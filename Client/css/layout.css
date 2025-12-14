@@ -24,7 +24,8 @@ body {
     width: 15.625rem !important;
     margin: 0 !important;
     border-radius: 0 !important;
-    z-index: 990;
+    z-index: 1 !important;
+    overflow-y: auto;
 }
 
 /* CRITICAL: Force sidebar navigation to always display */
@@ -78,14 +79,21 @@ body {
 /* --- MAIN CONTENT AREA - Soft UI Integration --- */
 #page-content {
     /* Main styling from .main-content in soft-ui-base.css */
+    position: relative !important;
     width: calc(100% - 15.625rem) !important;
     margin-left: 15.625rem !important;
     transition: all 0.2s ease-in-out;
     min-height: 100vh;
-    position: relative;
+    z-index: 10 !important;
+    background-color: var(--bg-body);
 }
 
 /* Navbar blur effect on scroll (optional enhancement) */
+.navbar-main {
+    position: relative;
+    z-index: 100;
+}
+
 .navbar-main.navbar-blur {
     backdrop-filter: saturate(200%) blur(30px);
     background-color: rgba(255, 255, 255, 0.8);
