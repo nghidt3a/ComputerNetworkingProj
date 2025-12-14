@@ -18,13 +18,16 @@ import { TaskManagerFeature } from './features/taskManager.js';
 // Import Global Bridge để HTML onclick hoạt động
 import './utils/globalBridge.js';
 
+// Import Simple Navigation for debugging
+import { setupSimpleNavigation } from './navigation-simple.js';
+
 // --- INITIALIZATION ---
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("RCS Client Initializing...");
 
     // 1. Setup UI Events (Tabs, Sidebar clicks)
-    setupNavigation();
+    setupSimpleNavigation(); // Using simple version to fix navigation issues
 
     // 2. Setup Theme Toggle
     setupThemeToggle();
@@ -36,14 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLogoClick();
     
     // 2.7 Setup Scroll Animations
-    setupScrollAnimations();
+    // setupScrollAnimations(); // Disabled temporarily for debugging
     
     // 2.8 Add page entrance animation
-    document.body.style.opacity = '0';
-    setTimeout(() => {
-        document.body.style.transition = 'opacity 0.5s ease';
-        document.body.style.opacity = '1';
-    }, 100);
+    // document.body.style.opacity = '0'; // Disabled temporarily
+    // setTimeout(() => {
+    //     document.body.style.transition = 'opacity 0.5s ease';
+    //     document.body.style.opacity = '1';
+    // }, 100);
 
     // 3. Setup Login Event
     AuthFeature.init();
@@ -62,8 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 function setupMenuToggle() {
-    // Mobile menu removed - Desktop only version
-    // No toggle functionality needed
+    const menuToggle = document.getElementById('menu-toggle');
+    const appWrapper = document.getElementById('app-wrapper');
+    
+    if (menuToggle && appWrapper) {
+        menuToggle.addEventListener('click', () => {
+            appWrapper.classList.toggle('toggled');
+        });
+    }
 }
 
 // --- EVENT HANDLERS ---
@@ -258,7 +267,7 @@ function applyTheme(theme) {
 }
 
 /**
- * Cập nhật icon của nút toggle (nếu có)
+ * Cập nhật icon và text của nút toggle
  * @param {string} theme - Theme hiện tại
  */
 function updateThemeIcon(theme) {
@@ -266,11 +275,15 @@ function updateThemeIcon(theme) {
     if (!themeToggleBtn) return;
 
     const icon = themeToggleBtn.querySelector('i');
-    if (icon) {
-        if (theme === 'dark') {
-            icon.className = 'fas fa-sun'; // Icon mặt trời khi đang Dark Mode
-        } else {
-            icon.className = 'fas fa-moon'; // Icon mặt trăng khi đang Light Mode
-        }
+    const text = themeToggleBtn.querySelector('span');
+    
+    if (theme === 'dark') {
+        // Đang ở Dark Mode, hiển thị icon/text để chuyển về Light
+        if (icon) icon.className = 'fas fa-sun me-2';
+        if (text) text.textContent = 'Light Mode';
+    } else {
+        // Đang ở Light Mode, hiển thị icon/text để chuyển sang Dark
+        if (icon) icon.className = 'fas fa-moon me-2';
+        if (text) text.textContent = 'Dark Mode';
     }
 }

@@ -16,16 +16,32 @@ body {
 
 /* --- SIDEBAR - Soft UI Integration --- */
 #sidebar {
-    /* Override Soft UI default styles */
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    height: 100vh !important;
+    /* CRITICAL: Override Soft UI .sidenav position:fixed */
+    position: static !important;
+    flex-shrink: 0;
     width: 15.625rem !important;
+    height: 100vh !important;
     margin: 0 !important;
     border-radius: 0 !important;
-    z-index: 100 !important;
+    z-index: auto !important;
     overflow-y: auto;
+    transition: all 0.3s ease !important;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    top: auto !important;
+    left: auto !important;
+    transform: translateX(0) !important;
+    box-shadow: none !important;
+    max-height: auto !important;
+}
+
+/* Override Soft UI .sidenav rules applied via class */
+#sidebar.sidenav {
+    position: static !important;
+    z-index: auto !important;
+    top: auto !important;
+    left: auto !important;
+    transform: translateX(0) !important;
 }
 
 /* CRITICAL: Force sidebar navigation to always display */
@@ -40,6 +56,17 @@ body {
 #sidebar .navbar-nav {
     display: flex !important;
     flex-direction: column !important;
+}
+
+/* Add smooth transitions for toggle */
+#sidebar .nav-link,
+#sidebar .nav-link-text,
+#sidebar .icon,
+#sidebar .sidenav-header,
+#sidebar .navbar-brand,
+#sidebar .navbar-brand span,
+#sidebar .navbar-brand i {
+    transition: all 0.3s ease !important;
 }
 
 /* Mobile menu removed - Desktop only */
@@ -80,17 +107,19 @@ body {
 #page-content {
     /* Main styling from .main-content in soft-ui-base.css */
     position: relative !important;
-    width: calc(100% - 15.625rem) !important;
-    margin-left: 15.625rem !important;
-    transition: all 0.2s ease-in-out;
-    min-height: 100vh;
-    z-index: 1 !important;
+    flex: 1;
+    width: auto !important;
+    margin-left: 0 !important;
+    transition: all 0.3s ease !important;
+    height: 100vh;
+    z-index: 5 !important;
+    overflow-y: auto;
 }
 
 /* Navbar blur effect on scroll (optional enhancement) */
 .navbar-main {
     position: relative;
-    z-index: 50;
+    z-index: 20;
 }
 
 .navbar-main.navbar-blur {
@@ -119,15 +148,46 @@ body {
 
 /* --- COLLAPSIBLE SIDEBAR (TOGGLED STATE) --- */
 #app-wrapper.toggled #sidebar {
-    width: 4.5rem;
-    min-width: 4.5rem;
+    width: 5rem !important;
+    min-width: 5rem !important;
+    flex-basis: 5rem !important;
+    flex-shrink: 0;
 }
 
 #app-wrapper.toggled #page-content {
-    margin-left: 4.5rem;
-    width: calc(100% - 4.5rem);
+    flex: 1;
+    width: auto !important;
+    margin-left: 0 !important;
 }
 
+/* Soft UI sidenav header when toggled */
+#app-wrapper.toggled .sidenav-header {
+    padding: 1.25rem 0.5rem !important;
+    justify-content: center !important;
+    display: flex !important;
+}
+
+#app-wrapper.toggled .sidenav-header .navbar-brand {
+    justify-content: center !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    width: 100% !important;
+}
+
+#app-wrapper.toggled .sidenav-header .navbar-brand span {
+    display: none !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+}
+
+#app-wrapper.toggled .sidenav-header .navbar-brand i {
+    margin: 0 auto !important;
+    font-size: 2rem !important;
+    color: var(--primary-color) !important;
+}
+
+/* Legacy sidebar heading support */
 #app-wrapper.toggled .sidebar-heading {
     font-size: 1.5rem;
     padding: 1rem;
@@ -141,6 +201,69 @@ body {
     display: none;
 }
 
+/* Soft UI nav-link when toggled */
+#app-wrapper.toggled .nav-link {
+    padding: 0.75rem 0.5rem !important;
+    justify-content: center !important;
+    margin: 0.125rem 0.5rem !important;
+    text-align: center;
+    min-height: 3rem;
+    display: flex !important;
+    align-items: center !important;
+}
+
+#app-wrapper.toggled .nav-link .nav-link-text {
+    display: none !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+}
+
+#app-wrapper.toggled .nav-link .icon {
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+}
+
+#app-wrapper.toggled .nav-link .icon i {
+    font-size: 1.125rem !important;
+    margin: 0 !important;
+}
+
+/* Adjust navbar-nav padding when toggled */
+#app-wrapper.toggled .navbar-nav {
+    padding: 0 0.25rem !important;
+}
+
+/* Improve active state when toggled */
+#app-wrapper.toggled .nav-link.active {
+    background: linear-gradient(310deg, var(--primary-color) 0%, var(--primary-hover) 100%) !important;
+    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Improve hover effect when toggled */
+#app-wrapper.toggled .nav-link:hover {
+    background-color: var(--bg-input) !important;
+    transform: translateY(-1px);
+}
+
+#app-wrapper.toggled .nav-link.active:hover {
+    transform: translateY(-1px);
+}
+
+/* Disconnect button when toggled */
+#app-wrapper.toggled #btn-disconnect .nav-link-text {
+    display: none !important;
+}
+
+#app-wrapper.toggled #btn-disconnect .icon {
+    margin: 0 !important;
+}
+
+/* Legacy list-group-item support */
 #app-wrapper.toggled .list-group-item {
     padding: 16px 12px;
     justify-content: center;
@@ -159,7 +282,6 @@ body {
     border-right: 3px solid var(--primary-color);
 }
 
-/* --- 
 /* --- UTILITIES --- */
 .disabled-ui {
     pointer-events: none;
@@ -181,26 +303,22 @@ body {
     display: block !important;
 }
 
-/* Ensure content has proper margin */
-#page-content {
-    margin-left: 15.625rem !important;
-    width: calc(100% - 15.625rem) !important;
-}
-
 /* Card hover effects */
 .card:hover {
     transform: translateY(-5px);
 }
-    
-    #sidebar.sidenav.show,
-    #sidebar.active {
-        transform: translateX(0);
-        box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.15);
+
+/* Tablets */
+@media (max-width: 1024px) {
+    #sidebar {
+        width: 15.625rem !important;
+        transform: translateX(0) !important;
     }
     
     #page-content {
+        flex: 1;
+        width: auto !important;
         margin-left: 0 !important;
-        width: 100% !important;
     }
 
     .container-fluid {

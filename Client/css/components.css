@@ -1,3 +1,25 @@
+/* --- MENU TOGGLE BUTTON --- */
+#menu-toggle {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+#menu-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1.1);
+}
+
+#menu-toggle:active {
+    transform: scale(0.95);
+}
+
+[data-theme="dark"] #menu-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 /* --- CARDS --- */
 .card-custom {
     background: var(--bg-card);
