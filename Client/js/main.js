@@ -62,42 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 function setupMenuToggle() {
-    const menuToggle = document.getElementById('menu-toggle');
-    const sidebar = document.getElementById('sidebar');
-    const iconSidenav = document.getElementById('iconSidenav');
-    
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            sidebar.classList.toggle('show');
-            sidebar.classList.toggle('active'); // Keep backward compatibility
-        });
-    }
-
-    // Close button inside sidebar (mobile)
-    if (iconSidenav && sidebar) {
-        iconSidenav.addEventListener('click', (e) => {
-            e.preventDefault();
-            sidebar.classList.remove('show');
-            sidebar.classList.remove('active');
-        });
-    }
-
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener('click', (e) => {
-        if (window.innerWidth < 1024) {
-            const sidebar = document.getElementById('sidebar');
-            const menuToggle = document.getElementById('menu-toggle');
-            
-            if (sidebar && sidebar.classList.contains('show')) {
-                // Check if click is outside sidebar and not on toggle button
-                if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-                    sidebar.classList.remove('show');
-                    sidebar.classList.remove('active');
-                }
-            }
-        }
-    });
+    // Mobile menu removed - Desktop only version
+    // No toggle functionality needed
 }
 
 // --- EVENT HANDLERS ---
@@ -192,14 +158,7 @@ function setupNavigation() {
                 breadcrumb.innerText = newTitle;
             }
             
-            // 6. Close sidebar on mobile after selection
-            if (window.innerWidth < 1024) {
-                const sidebar = document.getElementById('sidebar');
-                sidebar.classList.remove('show');
-                sidebar.classList.remove('active');
-            }
-            
-            // 7. Scroll to top smoothly
+            // 6. Scroll to top smoothly
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
             // 5. Trigger Feature Load (Lazy Load)

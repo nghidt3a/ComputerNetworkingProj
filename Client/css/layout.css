@@ -41,31 +41,7 @@ body {
     flex-direction: column !important;
 }
 
-/* Hamburger Menu Button - Always show for now (testing) */
-#menu-toggle {
-    z-index: 1000;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-}
-
-#menu-toggle:hover {
-    transform: scale(1.1);
-}
-
-#menu-toggle i {
-    font-size: 1.25rem;
-}
-
-/* Show hamburger on ALL screen sizes for testing */
-@media (min-width: 992px) {
-    #menu-toggle {
-        /* Temporarily show on desktop for testing */
-        display: inline-flex !important;
-    }
-}
+/* Mobile menu removed - Desktop only */
 
 /* Sidenav Toggler for Mobile */
 .sidenav-toggler-line {
@@ -189,47 +165,24 @@ body {
     display: none !important;
 }
 
-/* --- RESPONSIVE DESIGN - Soft UI Style --- */
+/* --- DESKTOP ONLY LAYOUT (No Mobile Support) --- */
 
-/* Desktop First - Large Screens (≥992px) */
-@media (min-width: 992px) {
-    /* Force sidebar always visible on desktop/laptop */
-    #sidebar.sidenav {
-        transform: translateX(0) !important;
-        left: 0 !important;
-    }
-    
-    #page-content {
-        margin-left: 17.625rem !important;
-    }
-    
-    /* Optimize card hover effects for desktop */
-    .card:hover {
-        transform: translateY(-5px);
-    }
+/* Force sidebar always visible */
+#sidebar.sidenav {
+    transform: translateX(0) !important;
+    left: 0 !important;
+    display: block !important;
 }
 
-/* Tablets & Mobile (<992px) */
-@media (max-width: 991px) {
-    /* Sidebar hidden by default on mobile */
-    #sidebar.sidenav {
-        transform: translateX(-17rem) !important;
-        z-index: 1050;
-        left: 0;
-        position: fixed;
-    }
-    
-    /* Show sidebar when .show class is added */
-    #sidebar.sidenav.show {
-        transform: translateX(0) !important;
-        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
-    }
-    
-    /* Full width content on mobile */
-    #page-content {
-        margin-left: 0 !important;
-        width: 100% !important;
-    }
+/* Ensure content has proper margin */
+#page-content {
+    margin-left: 15.625rem !important;
+    width: calc(100% - 15.625rem) !important;
+}
+
+/* Card hover effects */
+.card:hover {
+    transform: translateY(-5px);
 }
     
     #sidebar.sidenav.show,
