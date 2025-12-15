@@ -10,15 +10,15 @@
 
 /* Force hide all tabs by default */
 .tab-content {
-    display: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
+  display: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
 }
 
 /* Show only active tab */
 .tab-content.active {
-    display: block !important;
+  display: block !important;
 }
 
 /* ===========================================
@@ -27,28 +27,33 @@
 
 /* Soft UI nav-link active state */
 #sidebar .nav-link.active {
-    background: linear-gradient(310deg, var(--primary-color) 0%, var(--primary-hover) 100%) !important;
-    box-shadow: 0 4px 7px -1px rgba(0, 0, 0, 0.11), 0 2px 4px -1px rgba(0, 0, 0, 0.07) !important;
+  background: linear-gradient(
+    310deg,
+    var(--primary-color) 0%,
+    var(--primary-hover) 100%
+  ) !important;
+  box-shadow: 0 4px 7px -1px rgba(0, 0, 0, 0.11),
+    0 2px 4px -1px rgba(0, 0, 0, 0.07) !important;
 }
 
 #sidebar .nav-link.active .icon {
-    background-color: white !important;
+  background-color: white !important;
 }
 
 #sidebar .nav-link.active i {
-    color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
 }
 
 #sidebar .nav-link.active .nav-link-text {
-    color: white !important;
-    font-weight: 600 !important;
+  color: white !important;
+  font-weight: 600 !important;
 }
 
 /* Legacy list-group-item support (if any remain) */
 #sidebar .list-group-item.active {
-    background-color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
-    color: white !important;
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: white !important;
 }
 
 /* ===========================================
@@ -58,20 +63,20 @@
 /* Prevent soft-ui button transforms from causing issues */
 .btn:active,
 .btn:focus {
-    transform: scale(1) !important;
-    outline: none !important;
+  transform: scale(1) !important;
+  outline: none !important;
 }
 
 /* Ensure buttons are clickable */
 .btn {
-    pointer-events: auto !important;
-    cursor: pointer !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
 }
 
 /* Nav links should be clickable */
 .nav-link {
-    cursor: pointer !important;
-    pointer-events: auto !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
 }
 
 /* ===========================================
@@ -80,14 +85,14 @@
 
 /* Disable card animations that might conflict */
 .card {
-    transition: none !important;
-    transform: none !important;
+  transition: none !important;
+  transform: none !important;
 }
 
 /* Ensure cards are visible */
 .card.animate-on-scroll {
-    opacity: 1 !important;
-    transform: none !important;
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 /* ===========================================
@@ -96,24 +101,24 @@
 
 /* Ensure sidebar is always visible */
 #sidebar {
-    display: flex !important;
-    flex-direction: column !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 /* Fix sidebar navigation list */
 #sidebar .navbar-nav {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 /* Fix nav item padding and spacing */
 #sidebar .nav-item {
-    margin-bottom: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 #sidebar .nav-link {
-    padding: 0.75rem 1rem !important;
-    margin: 0.125rem 0.5rem !important;
-    border-radius: 0.5rem !important;
+  padding: 0.75rem 1rem !important;
+  margin: 0.125rem 0.5rem !important;
+  border-radius: 0.5rem !important;
 }
 
 /* ===========================================
@@ -122,13 +127,13 @@
 
 /* Ensure form inputs are usable */
 .form-control {
-    pointer-events: auto !important;
+  pointer-events: auto !important;
 }
 
 .form-control:focus {
-    outline: none !important;
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25) !important;
+  outline: none !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25) !important;
 }
 
 /* ===========================================
@@ -137,11 +142,11 @@
 
 /* Ensure login screen is above everything */
 #login-overlay {
-    z-index: 9999 !important;
+  z-index: 9999 !important;
 }
 
 #login-overlay.hidden {
-    display: none !important;
+  display: none !important;
 }
 
 /* ===========================================
@@ -150,14 +155,14 @@
 
 /* Ensure app wrapper is hidden when not authenticated */
 #app-wrapper.disabled-ui {
-    pointer-events: none !important;
-    opacity: 0.3 !important;
+  pointer-events: none !important;
+  opacity: 0.3 !important;
 }
 
 /* Show app when authenticated */
 #app-wrapper:not(.disabled-ui) {
-    pointer-events: auto !important;
-    opacity: 1 !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
 }
 
 /* ===========================================
@@ -166,8 +171,8 @@
 
 /* Ensure content is scrollable on small screens */
 #page-content {
-    overflow-y: auto !important;
-    height: 100vh !important;
+  overflow-y: auto !important;
+  height: 100vh !important;
 }
 
 /* ===========================================
@@ -176,20 +181,20 @@
 
 /* Ensure disconnect button is styled correctly */
 #btn-disconnect {
-    color: var(--danger-color) !important;
-    margin-top: auto !important;
+  color: var(--danger-color) !important;
+  margin-top: auto !important;
 }
 
 #btn-disconnect:hover {
-    background: rgba(220, 53, 69, 0.1) !important;
+  background: rgba(220, 53, 69, 0.1) !important;
 }
 
 #btn-disconnect .icon {
-    background-color: rgba(220, 53, 69, 0.1) !important;
+  background-color: rgba(220, 53, 69, 0.1) !important;
 }
 
 #btn-disconnect i {
-    color: var(--danger-color) !important;
+  color: var(--danger-color) !important;
 }
 
 /* ===========================================
@@ -211,20 +216,20 @@
 /* Ensure proper stacking order */
 /* Sidebar z-index is now auto since it's static positioned */
 #page-content {
-    z-index: auto;
+  z-index: auto;
 }
 
 .toast-container {
-    z-index: 10000 !important;
+  z-index: 10000 !important;
 }
 
 /* Modal should be above everything */
 .modal {
-    z-index: 9998 !important;
+  z-index: 9998 !important;
 }
 
 .modal-backdrop {
-    z-index: 9997 !important;
+  z-index: 9997 !important;
 }
 
 /* ===========================================
@@ -233,21 +238,21 @@
 
 /* Ensure text is readable */
 .nav-link-text {
-    font-size: 0.875rem !important;
-    font-weight: 400 !important;
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
 }
 
 /* Icon sizing */
 .icon-shape {
-    width: 32px !important;
-    height: 32px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .icon-shape i {
-    font-size: 14px !important;
+  font-size: 14px !important;
 }
 
 /* ===========================================
@@ -256,34 +261,34 @@
 
 /* Dashboard cards */
 #tab-dashboard .card {
-    margin-bottom: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
 }
 
 /* Monitor canvas */
 #monitor-canvas {
-    max-width: 100% !important;
-    height: auto !important;
-    display: block !important;
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
 }
 
 /* Webcam video */
 #webcam-video {
-    max-width: 100% !important;
-    height: auto !important;
-    display: block !important;
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
 }
 
 /* File manager tree */
 #file-tree {
-    max-height: 400px !important;
-    overflow-y: auto !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
 }
 
 /* Terminal output */
 #terminal-output {
-    max-height: 500px !important;
-    overflow-y: auto !important;
-    font-family: 'Consolas', monospace !important;
+  max-height: 500px !important;
+  overflow-y: auto !important;
+  font-family: "Consolas", monospace !important;
 }
 
 /* ===========================================
@@ -292,21 +297,21 @@
 
 /* Quick visibility toggles */
 .force-show {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .force-hide {
-    display: none !important;
+  display: none !important;
 }
 
 /* Debug border */
 .debug-border {
-    border: 2px solid red !important;
+  border: 2px solid red !important;
 }
 
 /* Debug background */
 .debug-bg {
-    background-color: rgba(255, 0, 0, 0.1) !important;
+  background-color: rgba(255, 0, 0, 0.1) !important;
 }

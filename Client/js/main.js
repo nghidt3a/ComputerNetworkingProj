@@ -15,6 +15,7 @@ import { KeyloggerFeature } from "./features/keylogger.js";
 import { FileManagerFeature } from "./features/fileManager.js";
 import { TaskManagerFeature } from "./features/taskManager.js";
 import { AudioFeature } from "./features/audio.js";
+import { PingFeature } from "./features/ping.js";
 
 // Import Global Bridge để HTML onclick hoạt động
 import "./utils/globalBridge.js";
@@ -59,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   FileManagerFeature.init();
   TaskManagerFeature.init();
   AudioFeature.init();
+  PingFeature.init();
 
   // 4. Setup disconnect handler
   SocketService.on("DISCONNECT", () => {

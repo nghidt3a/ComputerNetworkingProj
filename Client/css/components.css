@@ -492,3 +492,80 @@
         font-size: 0.85rem;
     }
 }
+
+/* --- PING PILL COMPONENT --- */
+.ping-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 3px 3px 12px; /* Padding trái rộng cho chữ, phải nhỏ cho badge con */
+    border-radius: 9999px;     /* Full rounded */
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    gap: 8px; /* Khoảng cách giữa chữ Online và Badge số */
+}
+
+/* Phần bên trái: Dot + Text */
+.ping-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ping-dot {
+    width: 8px;
+    height: 8px;
+    background-color: currentColor; /* Ăn theo màu chữ */
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+}
+
+/* Phần bên phải: Badge con chứa số ms */
+.ping-latency {
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: #ffffff; /* Luôn màu trắng */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- COLOR VARIANTS (Màu sắc theo trạng thái) --- */
+
+/* 1. Good (< 100ms) - Xanh Mint/Emerald */
+.ping-pill.good {
+    background-color: #d1fae5; /* Mint 100 */
+    color: #065f46;            /* Emerald 800 */
+}
+.ping-pill.good .ping-latency {
+    background-color: #10b981; /* Emerald 500 */
+}
+
+/* 2. Medium (100-300ms) - Vàng Amber */
+.ping-pill.medium {
+    background-color: #fef3c7; /* Amber 100 */
+    color: #92400e;            /* Amber 800 */
+}
+.ping-pill.medium .ping-latency {
+    background-color: #f59e0b; /* Amber 500 */
+}
+
+/* 3. Bad (> 300ms) - Đỏ Rose */
+.ping-pill.bad {
+    background-color: #fee2e2; /* Rose 100 */
+    color: #991b1b;            /* Rose 800 */
+}
+.ping-pill.bad .ping-latency {
+    background-color: #ef4444; /* Rose 500 */
+}
+
+@keyframes pulse-dot {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}

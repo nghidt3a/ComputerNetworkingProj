@@ -261,20 +261,21 @@
               id="navbar"
             >
               <div class="ms-md-auto pe-md-3 d-flex align-items-center gap-3">
-                <!-- Theme Toggle Button -->
-                <button
-                  id="theme-toggle"
-                  class="btn btn-outline-primary btn-sm border-radius-lg"
-                  title="Toggle Dark Mode"
-                >
-                  <i class="fas fa-moon me-2"></i>
-                  <span class="d-none d-sm-inline">Dark Mode</span>
-                </button>
+                  <button id="theme-toggle" class="btn btn-outline-primary btn-sm border-radius-lg" title="Toggle Dark Mode">
+                      <i class="fas fa-moon me-2"></i>
+                      <span class="d-none d-sm-inline">Dark Mode</span>
+                  </button>
 
-                <!-- Connection Badge -->
-                <span id="connection-badge" class="badge badge-danger">
-                  <i class="fas fa-circle me-1"></i> Disconnected
-                </span>
+                  <div id="ping-badge" class="ping-pill good" style="display: none;">
+                      <div class="ping-status">
+                          <span class="ping-dot"></span>
+                          <span>Online</span>
+                      </div>
+                      <div class="ping-latency">
+                          <i class="fas fa-wifi"></i>
+                          <span id="ping-value">-- ms</span>
+                      </div>
+                  </div>
               </div>
             </div>
           </div>
