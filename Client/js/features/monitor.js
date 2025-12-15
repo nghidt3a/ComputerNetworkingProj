@@ -351,7 +351,7 @@ export const MonitorFeature = {
   // --- Recording ---
   startRecording() {
     if (!isStreaming) {
-      UIManager.showToast("Hãy bật Stream trước!", "error");
+      UIManager.showToast("Please start stream first!", "error");
       return;
     }
 
@@ -372,7 +372,7 @@ export const MonitorFeature = {
 
     this.startRecordingTimer(duration);
     SocketService.send("RECORD_SCREEN", duration);
-    UIManager.showToast(`Đang ghi màn hình ${duration}s...`, "info");
+    UIManager.showToast(`Recording screen ${duration}s...`, "info");
   },
 
   handleScreenRecordDownload(data) {
@@ -404,7 +404,7 @@ export const MonitorFeature = {
       window.URL.revokeObjectURL(url);
     }, 100);
 
-    UIManager.showToast("Đã tải video màn hình về máy!", "success");
+    UIManager.showToast("Screenshot saved to device!", "success");
 
     // Re-enable controls after video is ready
     const durationInput = document.getElementById("monitor-record-duration");
@@ -475,7 +475,7 @@ export const MonitorFeature = {
   cancelRecording() {
     this.stopRecordingTimer();
     SocketService.send("CANCEL_RECORD");
-    UIManager.showToast("Đã hủy ghi màn hình", "info");
+    UIManager.showToast('Screen recording cancelled', 'info');
   },
 
   handleStreamFrame(arrayBuffer) {
@@ -562,7 +562,7 @@ export const MonitorFeature = {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    UIManager.showToast("Ảnh đã được lưu về máy!", "success");
+    UIManager.showToast("Screen video downloaded!", "success");
   },
 
   // NEW: Zoom Controls
@@ -725,7 +725,7 @@ export const MonitorFeature = {
     const screenImg = document.getElementById("live-screen");
 
     if (isControlEnabled) {
-      UIManager.showToast("Đã BẬT chế độ điều khiển!", "success");
+      UIManager.showToast("Remote control ENABLED!", "success");
       if (screenImg) {
         screenImg.style.cursor = "crosshair";
         screenImg.classList.add("control-active");
@@ -734,7 +734,7 @@ export const MonitorFeature = {
       this.keyHandler = (e) => this.handleRemoteKey(e);
       document.addEventListener("keydown", this.keyHandler);
     } else {
-      UIManager.showToast("Đã TẮT chế độ điều khiển!", "info");
+      UIManager.showToast("Remote control DISABLED!", "info");
       if (screenImg) {
         screenImg.style.cursor = "default";
         screenImg.classList.remove("control-active");

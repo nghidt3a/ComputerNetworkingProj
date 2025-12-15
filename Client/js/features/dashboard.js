@@ -17,7 +17,7 @@ export const DashboardFeature = {
             this.logToTerminal(text);
             if (text.includes('Lỗi') || text.includes('Error')) {
                 UIManager.showToast(text, 'error');
-            } else if (text.includes('Đã')) {
+            } else if (text.includes('Đã') || text.includes('Successfully')) {
                 UIManager.showToast(text, 'success');
             }
         });
@@ -53,11 +53,11 @@ export const DashboardFeature = {
 
         // Power Controls
         document.getElementById('btn-shutdown')?.addEventListener('click', () => {
-            if(confirm('Tắt máy Server?')) SocketService.send('SHUTDOWN');
+            if(confirm('Shutdown Server?')) SocketService.send('SHUTDOWN');
         });
         
         document.getElementById('btn-restart')?.addEventListener('click', () => {
-            if(confirm('Khởi động lại Server?')) SocketService.send('RESTART');
+            if(confirm('Restart Server?')) SocketService.send('RESTART');
         });
 
         // Quick Launch
@@ -66,7 +66,7 @@ export const DashboardFeature = {
             if(e.key === 'Enter') this.runApp();
         });
 
-        // Web Shortcuts (Sử dụng Event Delegation cho gọn)
+        // Web Shortcuts (Event Delegation)
         document.querySelectorAll('.btn-web-launch').forEach(btn => {
             btn.addEventListener('click', () => {
                 const url = btn.getAttribute('data-url');
@@ -80,16 +80,16 @@ export const DashboardFeature = {
         const appName = input.value.trim();
         if (appName) {
             SocketService.send("START_APP", appName);
-            UIManager.showToast(`Đang mở: ${appName}...`, "info");
+            UIManager.showToast(`Opening: ${appName}...`, "info");
             input.value = "";
         } else {
-            UIManager.showToast("Vui lòng nhập tên ứng dụng!", "error");
+            UIManager.showToast("Please enter app name!", "error");
         }
     },
 
     openWeb(url) {
         SocketService.send("START_APP", url);
-        UIManager.showToast(`Đang mở trình duyệt: ${url}...`, "info");
+        UIManager.showToast(`Opening browser: ${url}...`, "info");
     },
 
     renderAppGrid(appList) {
@@ -134,8 +134,8 @@ export const DashboardFeature = {
         term.scrollTop = term.scrollHeight;
     },
     
+    // ... (Phần updateSystemInfo và updatePerformanceStats giữ nguyên logic, chỉ cần chắc chắn text bên trong HTML đã đổi)
     updateSystemInfo(info) {
-        // Update static system information
         if (document.getElementById('os-info')) {
             document.getElementById('os-info').innerText = info.os || 'Windows';
             document.getElementById('pc-name').innerText = info.pcName || 'Unknown';
@@ -147,19 +147,16 @@ export const DashboardFeature = {
     },
     
     updatePerformanceStats(perf) {
-        // Helper: Get color based on usage percentage
+        // ... (Giữ nguyên logic update)
         const getUsageColor = (value) => {
             if (value < 50) return 'text-success';
             if (value < 80) return 'text-warning';
             return 'text-danger';
         };
         
-        // Update CPU
         const cpuUsage = perf.cpu || 0;
         const elCpuFreq = document.getElementById('disp-cpu-freq');
-        if (elCpuFreq) {
-            elCpuFreq.innerHTML = `${cpuUsage}%`;
-        }
+        if (elCpuFreq) elCpuFreq.innerHTML = `${cpuUsage}%`;
         
         const elCpuChange = document.getElementById('cpu-change');
         if (elCpuChange) {
@@ -176,20 +173,16 @@ export const DashboardFeature = {
             }
         }
         
-        // Update RAM
         const ramUsage = perf.ram || 0;
         const elRam = document.getElementById('disp-ram-usage');
-        if (elRam) {
-            elRam.innerHTML = `${ramUsage}%`;
-        }
+        if (elRam) elRam.innerHTML = `${ramUsage}%`;
         
         const elRamChange = document.getElementById('ram-change');
         if (elRamChange) {
             elRamChange.className = `text-sm font-weight-bolder ${getUsageColor(ramUsage)}`;
             elRamChange.textContent = ramUsage < 50 ? '✓ OK' : ramUsage < 80 ? '⚠ High' : '⚠ Critical';
         }
-        
-        // Update RAM details (if available)
+
         if (perf.ramUsedGB && perf.ramTotalGB) {
             const elRamUsed = document.getElementById('ram-used');
             const elRamTotal = document.getElementById('ram-total');
@@ -197,12 +190,9 @@ export const DashboardFeature = {
             if (elRamTotal) elRamTotal.textContent = `${perf.ramTotalGB.toFixed(1)} GB`;
         }
         
-        // Update GPU
         const gpuUsage = perf.gpu || 0;
         const elGpu = document.getElementById('disp-gpu-vram');
-        if (elGpu) {
-            elGpu.innerHTML = `${gpuUsage}%`;
-        }
+        if (elGpu) elGpu.innerHTML = `${gpuUsage}%`;
         
         const elGpuChange = document.getElementById('gpu-change');
         if (elGpuChange) {
@@ -210,12 +200,9 @@ export const DashboardFeature = {
             elGpuChange.textContent = gpuUsage < 50 ? 'Idle' : gpuUsage < 80 ? 'Active' : 'Busy';
         }
         
-        // Update Disk
         const diskUsage = perf.diskUsage || 0;
         const elDisk = document.getElementById('disp-disk-free');
-        if (elDisk) {
-            elDisk.innerHTML = `${diskUsage}%`;
-        }
+        if (elDisk) elDisk.innerHTML = `${diskUsage}%`;
         
         const elDiskChange = document.getElementById('disk-change');
         if (elDiskChange) {
@@ -223,7 +210,6 @@ export const DashboardFeature = {
             elDiskChange.textContent = diskUsage < 50 ? '✓ Healthy' : diskUsage < 80 ? '⚠ Low' : '⚠ Full';
         }
         
-        // Update Disk details (if available)
         if (perf.diskUsedGB && perf.diskTotalGB) {
             const elDiskUsed = document.getElementById('disk-used');
             const elDiskTotal = document.getElementById('disk-total');
@@ -233,14 +219,11 @@ export const DashboardFeature = {
     },
     
     startPerformanceMonitoring() {
-        // Request initial system info
         SocketService.send('GET_SYS_INFO');
-        
-        // Start periodic performance updates
         if (perfInterval) clearInterval(perfInterval);
         perfInterval = setInterval(() => {
             SocketService.send('GET_PERFORMANCE');
-        }, 2000); // Update every 2 seconds
+        }, 2000); 
     },
     
     stopPerformanceMonitoring() {

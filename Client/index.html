@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,7 +9,6 @@
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖥️</text></svg>"
     />
 
-    <!-- Fonts & External Libs -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Consolas&display=swap"
       rel="stylesheet"
@@ -24,21 +23,11 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.5/dist/chart.umd.min.js"></script>
 
-    <!-- Modular CSS Loading -->
-    <!-- 1. Load biến trước tiên -->
     <link rel="stylesheet" href="css/variables.css" />
-
-    <!-- 2. Load Soft UI Base Components (buttons, cards, shadows, etc.) -->
     <link rel="stylesheet" href="css/soft-ui-base.css" />
-
-    <!-- 2.5 Load Fixes for Soft UI Conflicts -->
     <link rel="stylesheet" href="css/fixes.css" />
-
-    <!-- 3. Load Custom Layout & Components -->
     <link rel="stylesheet" href="css/layout.css" />
     <link rel="stylesheet" href="css/components.css" />
-
-    <!-- 4. Load Module Styles -->
     <link rel="stylesheet" href="css/modules/terminal.css" />
     <link rel="stylesheet" href="css/modules/webcam.css" />
     <link rel="stylesheet" href="css/modules/keylogger.css" />
@@ -47,7 +36,6 @@
   </head>
 
   <body>
-    <!-- SECTION: LOGIN OVERLAY -->
     <section id="login-overlay" class="overlay-container">
       <div class="login-card">
         <h2 class="mb-4 fw-bold text-primary">
@@ -95,9 +83,7 @@
       </div>
     </section>
 
-    <!-- APP WRAPPER -->
     <div class="d-flex disabled-ui" id="app-wrapper">
-      <!-- ASIDE: SIDEBAR NAVIGATION - Soft UI Style -->
       <aside
         class="sidenav navbar navbar-vertical navbar-expand-xs border-0"
         id="sidebar"
@@ -112,7 +98,7 @@
             class="navbar-brand m-0 d-flex align-items-center"
             style="cursor: pointer"
             id="logo-heading"
-            title="Quay về Dashboard"
+            title="Back to Dashboard"
           >
             <i
               class="fas fa-network-wired text-primary"
@@ -221,12 +207,10 @@
         </div>
       </aside>
 
-      <!-- MAIN CONTENT AREA - Soft UI Style -->
       <main
         class="main-content position-relative max-height-vh-100 h-100 border-radius-lg"
         id="page-content"
       >
-        <!-- Navbar -->
         <nav
           class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl"
           id="navbarBlur"
@@ -280,15 +264,9 @@
             </div>
           </div>
         </nav>
-        <!-- End Navbar -->
-
-        <!-- Main Content Container -->
         <div class="container-fluid py-4">
-          <!-- Dynamic Content Sections -->
           <section id="tab-dashboard" class="tab-content active">
-            <!-- Performance Stats Cards - Soft UI Style -->
             <div class="row">
-              <!-- CPU Card -->
               <div class="col-xl-3 col-sm-6 mb-4">
                 <div class="card">
                   <div class="card-body p-3">
@@ -328,7 +306,6 @@
                 </div>
               </div>
 
-              <!-- RAM Card -->
               <div class="col-xl-3 col-sm-6 mb-4">
                 <div class="card">
                   <div class="card-body p-3">
@@ -371,7 +348,6 @@
                 </div>
               </div>
 
-              <!-- GPU Card -->
               <div class="col-xl-3 col-sm-6 mb-4">
                 <div class="card">
                   <div class="card-body p-3">
@@ -412,7 +388,6 @@
                 </div>
               </div>
 
-              <!-- Disk Card -->
               <div class="col-xl-3 col-sm-6 mb-4">
                 <div class="card">
                   <div class="card-body p-3">
@@ -456,7 +431,6 @@
               </div>
             </div>
 
-            <!-- System Info Details Card -->
             <div class="row mb-4">
               <div class="col-12">
                 <div class="card">
@@ -601,7 +575,6 @@
               </div>
             </div>
 
-            <!-- Power & Quick Launch Row -->
             <div class="row">
               <div class="col-md-6">
                 <div class="card-custom">
@@ -610,13 +583,13 @@
                   </div>
                   <div class="d-grid gap-2">
                     <button
-                      onclick="if(confirm('Tắt máy server?')) sendCommand('SHUTDOWN')"
+                      id="btn-shutdown"
                       class="btn btn-danger"
                     >
                       <i class="fas fa-power-off"></i> SHUTDOWN SERVER
                     </button>
                     <button
-                      onclick="if(confirm('Khởi động lại server?')) sendCommand('RESTART')"
+                      id="btn-restart"
                       class="btn btn-warning text-dark"
                     >
                       <i class="fas fa-sync"></i> RESTART SERVER
@@ -634,10 +607,9 @@
                       type="text"
                       id="quickAppInput"
                       class="form-control"
-                      placeholder="Tên app (vd: notepad, calc, mspaint)"
-                      onkeydown="if(event.key === 'Enter') startApp()"
+                      placeholder="App name (e.g. notepad, calc, mspaint)"
                     />
-                    <button onclick="startApp()" class="btn btn-primary">
+                    <button id="btn-run-app" class="btn btn-primary">
                       <i class="fas fa-play"></i> Run
                     </button>
                     <button
@@ -652,26 +624,26 @@
                   >
                   <div class="d-flex gap-2 justify-content-between">
                     <button
-                      onclick="openWeb('https://facebook.com')"
-                      class="btn btn-outline-primary flex-fill"
+                      data-url="https://facebook.com"
+                      class="btn btn-outline-primary flex-fill btn-web-launch"
                     >
                       <i class="fab fa-facebook-f"></i> FB
                     </button>
                     <button
-                      onclick="openWeb('https://youtube.com')"
-                      class="btn btn-outline-danger flex-fill"
+                      data-url="https://youtube.com"
+                      class="btn btn-outline-danger flex-fill btn-web-launch"
                     >
                       <i class="fab fa-youtube"></i> YT
                     </button>
                     <button
-                      onclick="openWeb('https://gmail.com')"
-                      class="btn btn-outline-danger flex-fill"
+                      data-url="https://gmail.com"
+                      class="btn btn-outline-danger flex-fill btn-web-launch"
                     >
                       <i class="fas fa-envelope"></i> Mail
                     </button>
                     <button
-                      onclick="openWeb('https://google.com')"
-                      class="btn btn-outline-success flex-fill"
+                      data-url="https://google.com"
+                      class="btn btn-outline-success flex-fill btn-web-launch"
                     >
                       <i class="fab fa-google"></i> Web
                     </button>
@@ -682,7 +654,6 @@
           </section>
 
           <section id="tab-monitor" class="tab-content">
-            <!-- Screen Streaming Section -->
             <div class="row">
               <div class="col-lg-8">
                 <div class="card h-100">
@@ -699,7 +670,6 @@
                         <h6 class="mb-0">Live Screen Streaming</h6>
                       </div>
                       <div class="d-flex gap-2 align-items-center">
-                        <!-- Control Toggle Switch -->
                         <div class="form-check form-switch me-2">
                           <input
                             class="form-check-input"
@@ -724,7 +694,6 @@
                           <span id="btn-monitor-text">Start</span>
                         </button>
 
-                        <!-- Display Controls -->
                         <div class="btn-group btn-group-sm" role="group">
                           <button
                             class="btn btn-outline-secondary mb-0"
@@ -771,7 +740,6 @@
 
                   <div class="card-body p-3">
                     <div class="monitor-frame" id="monitor-container">
-                      <!-- Zoom Level Indicator -->
                       <div class="zoom-indicator" id="monitor-zoom-level">
                         100%
                       </div>
@@ -870,14 +838,14 @@
                       class="recording-timer-container mb-2"
                       style="display: none"
                     >
-                      <span class="label">Còn lại:</span>
+                      <span class="label">Remaining:</span>
                       <span id="monitor-recording-countdown" class="countdown"
                         >00s</span
                       >
                     </div>
                     <div class="mb-3">
                       <label class="form-label small fw-bold"
-                        >Thời lượng (giây):</label
+                        >Duration (sec):</label
                       >
                       <input
                         type="number"
@@ -895,7 +863,7 @@
                       class="btn btn-danger w-100 fw-bold"
                       disabled
                     >
-                      <i class="fas fa-record-vinyl"></i> GHI MÀN HÌNH & LƯU
+                      <i class="fas fa-record-vinyl"></i> RECORD SCREEN & SAVE
                     </button>
                     <button
                       id="btn-monitor-cancel"
@@ -903,15 +871,8 @@
                       class="btn btn-secondary w-100 fw-bold mt-2"
                       disabled
                     >
-                      <i class="fas fa-stop"></i> HỦY GHI
+                      <i class="fas fa-stop"></i> CANCEL
                     </button>
-                    <small
-                      class="text-muted d-block mt-2 fst-italic"
-                      style="font-size: 0.8rem"
-                    >
-                      * Video sẽ được lưu tại thư mục
-                      <b>ScreenRecordings</b> trên máy Server.
-                    </small>
                   </div>
                 </div>
               </div>
@@ -930,7 +891,6 @@
 
               <div class="row p-3">
                 <div class="col-md-8 text-center">
-                  <!-- Webcam Toolbar -->
                   <div class="webcam-toolbar mb-2">
                     <div class="btn-group btn-group-sm" role="group">
                       <button
@@ -1005,7 +965,7 @@
                       style="transition: all 0.3s ease"
                     >
                       <i class="fas fa-power-off"></i>
-                      <span id="btn-webcam-text">BẬT WEBCAM</span>
+                      <span id="btn-webcam-text">START WEBCAM</span>
                     </button>
 
                     <hr />
@@ -1018,14 +978,14 @@
                       class="recording-timer-container mb-2"
                       style="display: none"
                     >
-                      <span class="label">Còn lại:</span>
+                      <span class="label">Remaining:</span>
                       <span id="recording-countdown" class="countdown"
                         >00s</span
                       >
                     </div>
                     <div class="mb-3">
                       <label class="form-label small fw-bold"
-                        >Thời lượng (giây):</label
+                        >Duration (sec):</label
                       >
                       <input
                         type="number"
@@ -1043,7 +1003,7 @@
                       class="btn btn-danger w-100 fw-bold"
                       disabled
                     >
-                      <i class="fas fa-record-vinyl"></i> GHI HÌNH & LƯU
+                      <i class="fas fa-record-vinyl"></i> RECORD & SAVE
                     </button>
                     <button
                       id="btn-webcam-cancel"
@@ -1051,15 +1011,8 @@
                       class="btn btn-secondary w-100 fw-bold mt-2"
                       disabled
                     >
-                      <i class="fas fa-stop"></i> HỦY GHI
+                      <i class="fas fa-stop"></i> CANCEL
                     </button>
-                    <small
-                      class="text-muted d-block mt-2 fst-italic"
-                      style="font-size: 0.8rem"
-                    >
-                      * Video sẽ được lưu tại thư mục
-                      <b>WebcamRecordings</b> trên máy Server.
-                    </small>
                   </div>
                 </div>
               </div>
@@ -1118,7 +1071,7 @@
 
                       <div class="mb-3">
                         <label class="form-label small fw-bold"
-                          >Thời lượng (giây):</label
+                          >Duration (sec):</label
                         >
                         <input
                           type="number"
@@ -1135,7 +1088,7 @@
                         class="recording-timer-container mb-2"
                         style="display: none"
                       >
-                        <span class="label">Còn lại:</span>
+                        <span class="label">Remaining:</span>
                         <span id="audio-recording-countdown" class="countdown"
                           >00s</span
                         >
@@ -1147,7 +1100,7 @@
                         class="btn btn-danger w-100 fw-bold"
                         disabled
                       >
-                        <i class="fas fa-record-vinyl"></i> GHI ÂM & LƯU
+                        <i class="fas fa-record-vinyl"></i> RECORD & SAVE
                       </button>
                       <button
                         id="btn-audio-cancel"
@@ -1155,7 +1108,7 @@
                         class="btn btn-secondary w-100 fw-bold mt-2"
                         disabled
                       >
-                        <i class="fas fa-stop"></i> HỦY GHI
+                        <i class="fas fa-stop"></i> CANCEL
                       </button>
 
                       <hr class="horizontal dark my-3" />
@@ -1173,12 +1126,6 @@
                         </p>
                       </div>
                       <div id="audio-preview-container" class="mt-2"></div>
-                      <small
-                        class="text-muted d-block mt-2 fst-italic"
-                        style="font-size: 0.8rem"
-                        >* Audio sẽ được lưu tại thư mục
-                        <b>AudioRecordings</b> trên máy Server.</small
-                      >
                     </div>
                   </div>
                 </div>
@@ -1188,7 +1135,6 @@
 
           <section id="tab-files" class="tab-content">
             <div class="card h-100 d-flex flex-column">
-              <!-- Card Header with Breadcrumb -->
               <div class="card-header pb-0">
                 <div class="d-flex align-items-center justify-content-between">
                   <div>
@@ -1198,7 +1144,6 @@
                         class="breadcrumb bg-transparent mb-0 pb-0"
                         id="file-breadcrumb"
                       >
-                        <!-- Breadcrumb will be dynamically populated by JavaScript -->
                         <li class="breadcrumb-item">
                           <a
                             href="#"
@@ -1235,7 +1180,6 @@
                 </div>
               </div>
 
-              <!-- Search Bar -->
               <div class="px-3 pt-3 pb-0">
                 <div class="input-group input-group-outline">
                   <input
@@ -1251,7 +1195,6 @@
                 </div>
               </div>
 
-              <!-- File List Table -->
               <div class="card-body px-0 pt-0 pb-2 flex-grow-1 overflow-auto">
                 <div
                   class="table-responsive p-0"
@@ -1392,7 +1335,7 @@
                       <button
                         onclick="sendCommand('START_KEYLOG')"
                         class="btn btn-success btn-sm me-1"
-                        title="Bắt đầu ghi"
+                        title="Start Log"
                         style="padding: 2px 8px"
                       >
                         <i class="fas fa-play"></i>
@@ -1400,7 +1343,7 @@
                       <button
                         onclick="sendCommand('STOP_KEYLOG')"
                         class="btn btn-secondary btn-sm me-1"
-                        title="Dừng ghi"
+                        title="Stop Log"
                         style="padding: 2px 8px"
                       >
                         <i class="fas fa-stop"></i>
@@ -1408,7 +1351,7 @@
                       <button
                         onclick="clearAllKeylogs()"
                         class="btn btn-sm btn-light border"
-                        title="Xóa tất cả dữ liệu"
+                        title="Clear All"
                       >
                         Clear
                       </button>
@@ -1433,7 +1376,7 @@
                       onclick="downloadLog()"
                       class="btn btn-sm btn-success text-white fw-bold"
                     >
-                      <i class="fas fa-download"></i> Tải .txt
+                      <i class="fas fa-download"></i> Download .txt
                     </button>
                   </div>
                   <div class="paper-container flex-grow-1">
@@ -1449,14 +1392,11 @@
             </div>
           </section>
         </div>
-        <!-- End Container-fluid -->
-      </main>
+        </main>
     </div>
 
-    <!-- UI COMPONENTS: MODALS & TOASTS -->
     <div id="toast-container" class="toast-container"></div>
 
-    <!-- App Library Modal -->
     <div id="app-library-modal" class="modal-overlay hidden">
       <div class="modal-content-custom">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -1472,21 +1412,19 @@
             type="text"
             id="appSearch"
             class="form-control"
-            placeholder="Tìm ứng dụng..."
+            placeholder="Search apps..."
             onkeyup="filterApps()"
           />
         </div>
 
         <div id="app-grid" class="app-grid-container">
           <div class="text-center p-4 text-secondary">
-            <i class="fas fa-spinner fa-spin me-2"></i> Đang tải danh sách...
+            <i class="fas fa-spinner fa-spin me-2"></i> Loading list...
           </div>
         </div>
       </div>
     </div>
 
-    <!-- JAVASCRIPT: MODULE ENTRY POINT -->
-    <!-- Quan trọng: type="module" cho phép dùng import/export -->
     <script type="module" src="js/main.js"></script>
   </body>
 </html>
