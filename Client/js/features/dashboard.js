@@ -4,6 +4,49 @@ import { UIManager } from '../utils/ui.js';
 let allInstalledApps = [];
 let perfInterval = null;
 
+const clampPercent = (value) => {
+    const num = Number(value) || 0;
+    return Math.min(100, Math.max(0, Math.round(num)));
+};
+
+const getState = (value) => {
+    if (value >= 90) return "danger";
+    if (value >= 80) return "warn";
+    return "ok";
+};
+
+const stateColors = {
+    ok: "var(--stat-accent)",
+    warn: "var(--stat-warn)",
+    danger: "var(--stat-danger)",
+};
+
+const getStateLabel = (value, labels) => {
+    if (value >= 90) return labels.danger;
+    if (value >= 80) return labels.warn;
+    return labels.ok;
+};
+
+const setGauge = (circle, percent, radius) => {
+    if (!circle) return;
+    const value = clampPercent(percent);
+    const circumference = 2 * Math.PI * radius;
+    circle.setAttribute("data-state", getState(value));
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    circle.style.strokeDashoffset = `${circumference - (value / 100) * circumference}`;
+    const color = stateColors[getState(value)] || stateColors.ok;
+    circle.style.stroke = color;
+};
+
+const setBarFill = (el, percent) => {
+    if (!el) return;
+    const value = clampPercent(percent);
+    const state = getState(value);
+    el.style.height = `${value}%`;
+    el.classList.remove("state-ok", "state-warn", "state-danger");
+    el.classList.add(`state-${state}`);
+};
+
 export const DashboardFeature = {
     init() {
         // Listen to socket events
@@ -134,87 +177,144 @@ export const DashboardFeature = {
         term.scrollTop = term.scrollHeight;
     },
     
-    // ... (Phần updateSystemInfo và updatePerformanceStats giữ nguyên logic, chỉ cần chắc chắn text bên trong HTML đã đổi)
     updateSystemInfo(info) {
-        if (document.getElementById('os-info')) {
-            document.getElementById('os-info').innerText = info.os || 'Windows';
-            document.getElementById('pc-name').innerText = info.pcName || 'Unknown';
-            document.getElementById('cpu-name').innerText = info.cpuName || 'Standard CPU';
-            document.getElementById('gpu-name').innerText = info.gpuName || 'Integrated Graphics';
-            document.getElementById('vram-val').innerText = info.vram || 'N/A';
-            document.getElementById('disk-name').innerText = info.totalDisk || 'N/A';
+        const elOs = document.getElementById('os-info');
+        if (elOs) elOs.innerText = info.os || 'Windows';
+
+        const elPc = document.getElementById('pc-name');
+        if (elPc) elPc.innerText = info.pcName || 'Unknown';
+
+        const elCpu = document.getElementById('cpu-name');
+        if (elCpu) elCpu.innerText = info.cpuName || 'Standard CPU';
+
+        const elCpuMax = document.getElementById('cpu-max');
+        if (elCpuMax) {
+            if (info.cpuMaxSpeedGHz) {
+                elCpuMax.innerText = `${info.cpuMaxSpeedGHz} GHz`;
+            } else {
+                elCpuMax.innerText = '--';
+            }
         }
+
+        const elCpuCores = document.getElementById('cpu-cores');
+        if (elCpuCores) elCpuCores.innerText = (info.cpuCores ?? '--').toString();
+
+        const elGpu = document.getElementById('gpu-name');
+        if (elGpu) elGpu.innerText = info.gpuName || 'Integrated Graphics';
+
+        const elVram = document.getElementById('vram-val');
+        if (elVram) elVram.innerText = info.vram || 'N/A';
+
+        const diskName = info.totalDisk || info.diskName || 'N/A';
+        const elDisk = document.getElementById('disk-name');
+        if (elDisk) elDisk.innerText = diskName;
+
+        const statDisk = document.getElementById('stat-ssd-name');
+        if (statDisk) statDisk.textContent = diskName;
     },
     
     updatePerformanceStats(perf) {
-        // ... (Giữ nguyên logic update)
-        const getUsageColor = (value) => {
-            if (value < 50) return 'text-success';
-            if (value < 80) return 'text-warning';
-            return 'text-danger';
-        };
-        
-        const cpuUsage = perf.cpu || 0;
-        const elCpuFreq = document.getElementById('disp-cpu-freq');
-        if (elCpuFreq) elCpuFreq.innerHTML = `${cpuUsage}%`;
-        
-        const elCpuChange = document.getElementById('cpu-change');
-        if (elCpuChange) {
-            elCpuChange.className = `text-sm font-weight-bolder ${getUsageColor(cpuUsage)}`;
-            elCpuChange.textContent = cpuUsage < 50 ? 'Normal' : cpuUsage < 80 ? 'Moderate' : 'High';
-        }
-        
-        const elCpuTemp = document.getElementById('disp-cpu-temp');
-        if (elCpuTemp) {
-            if (perf.cpuTemp) {
-                elCpuTemp.innerHTML = `<span class="text-secondary">Temp:</span> ${perf.cpuTemp}°C`;
+        const cpuUsage = clampPercent(perf.cpu);
+        const cpuGauge = document.getElementById('stat-cpu-gauge');
+        setGauge(cpuGauge, cpuUsage, 55);
+
+        const elCpuPercent = document.getElementById('stat-cpu-percent');
+        if (elCpuPercent) elCpuPercent.textContent = `${cpuUsage}%`;
+
+        const elCpuFreq = document.getElementById('stat-cpu-freq');
+        if (elCpuFreq) {
+            if (perf.cpuFreqCurrent && perf.cpuFreqMax) {
+                elCpuFreq.textContent = `${perf.cpuFreqCurrent}/${perf.cpuFreqMax} GHz`;
+            } else if (perf.cpuTemp) {
+                elCpuFreq.textContent = `Temp ${perf.cpuTemp}°C`;
             } else {
-                elCpuTemp.innerHTML = '<span class="text-secondary">Temp:</span> --°C';
+                elCpuFreq.textContent = '--';
             }
         }
-        
-        const ramUsage = perf.ram || 0;
-        const elRam = document.getElementById('disp-ram-usage');
-        if (elRam) elRam.innerHTML = `${ramUsage}%`;
-        
-        const elRamChange = document.getElementById('ram-change');
-        if (elRamChange) {
-            elRamChange.className = `text-sm font-weight-bolder ${getUsageColor(ramUsage)}`;
-            elRamChange.textContent = ramUsage < 50 ? '✓ OK' : ramUsage < 80 ? '⚠ High' : '⚠ Critical';
+
+        const elCpuBadge = document.getElementById('stat-cpu-badge');
+        if (elCpuBadge) {
+            const state = getState(cpuUsage);
+            elCpuBadge.className = `stat-badge state-${state}`;
+            elCpuBadge.textContent = getStateLabel(cpuUsage, {
+                ok: 'Normal',
+                warn: 'Moderate',
+                danger: 'High',
+            });
         }
 
-        if (perf.ramUsedGB && perf.ramTotalGB) {
-            const elRamUsed = document.getElementById('ram-used');
-            const elRamTotal = document.getElementById('ram-total');
-            if (elRamUsed) elRamUsed.textContent = `${perf.ramUsedGB.toFixed(1)} GB`;
-            if (elRamTotal) elRamTotal.textContent = `${perf.ramTotalGB.toFixed(1)} GB`;
+        const gpuUsage = clampPercent(perf.gpu);
+        setBarFill(document.getElementById('stat-gpu-bar'), gpuUsage);
+        const elGpuPercent = document.getElementById('stat-gpu-percent');
+        if (elGpuPercent) elGpuPercent.textContent = `${gpuUsage}%`;
+
+        const elGpuBadge = document.getElementById('stat-gpu-badge');
+        if (elGpuBadge) {
+            const state = getState(gpuUsage);
+            elGpuBadge.className = `stat-badge state-${state}`;
+            elGpuBadge.textContent = getStateLabel(gpuUsage, {
+                ok: 'Idle',
+                warn: 'Active',
+                danger: 'Busy',
+            });
         }
-        
-        const gpuUsage = perf.gpu || 0;
-        const elGpu = document.getElementById('disp-gpu-vram');
-        if (elGpu) elGpu.innerHTML = `${gpuUsage}%`;
-        
-        const elGpuChange = document.getElementById('gpu-change');
-        if (elGpuChange) {
-            elGpuChange.className = `text-sm font-weight-bolder ${getUsageColor(gpuUsage)}`;
-            elGpuChange.textContent = gpuUsage < 50 ? 'Idle' : gpuUsage < 80 ? 'Active' : 'Busy';
+
+        const elGpuInfo = document.getElementById('stat-gpu-info');
+        if (elGpuInfo) {
+            if (perf.gpuClock !== undefined && perf.gpuClockMax !== undefined) {
+                elGpuInfo.textContent = `${perf.gpuClock}/${perf.gpuClockMax} MHz`;
+            } else if (perf.vramUsedGB !== undefined && perf.vramTotalGB !== undefined) {
+                elGpuInfo.textContent = `${Number(perf.vramUsedGB).toFixed(1)}/${Number(perf.vramTotalGB).toFixed(1)} GB`;
+            } else {
+                elGpuInfo.textContent = '--';
+            }
         }
-        
-        const diskUsage = perf.diskUsage || 0;
-        const elDisk = document.getElementById('disp-disk-free');
-        if (elDisk) elDisk.innerHTML = `${diskUsage}%`;
-        
-        const elDiskChange = document.getElementById('disk-change');
-        if (elDiskChange) {
-            elDiskChange.className = `text-sm font-weight-bolder ${getUsageColor(diskUsage)}`;
-            elDiskChange.textContent = diskUsage < 50 ? '✓ Healthy' : diskUsage < 80 ? '⚠ Low' : '⚠ Full';
+
+        const ramUsage = clampPercent(perf.ram);
+        setBarFill(document.getElementById('stat-ram-bar'), ramUsage);
+        const elRamPercent = document.getElementById('stat-ram-percent');
+        if (elRamPercent) elRamPercent.textContent = `${ramUsage}%`;
+
+        const elRamBadge = document.getElementById('stat-ram-badge');
+        if (elRamBadge) {
+            const state = getState(ramUsage);
+            elRamBadge.className = `stat-badge state-${state}`;
+            elRamBadge.textContent = getStateLabel(ramUsage, {
+                ok: 'OK',
+                warn: 'High',
+                danger: 'Critical',
+            });
         }
-        
-        if (perf.diskUsedGB && perf.diskTotalGB) {
-            const elDiskUsed = document.getElementById('disk-used');
-            const elDiskTotal = document.getElementById('disk-total');
-            if (elDiskUsed) elDiskUsed.textContent = `${perf.diskUsedGB.toFixed(0)} GB`;
-            if (elDiskTotal) elDiskTotal.textContent = `${perf.diskTotalGB.toFixed(0)} GB`;
+
+        const elRamAbs = document.getElementById('stat-ram-abs');
+        if (elRamAbs && perf.ramUsedGB !== undefined && perf.ramTotalGB !== undefined) {
+            elRamAbs.textContent = `${Number(perf.ramUsedGB).toFixed(1)} / ${Number(perf.ramTotalGB).toFixed(1)} GB`;
+        } else if (elRamAbs) {
+            elRamAbs.textContent = '--';
+        }
+
+        const diskUsage = clampPercent(perf.diskUsage);
+        const ssdGauge = document.getElementById('stat-ssd-gauge');
+        setGauge(ssdGauge, diskUsage, 44);
+        const elSsdPercent = document.getElementById('stat-ssd-percent');
+        if (elSsdPercent) elSsdPercent.textContent = `${diskUsage}%`;
+
+        const elSsdAbs = document.getElementById('stat-ssd-abs');
+        if (elSsdAbs && perf.diskUsedGB !== undefined && perf.diskTotalGB !== undefined) {
+            elSsdAbs.textContent = `${Number(perf.diskUsedGB).toFixed(0)} / ${Number(perf.diskTotalGB).toFixed(0)} GB`;
+        } else if (elSsdAbs) {
+            elSsdAbs.textContent = '--';
+        }
+
+        const elSsdBadge = document.getElementById('stat-ssd-badge');
+        if (elSsdBadge) {
+            const state = getState(diskUsage);
+            elSsdBadge.className = `stat-badge state-${state}`;
+            elSsdBadge.textContent = getStateLabel(diskUsage, {
+                ok: 'Healthy',
+                warn: 'Low',
+                danger: 'Full',
+            });
         }
     },
     

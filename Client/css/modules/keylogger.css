@@ -2,6 +2,38 @@
 .small-header { font-size: 0.95rem; padding-bottom: 8px; margin-bottom: 10px; }
 .system-log-font { font-size: 0.75rem; color: #6b7280; }
 
+/* Nút Stop Keylogger - Đỏ gradient đẹp mắt */
+.keylog-stop-btn {
+    background: linear-gradient(310deg, #dc2626, #ef4444);
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+    transition: all 0.2s ease;
+}
+
+.keylog-stop-btn:hover {
+    background: linear-gradient(310deg, #b91c1c, #dc2626);
+    box-shadow: 0 4px 8px rgba(220, 38, 38, 0.4);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.keylog-stop-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(220, 38, 38, 0.3);
+}
+
+/* Dark mode styling - Màu đỏ sáng hơn */
+body.dark .keylog-stop-btn {
+    background: linear-gradient(310deg, #ef4444, #f87171);
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+}
+
+body.dark .keylog-stop-btn:hover {
+    background: linear-gradient(310deg, #dc2626, #ef4444);
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.5);
+}
+
 /* Khu vực hiển thị Phím Thô */
 .raw-log-area {
     background: #1f2937; /* Màu xám đậm */

