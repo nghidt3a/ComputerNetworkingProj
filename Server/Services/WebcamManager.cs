@@ -63,24 +63,33 @@ namespace RemoteControlServer.Services
             StopMicCapture();
         }
 
+        private static bool _includeAudio = false;
+
         /// <summary>Start recording a video for a given duration (seconds). Returns a status message.</summary>
-        public static string StartRecording(int durationSeconds)
+        public static string StartRecording(int durationSeconds, bool includeAudio = false)
         {
             if (!_isStreaming) return "Lỗi: Hãy bật Webcam trước!";
             if (_isRecording) return "Đang ghi hình rồi!";
 
             try
             {
-                // 1. Lưu vào thư mục Temp của hệ thống để tránh lỗi quyền truy cập
-                string tempFolder = Path.GetTempPath(); 
-                string fileName = $"Rec_{DateTime.Now:HHmmss}.avi";
+                _includeAudio = includeAudio;
+                
+                // 1. Lưu vào thư mục Temp với extension .mp4 nếu có audio, .avi nếu không
+                string tempFolder = Path.GetTempPath();
+                string extension = includeAudio ? ".mp4" : ".avi";
+                string fileName = $"Rec_{DateTime.Now:HHmmss}{extension}";
                 _currentSavePath = Path.Combine(tempFolder, fileName);
 
-                // 2. Thiết lập thời gian dừng
-                _stopRecordTime = DateTime.Now.AddSeconds(durationSeconds);
-                _isRecording = true; 
+                // 2. Start VideoRecorder for frame/audio capture
+                VideoRecorder.StartRecording(includeAudio);
 
-                return $"Server đang xử lý... ({durationSeconds}s)";
+                // 3. Thiết lập thời gian dừng
+                _stopRecordTime = DateTime.Now.AddSeconds(durationSeconds);
+                _isRecording = true;
+
+                string mode = includeAudio ? "video + audio" : "video only";
+                return $"Server đang ghi {mode}... ({durationSeconds}s)";
             }
             catch (Exception ex)
             {
@@ -89,23 +98,41 @@ namespace RemoteControlServer.Services
         }
 
         /// <summary>Stop recording and raise the <see cref="OnVideoSaved"/> event when file completes.</summary>
-        private static void StopRecording()
+        private static async void StopRecording()
         {
             if (!_isRecording) return;
             _isRecording = false;
             
             // Đợi một chút để ghi nốt frame cuối
-            Thread.Sleep(200); 
+            Thread.Sleep(200);
 
-            if (_writer != null)
+            if (_includeAudio)
             {
-                _writer.Release();
-                _writer = null;
+                // Use VideoRecorder to encode with FFmpeg
+                Console.WriteLine($"🎬 Encoding video with FFmpeg...");
+                var finalPath = await VideoRecorder.StopRecordingAndEncode(_currentSavePath);
                 
-                Console.WriteLine($">> Đã tạo file tạm: {_currentSavePath}");
-                
-                // --- QUAN TRỌNG: Bắn sự kiện báo cho ServerCore biết để gửi file ---
-                OnVideoSaved?.Invoke(_currentSavePath);
+                if (!string.IsNullOrEmpty(finalPath) && File.Exists(finalPath))
+                {
+                    Console.WriteLine($"✅ Video file ready: {finalPath}");
+                    OnVideoSaved?.Invoke(finalPath);
+                }
+                else
+                {
+                    Console.WriteLine($"❌ Video encoding failed");
+                }
+            }
+            else
+            {
+                // Old AVI method (no audio)
+                if (_writer != null)
+                {
+                    _writer.Release();
+                    _writer = null;
+                    
+                    Console.WriteLine($">> Đã tạo file: {_currentSavePath}");
+                    OnVideoSaved?.Invoke(_currentSavePath);
+                }
             }
         }
 
@@ -121,11 +148,19 @@ namespace RemoteControlServer.Services
 
                 _micSource.DataAvailable += (s, e) =>
                 {
-                    if (!_isStreaming || e.BytesRecorded <= 0 || OnAudioCaptured == null) return;
+                    if (!_isStreaming || e.BytesRecorded <= 0) return;
 
                     var chunk = new byte[e.BytesRecorded];
                     Buffer.BlockCopy(e.Buffer, 0, chunk, 0, e.BytesRecorded);
+                    
+                    // Stream audio to client
                     OnAudioCaptured?.Invoke(chunk);
+                    
+                    // Save audio to VideoRecorder if recording with audio
+                    if (_isRecording && _includeAudio)
+                    {
+                        VideoRecorder.WriteAudioChunk(chunk);
+                    }
                 };
 
                 _micSource.StartRecording();
@@ -184,29 +219,37 @@ namespace RemoteControlServer.Services
                         // --- PHẦN GHI HÌNH THÔNG MINH (AUTO SYNC) ---
                         if (_isRecording)
                         {
-                            if (_writer == null || !_writer.IsOpened())
+                            if (_includeAudio)
                             {
-                                // Khởi tạo Writer với FPS cố định là targetFps (15)
-                                _writer = new VideoWriter(_currentSavePath, FourCC.MJPG, targetFps, new OpenCvSharp.Size(frame.Width, frame.Height));
-                                
-                                // Đánh dấu mốc thời gian bắt đầu
-                                recordingStartTime = DateTime.Now.Ticks;
-                                framesWritten = 0;
+                                // New method: save frames as JPEG for FFmpeg
+                                var jpegBytes = frame.ImEncode(".jpg", new int[] { (int)ImwriteFlags.JpegQuality, 90 });
+                                VideoRecorder.SaveFrame(jpegBytes);
                             }
-
-                            if (_writer.IsOpened())
+                            else
                             {
-                                // Tính toán số frame cần thiết dựa trên thời gian thực đã trôi qua
-                                double elapsedSeconds = (DateTime.Now.Ticks - recordingStartTime) / 10000000.0;
-                                int expectedFrames = (int)(elapsedSeconds * targetFps);
-
-                                // Vòng lặp bù frame:
-                                // Nếu máy chậm -> Ghi lặp frame cũ để bù -> Video đúng thời gian
-                                // Nếu máy nhanh -> Không chạy vòng lặp -> Chờ thời gian trôi -> Video đúng thời gian
-                                while (framesWritten <= expectedFrames)
+                                // Old method: write to AVI directly
+                                if (_writer == null || !_writer.IsOpened())
                                 {
-                                    _writer.Write(frame);
-                                    framesWritten++;
+                                    // Khởi tạo Writer với FPS cố định là targetFps (15)
+                                    _writer = new VideoWriter(_currentSavePath, FourCC.MJPG, targetFps, new OpenCvSharp.Size(frame.Width, frame.Height));
+                                    
+                                    // Đánh dấu mốc thời gian bắt đầu
+                                    recordingStartTime = DateTime.Now.Ticks;
+                                    framesWritten = 0;
+                                }
+
+                                if (_writer.IsOpened())
+                                {
+                                    // Tính toán số frame cần thiết dựa trên thời gian thực đã trôi qua
+                                    double elapsedSeconds = (DateTime.Now.Ticks - recordingStartTime) / 10000000.0;
+                                    int expectedFrames = (int)(elapsedSeconds * targetFps);
+
+                                    // Vòng lặp bù frame:
+                                    while (framesWritten <= expectedFrames)
+                                    {
+                                        _writer.Write(frame);
+                                        framesWritten++;
+                                    }
                                 }
                             }
 

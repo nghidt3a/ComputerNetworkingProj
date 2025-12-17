@@ -235,16 +235,27 @@ export const WebcamFeature = {
         parseInt(durationInput ? durationInput.value : 10, 10) || 10
       )
     );
+
+    // Check if audio recording is enabled
+    const audioToggle = document.getElementById("webcam-audio-toggle");
+    const includeAudio = audioToggle ? audioToggle.checked : false;
+
     // Disable controls during recording
     const recordBtn = document.getElementById("btn-webcam-record");
     const cancelBtn = document.getElementById("btn-webcam-cancel");
     if (recordBtn) recordBtn.disabled = true;
     if (cancelBtn) cancelBtn.disabled = false;
     if (durationInput) durationInput.disabled = true;
+    if (audioToggle) audioToggle.disabled = true;
+
     this.startRecordingTimer(duration);
 
-    SocketService.send("RECORD_WEBCAM", duration);
-    UIManager.showToast(`Đang ghi hình ${duration}s...`, "info");
+    // Send command with audio flag
+    const payload = JSON.stringify({ duration, audio: includeAudio });
+    SocketService.send("RECORD_WEBCAM", payload);
+
+    const mode = includeAudio ? "video + audio" : "video only";
+    UIManager.showToast(`Đang ghi ${mode} ${duration}s...`, "info");
   },
 
   handleVideoDownload(data) {
@@ -279,7 +290,9 @@ export const WebcamFeature = {
     const durationInput = document.getElementById("record-duration");
     const recordBtn = document.getElementById("btn-webcam-record");
     const cancelBtn = document.getElementById("btn-webcam-cancel");
+    const audioToggle = document.getElementById("webcam-audio-toggle");
     if (durationInput) durationInput.disabled = false;
+    if (audioToggle) audioToggle.disabled = false;
     if (isWebcamActive && recordBtn) recordBtn.disabled = false;
     if (cancelBtn) cancelBtn.disabled = true;
     this.stopRecordingTimer();

