@@ -421,25 +421,53 @@
   word-break: break-word;
 }
 
-/* NEW LAYOUT: Performance Grid (2x2) - Thin borders matching System Info */
+/* NEW LAYOUT: Performance Grid - 2 Block Layout */
 .performance-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
   height: 100%;
-  min-height: 380px;
-  background: var(--stat-card);
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  min-height: 320px;
+  background: transparent;
+  padding: 0;
   position: relative;
 }
 
+/* LEFT BLOCK - 3-part grid (GPU - CPU - VRAM) in one row */
+.perf-grid-left {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  grid-template-rows: 1fr;
+  align-items: center;
+  gap: 12px;
+  background: var(--stat-card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .perf-grid-left {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* RIGHT BLOCK - SSD standalone */
+.perf-grid-right {
+  display: flex;
+  background: var(--stat-card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .perf-grid-right {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Base cell styling */
 .perf-cell {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(59, 130, 246, 0.08) 100%);
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: 10px;
+  padding: 16px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -458,6 +486,22 @@
 .perf-cell:hover {
   transform: scale(1.02);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+/* GPU - Left (col 1) */
+#perf-gpu { grid-column: 1; grid-row: 1; }
+
+/* CPU - Center (col 2) */
+.perf-cell--cpu { grid-column: 2; grid-row: 1; padding: 24px 16px; }
+
+/* VRAM - Right (col 3) */
+#perf-vram { grid-column: 3; grid-row: 1; }
+
+/* SSD - Full height in right block */
+.perf-cell--ssd {
+  flex: 1;
+  min-height: 100%;
+  padding: 24px 20px;
 }
 
 .perf-cell__title {
@@ -483,15 +527,48 @@
   margin-top: 3px;
 }
 
-/* Gauge styling for 2x2 grid - Balanced */
-.perf-cell--gauge .gauge--md {
-  max-width: 110px;
+/* Gauge sizes */
+.gauge--xl {
+  max-width: 180px;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 8px auto;
+}
+
+.gauge--lg {
+  max-width: 140px;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 8px auto;
+}
+
+.gauge--md {
+  max-width: 120px;
   width: 100%;
   aspect-ratio: 1;
 }
 
+/* CPU gauge styling */
+.perf-cell--cpu .gauge__value {
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.perf-cell--cpu .gauge__sub {
+  font-size: 0.85rem;
+  margin-top: 4px;
+  color: var(--stat-text-muted);
+}
+
+/* SSD gauge styling */
+.perf-cell--ssd .gauge__value {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
 .perf-cell--gauge .gauge__value {
-  font-size: 1.65rem;
+  font-size: 1.5rem;
   font-weight: 800;
 }
 
@@ -507,27 +584,42 @@
   margin-top: 5px;
 }
 
-/* Bar styling for 2x2 grid - Balanced */
+/* Bar styling for grid layout */
 .perf-cell--bar {
-  justify-content: space-evenly;
+  justify-content: space-around;
 }
 
 .bar-vertical--lg {
-  width: 42px;
-  height: 90px;
-  border-radius: 9px;
+  width: 48px;
+  height: 110px;
+  border-radius: 10px;
+  background: var(--stat-track);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Realtime indicator at bottom - Balanced */
+.bar-vertical__fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, var(--stat-accent), var(--stat-accent-2));
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 10px;
+}
+
+/* Realtime indicator at bottom */
 .realtime-indicator {
   position: absolute;
-  bottom: 6px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.7rem;
   color: var(--stat-text-muted);
   font-style: italic;
   white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .realtime-indicator i {
@@ -539,7 +631,30 @@
   to { transform: rotate(360deg); }
 }
 
-/* Responsive for new layouts */
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .performance-grid {
+    grid-template-columns: 1.5fr 1fr;
+    min-height: 300px;
+  }
+  
+  .gauge--xl {
+    max-width: 150px;
+  }
+  
+  .gauge--lg {
+    max-width: 120px;
+  }
+  
+  .perf-cell--cpu .gauge__value {
+    font-size: 2.4rem;
+  }
+  
+  .perf-cell--ssd .gauge__value {
+    font-size: 1.8rem;
+  }
+}
+
 @media (max-width: 992px) {
   .system-info-cards {
     grid-template-columns: 1fr;
@@ -551,29 +666,51 @@
   }
   
   .performance-grid {
-    min-height: 350px;
-    padding: 16px;
+    grid-template-columns: 1fr;
     gap: 12px;
+    min-height: auto;
   }
   
-  .perf-cell--gauge .gauge--md {
-    max-width: 100px;
+  .perf-grid-left,
+  .perf-grid-right {
+    width: 100%;
+  }
+  
+  .perf-cell--cpu {
+    grid-row: 1 / 2;
+  }
+  
+  .gauge--xl {
+    max-width: 140px;
   }
   
   .bar-vertical--lg {
-    height: 82px;
+    height: 100px;
   }
 }
 
 @media (max-width: 768px) {
-  .performance-grid {
+  .perf-grid-left {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
-    min-height: auto;
+    gap: 10px;
   }
   
-  .perf-cell {
+  .perf-cell--cpu { grid-column: 1; grid-row: auto; }
+  
+  #perf-gpu,
+  #perf-vram,
+  .perf-cell--ssd {
     min-height: 180px;
+  }
+  
+  .bar-vertical--lg {
+    height: 100px;
+  }
+  
+  .perf-grid-left,
+  .perf-grid-right {
+    padding: 16px;
   }
 }
 
@@ -597,13 +734,29 @@
   }
   
   .performance-grid {
-    padding: 12px;
     gap: 10px;
-    min-height: 300px;
+    min-height: auto;
   }
   
-  .perf-cell--gauge .gauge--md {
-    max-width: 90px;
+  .perf-grid-left,
+  .perf-grid-right {
+    padding: 12px;
+  }
+  
+  .gauge--xl {
+    max-width: 120px;
+  }
+  
+  .gauge--lg {
+    max-width: 100px;
+  }
+  
+  .perf-cell--cpu .gauge__value {
+    font-size: 2.2rem;
+  }
+  
+  .perf-cell--ssd .gauge__value {
+    font-size: 1.6rem;
   }
   
   .perf-cell__value {

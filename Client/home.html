@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RCS — Entry</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/soft-ui-base.css" />
+    <style>
+      :root { color-scheme: light; }
+      body {
+        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.08), transparent 35%),
+                    radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.08), transparent 30%),
+                    var(--bg-body);
+        color: var(--text-primary);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+      }
+      .gateway {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        box-shadow: var(--shadow-card);
+        max-width: 720px;
+        width: 100%;
+        padding: 32px;
+      }
+      .gateway h1 { font-weight: 800; margin-bottom: 12px; }
+      .gateway p { color: var(--text-secondary); margin-bottom: 16px; }
+      .btn-group-custom { display: flex; flex-wrap: wrap; gap: 12px; }
+      .btn-large { padding: 14px 18px; font-weight: 700; border-radius: 0.75rem; }
+      .badge-soft { background: var(--primary-light); color: var(--primary-dark); border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: 0.8rem; }
+      @media (max-width: 575.98px) { .btn-group-custom { flex-direction: column; } }
+    </style>
+  </head>
+  <body>
+    <main class="gateway">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="badge-soft">RCS</span>
+        <button class="btn btn-sm btn-outline-secondary" id="themeToggle" aria-label="Đổi giao diện">
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
+      <h1>Remote Control System</h1>
+      <p>Chọn điểm bắt đầu: xem landing giới thiệu hoặc đi thẳng vào dashboard điều khiển.</p>
+      <div class="btn-group-custom mb-3">
+        <a class="btn btn-primary btn-large" href="landing/landing.html">
+          <i class="fas fa-bolt me-2"></i> Xem Landing
+        </a>
+        <a class="btn btn-outline-primary btn-large" href="index.html">
+          <i class="fas fa-gauge-high me-2"></i> Vào Dashboard
+        </a>
+      </div>
+      <small class="text-secondary">Bạn có thể bookmark trang này để chọn nhanh giữa Landing và Dashboard.</small>
+    </main>
+
+    <script>
+      (() => {
+        const root = document.documentElement;
+        const btn = document.getElementById('themeToggle');
+        const KEY = 'rcs-entry-theme';
+        const saved = localStorage.getItem(KEY);
+        if (saved === 'dark') root.setAttribute('data-theme', 'dark');
+        const sync = () => {
+          const dark = root.getAttribute('data-theme') === 'dark';
+          btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        };
+        sync();
+        btn.addEventListener('click', () => {
+          const dark = root.getAttribute('data-theme') === 'dark';
+          if (dark) {
+            root.removeAttribute('data-theme');
+            localStorage.setItem(KEY, 'light');
+          } else {
+            root.setAttribute('data-theme', 'dark');
+            localStorage.setItem(KEY, 'dark');
+          }
+          sync();
+        });
+      })();
+    </script>
+  </body>
+</html>

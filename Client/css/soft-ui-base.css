@@ -107,6 +107,18 @@
   border-color: var(--info-hover);
 }
 
+.btn-secondary {
+  color: #fff;
+  background-color: #64748b;
+  border-color: #64748b;
+  background-image: linear-gradient(310deg, #64748b 0%, #475569 100%);
+}
+
+.btn-secondary:hover {
+  background-color: #475569;
+  border-color: #475569;
+}
+
 /* Outline Buttons */
 .btn-outline-primary {
   color: var(--primary-color);
@@ -122,16 +134,17 @@
 }
 
 .btn-outline-secondary {
-  color: var(--secondary-color);
-  border-color: var(--secondary-color);
-  background-color: transparent;
+  color: #475569 !important;
+  border-color: #94a3b8 !important;
+  background-color: transparent !important;
   box-shadow: none;
+  font-weight: 600;
 }
 
 .btn-outline-secondary:hover {
-  color: #fff;
-  background-color: var(--secondary-color);
-  border-color: var(--secondary-color);
+  color: #fff !important;
+  background-color: var(--secondary-color) !important;
+  border-color: var(--secondary-color) !important;
 }
 
 /* Button Sizes */
@@ -1390,12 +1403,13 @@ html {
   
   .btn-outline-secondary {
     border-color: var(--border-color);
-    color: var(--text-secondary);
+    color: var(--text-primary);
   }
   
   .btn-outline-secondary:hover {
-    background-color: var(--bg-hover);
+    background-color: #475569;
     border-color: var(--border-hover);
+    color: #fff;
   }
   
   /* Input Dark Mode */

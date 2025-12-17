@@ -408,13 +408,13 @@
                     </div>
                   </div>
 
-                  <!-- VRAM Card -->
+                  <!-- RAM Card -->
                   <div class="info-card">
                     <div class="info-card__icon">
                       <i class="fas fa-memory"></i>
                     </div>
                     <div class="info-card__content">
-                      <div class="info-card__label">VRAM</div>
+                      <div class="info-card__label">RAM</div>
                       <div class="info-card__value" id="vram-val">--</div>
                     </div>
                   </div>
@@ -427,65 +427,71 @@
                 </div>
               </div>
 
-              <!-- PHẦN DƯỚI PHẢI: Performance Stats 4-Grid -->
+              <!-- PHẦN DƯỚI PHẢI: Performance Stats 2-Block Layout -->
               <div class="col-lg-6">
                 <h5 class="section-title mb-3">
                   <i class="fas fa-tachometer-alt me-2 text-success"></i>Performance
                 </h5>
                 <div class="performance-grid">
-                  <!-- CPU Gauge - Top Left -->
-                  <div class="perf-cell perf-cell--gauge">
-                    <div class="perf-cell__title">CPU LOAD</div>
-                    <div class="gauge gauge--md">
-                      <svg class="gauge__svg" viewBox="0 0 140 140">
-                        <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
-                        <circle class="gauge__progress" id="stat-cpu-gauge" cx="70" cy="70" r="55" fill="none"></circle>
-                      </svg>
-                      <div class="gauge__center">
-                        <span class="gauge__value" id="stat-cpu-percent">0%</span>
-                        <span class="gauge__sub" id="stat-cpu-freq">--</span>
+                  <!-- LEFT BLOCK: 3-part grid -->
+                  <div class="perf-grid-left">
+                    <!-- GPU - Top Left -->
+                    <div class="perf-cell perf-cell--bar" id="perf-gpu">
+                      <div class="perf-cell__title">GPU</div>
+                      <div class="bar-vertical bar-vertical--lg">
+                        <div class="bar-vertical__fill" id="stat-gpu-bar"></div>
                       </div>
+                      <div class="perf-cell__value" id="stat-gpu-percent">0%</div>
+                      <span class="stat-badge state-ok" id="stat-gpu-badge">Idle</span>
+                      <div class="perf-cell__info" id="stat-gpu-info">--</div>
                     </div>
-                    <span class="stat-badge state-ok" id="stat-cpu-badge">Normal</span>
-                  </div>
 
-                  <!-- GPU Bar - Top Right -->
-                  <div class="perf-cell perf-cell--bar">
-                    <div class="perf-cell__title">GPU</div>
-                    <div class="bar-vertical bar-vertical--lg">
-                      <div class="bar-vertical__fill" id="stat-gpu-bar"></div>
-                    </div>
-                    <div class="perf-cell__value" id="stat-gpu-percent">0%</div>
-                    <span class="stat-badge state-ok" id="stat-gpu-badge">Idle</span>
-                    <div class="perf-cell__info" id="stat-gpu-info">--</div>
-                  </div>
-
-                  <!-- RAM Bar - Bottom Left -->
-                  <div class="perf-cell perf-cell--bar">
-                    <div class="perf-cell__title">RAM</div>
-                    <div class="bar-vertical bar-vertical--lg">
-                      <div class="bar-vertical__fill" id="stat-ram-bar"></div>
-                    </div>
-                    <div class="perf-cell__value" id="stat-ram-percent">0%</div>
-                    <span class="stat-badge state-ok" id="stat-ram-badge">OK</span>
-                    <div class="perf-cell__info" id="stat-ram-abs">--</div>
-                  </div>
-
-                  <!-- DISK Gauge - Bottom Right -->
-                  <div class="perf-cell perf-cell--gauge">
-                    <div class="perf-cell__title">DISK (C:)</div>
-                    <div class="gauge gauge--md">
-                      <svg class="gauge__svg" viewBox="0 0 140 140">
-                        <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
-                        <circle class="gauge__progress" id="stat-ssd-gauge" cx="70" cy="70" r="55" fill="none"></circle>
-                      </svg>
-                      <div class="gauge__center">
-                        <span class="gauge__value" id="stat-ssd-percent">0%</span>
+                    <!-- CPU - Center Large (spans 2 rows) -->
+                    <div class="perf-cell perf-cell--gauge perf-cell--cpu" id="perf-cpu">
+                      <div class="perf-cell__title">CPU</div>
+                      <div class="gauge gauge--xl">
+                        <svg class="gauge__svg" viewBox="0 0 140 140">
+                          <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
+                          <circle class="gauge__progress" id="stat-cpu-gauge" cx="70" cy="70" r="55" fill="none"></circle>
+                        </svg>
+                        <div class="gauge__center">
+                          <span class="gauge__value" id="stat-cpu-percent">0%</span>
+                          <span class="gauge__sub" id="stat-cpu-freq">--</span>
+                        </div>
                       </div>
+                      <span class="stat-badge state-ok" id="stat-cpu-badge">Normal</span>
                     </div>
-                    <span class="stat-badge state-ok" id="stat-ssd-badge">Healthy</span>
-                    <div class="gauge__sub-info">
-                      <div id="stat-ssd-abs">--</div>
+
+                    <!-- RAM - Bottom Left -->
+                    <div class="perf-cell perf-cell--bar" id="perf-vram">
+                      <div class="perf-cell__title">RAM</div>
+                      <div class="bar-vertical bar-vertical--lg">
+                        <div class="bar-vertical__fill" id="stat-ram-bar"></div>
+                      </div>
+                      <div class="perf-cell__value" id="stat-ram-percent">0%</div>
+                      <span class="stat-badge state-ok" id="stat-ram-badge">OK</span>
+                      <div class="perf-cell__info" id="stat-ram-abs">--</div>
+                    </div>
+                  </div>
+
+                  <!-- RIGHT BLOCK: SSD standalone -->
+                  <div class="perf-grid-right">
+                    <div class="perf-cell perf-cell--gauge perf-cell--ssd" id="perf-ssd">
+                      <div class="perf-cell__title"><i class="fas fa-hdd"></i> SSD</div>
+                      <div class="gauge gauge--lg">
+                        <svg class="gauge__svg" viewBox="0 0 140 140">
+                          <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
+                          <circle class="gauge__progress" id="stat-ssd-gauge" cx="70" cy="70" r="55" fill="none"></circle>
+                        </svg>
+                        <div class="gauge__center">
+                          <span class="gauge__value" id="stat-ssd-percent">0%</span>
+                        </div>
+                      </div>
+                      <span class="stat-badge state-ok" id="stat-ssd-badge">Healthy</span>
+                      <div class="gauge__sub-info">
+                        <div id="stat-ssd-abs">--</div>
+                        <div class="text-muted small mt-1">SKHynix_HFS...</div>
+                      </div>
                     </div>
                   </div>
 
