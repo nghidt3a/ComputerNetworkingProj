@@ -9,8 +9,8 @@ let remainingSeconds = 0;
 let audioCtx = null;
 let analyser = null;
 let animationId = null;
+let workletNode = null; // AudioWorklet-backed jitter buffer
 let audioBuffer = new Uint8Array(2048);
-let nextAudioTime = 0;
 
 export const AudioFeature = {
   init() {
@@ -62,8 +62,21 @@ export const AudioFeature = {
     const view = new DataView(arrayBuffer);
     const header = view.getUint8(0);
     if (header !== 0x04) return; // Only handle audio (0x04)
+    // Parse optional 4-byte little-endian timestamp (ms)
+    let offset = 1;
+    let timestampMs = null;
+    if (arrayBuffer.byteLength >= 5) {
+      const ts =
+        view.getUint8(1) |
+        (view.getUint8(2) << 8) |
+        (view.getUint8(3) << 16) |
+        (view.getUint8(4) << 24);
+      // Convert to signed 32-bit if needed, then to number
+      timestampMs = ts >>> 0; // ensure unsigned
+      offset = 5;
+    }
 
-    const pcmData = arrayBuffer.slice(1);
+    const pcmData = arrayBuffer.slice(offset);
     this.playAudioChunk(pcmData);
   },
 
@@ -74,10 +87,27 @@ export const AudioFeature = {
       });
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 2048;
-      analyser.connect(audioCtx.destination);
-      nextAudioTime = 0;
     }
+    // Ensure context is running
     if (audioCtx.state === "suspended") audioCtx.resume();
+
+    // Load worklet module once and create processor node
+    const ensureWorklet = async () => {
+      if (!workletNode) {
+        try {
+          await audioCtx.audioWorklet.addModule("js/features/audio-worklet.js");
+          workletNode = new AudioWorkletNode(audioCtx, "pcm-player");
+          // Connect: worklet -> analyser -> destination
+          workletNode.connect(analyser);
+          analyser.connect(audioCtx.destination);
+        } catch (err) {
+          console.error("AudioWorklet init failed, falling back.", err);
+          // Fallback: connect analyser directly to destination
+          analyser.connect(audioCtx.destination);
+        }
+      }
+    };
+    ensureWorklet();
 
     // Hide placeholder
     const placeholder = document.getElementById("audio-placeholder");
@@ -94,7 +124,12 @@ export const AudioFeature = {
       cancelAnimationFrame(animationId);
       animationId = null;
     }
-    nextAudioTime = 0;
+    // Clear buffered samples inside worklet
+    if (workletNode) {
+      try {
+        workletNode.port.postMessage({ type: "clear" });
+      } catch {}
+    }
 
     // Send STOP_AUDIO command to server
     SocketService.send("STOP_AUDIO");
@@ -115,25 +150,32 @@ export const AudioFeature = {
   playAudioChunk(pcmBuffer) {
     if (!audioCtx || !analyser) return;
 
+    // Convert 16-bit PCM to Float32 [-1, 1]
     const samples = new Int16Array(pcmBuffer);
     const floatData = new Float32Array(samples.length);
     for (let i = 0; i < samples.length; i++) {
       floatData[i] = samples[i] / 32768;
     }
 
+    // Prefer AudioWorklet for smooth low-latency playback
+    if (workletNode) {
+      try {
+        workletNode.port.postMessage({ type: "push", samples: floatData }, [
+          floatData.buffer,
+        ]);
+        return;
+      } catch (e) {
+        console.warn("Worklet push failed, using BufferSource fallback.", e);
+      }
+    }
+
+    // Fallback: schedule small buffers (less stable under jitter)
     const buffer = audioCtx.createBuffer(1, floatData.length, 16000);
     buffer.copyToChannel(floatData, 0, 0);
-
     const source = audioCtx.createBufferSource();
     source.buffer = buffer;
     source.connect(analyser);
-
-    const startAt = Math.max(
-      audioCtx.currentTime + 0.02,
-      nextAudioTime || audioCtx.currentTime
-    );
-    source.start(startAt);
-    nextAudioTime = startAt + buffer.duration;
+    source.start();
   },
 
   startVisualizer() {

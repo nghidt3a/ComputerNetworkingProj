@@ -124,7 +124,27 @@ namespace RemoteControlServer.Core
 
             // Live audio stream (system audio capture from mic)
             AudioManager.OnAudioCaptured += (pcmBytes) => {
-                SocketManager.BroadcastBinary(0x04, pcmBytes);
+                try
+                {
+                    // Prepend a 4-byte UTC timestamp (ms since epoch, little-endian)
+                    uint tsMs = (uint)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    var payload = new byte[4 + (pcmBytes?.Length ?? 0)];
+                    payload[0] = (byte)(tsMs & 0xFF);
+                    payload[1] = (byte)((tsMs >> 8) & 0xFF);
+                    payload[2] = (byte)((tsMs >> 16) & 0xFF);
+                    payload[3] = (byte)((tsMs >> 24) & 0xFF);
+                    if (pcmBytes != null && pcmBytes.Length > 0)
+                        Buffer.BlockCopy(pcmBytes, 0, payload, 4, pcmBytes.Length);
+
+                    // Header 0x04 then [timestamp(4) + pcm]
+                    SocketManager.BroadcastBinary(0x04, payload);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Audio timestamp pack error: {ex.Message}");
+                    // Fallback: send raw PCM if packing fails
+                    SocketManager.BroadcastBinary(0x04, pcmBytes);
+                }
             };
 
             // Xử lý khi Webcam ghi hình xong -> Gửi file về Client

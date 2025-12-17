@@ -8,7 +8,8 @@ namespace RemoteControlServer.Services
 {
     public static class AudioManager
     {
-        private static WaveInEvent _waveSource;
+        private static WaveInEvent _streamSource; // nguồn cho live streaming
+        private static WaveInEvent _recSource;    // nguồn riêng cho recording
         private static WaveFileWriter _waveFile;
         private static string _currentFilePath;
         private static bool _isRecording = false;
@@ -27,13 +28,13 @@ namespace RemoteControlServer.Services
 
             try
             {
-                // Cấu hình WaveIn (16kHz, 16bit, Mono)
-                _waveSource = new WaveInEvent();
-                _waveSource.WaveFormat = new WaveFormat(16000, 16, 1);
-                _waveSource.BufferMilliseconds = 50; // Giảm buffer để streaming mượt hơn
-                _waveSource.NumberOfBuffers = 3;
+                // Cấu hình WaveIn (16kHz, 16bit, Mono) cho streaming
+                _streamSource = new WaveInEvent();
+                _streamSource.WaveFormat = new WaveFormat(16000, 16, 1);
+                _streamSource.BufferMilliseconds = 50; // Giảm buffer để streaming mượt hơn
+                _streamSource.NumberOfBuffers = 3;
 
-                _waveSource.DataAvailable += (s, e) =>
+                _streamSource.DataAvailable += (s, e) =>
                 {
                     if (e.BytesRecorded > 0)
                     {
@@ -43,7 +44,7 @@ namespace RemoteControlServer.Services
                     }
                 };
 
-                _waveSource.StartRecording();
+                _streamSource.StartRecording();
                 Console.WriteLine(">> Bắt đầu streaming âm thanh...");
             }
             catch (Exception ex)
@@ -60,11 +61,11 @@ namespace RemoteControlServer.Services
 
             try
             {
-                if (_waveSource != null)
+                if (_streamSource != null)
                 {
-                    _waveSource.StopRecording();
-                    _waveSource.Dispose();
-                    _waveSource = null;
+                    _streamSource.StopRecording();
+                    _streamSource.Dispose();
+                    _streamSource = null;
                 }
                 Console.WriteLine(">> Đã tắt streaming âm thanh...");
             }
@@ -85,37 +86,33 @@ namespace RemoteControlServer.Services
                 string fileName = $"AudioRec_{DateTime.Now:HHmmss}.wav";
                 _currentFilePath = Path.Combine(tempFolder, fileName);
 
-                // Cấu hình WaveIn (44.1kHz, 16bit, Mono để nhẹ file)
-                _waveSource = new WaveInEvent();
-                _waveSource.WaveFormat = new WaveFormat(44100, 16, 1);
+                // Cấu hình nguồn ghi riêng, đồng bộ với streaming (16kHz, 16bit, Mono)
+                _recSource = new WaveInEvent();
+                _recSource.WaveFormat = new WaveFormat(16000, 16, 1);
+                // Giữ cấu hình buffer giống streaming để chunk đều và mượt
+                _recSource.BufferMilliseconds = 50;
+                _recSource.NumberOfBuffers = 3;
 
-                _waveFile = new WaveFileWriter(_currentFilePath, _waveSource.WaveFormat);
+                _waveFile = new WaveFileWriter(_currentFilePath, _recSource.WaveFormat);
 
-                _waveSource.DataAvailable += (s, e) =>
+                _recSource.DataAvailable += (s, e) =>
                 {
                     if (_waveFile != null)
                     {
                         _waveFile.Write(e.Buffer, 0, e.BytesRecorded);
-                        _waveFile.Flush();
+                        // Không flush mỗi chunk để tránh I/O chặn làm rè live
                     }
-
-                    // Broadcast audio chunks for live streaming
-                    if (e.BytesRecorded > 0)
-                    {
-                        byte[] chunk = new byte[e.BytesRecorded];
-                        Array.Copy(e.Buffer, chunk, e.BytesRecorded);
-                        OnAudioCaptured?.Invoke(chunk);
-                    }
+                    // Không broadcast từ nguồn ghi để tránh trùng với nguồn streaming
                 };
 
-                _waveSource.RecordingStopped += (s, e) =>
+                _recSource.RecordingStopped += (s, e) =>
                 {
-                    DisposeResources();
+                    DisposeRecordingResources();
                     Console.WriteLine($">> Đã lưu file ghi âm: {_currentFilePath}");
                     OnAudioSaved?.Invoke(_currentFilePath);
                 };
 
-                _waveSource.StartRecording();
+                _recSource.StartRecording();
 
                 // Hẹn giờ tắt (thêm 100ms buffer để đảm bảo ghi đủ)
                 Task.Delay(seconds * 1000 + 100).ContinueWith(_ => StopRecording());
@@ -125,26 +122,26 @@ namespace RemoteControlServer.Services
             catch (Exception ex)
             {
                 _isRecording = false;
-                DisposeResources();
+                DisposeRecordingResources();
                 return "Lỗi StartAudio: " + ex.Message;
             }
         }
 
         private static void StopRecording()
         {
-            if (_isRecording && _waveSource != null)
+            if (_isRecording && _recSource != null)
             {
                 _isRecording = false;
-                _waveSource.StopRecording();
+                _recSource.StopRecording();
             }
         }
 
-        private static void DisposeResources()
+        private static void DisposeRecordingResources()
         {
             _waveFile?.Dispose();
             _waveFile = null;
-            _waveSource?.Dispose();
-            _waveSource = null;
+            _recSource?.Dispose();
+            _recSource = null;
         }
     }
 }
