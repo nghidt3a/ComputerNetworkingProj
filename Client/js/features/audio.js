@@ -37,7 +37,7 @@ export const AudioFeature = {
     if (isAudioActive) {
       // Start live audio
       this.startLiveAudio();
-      
+
       if (btn) btn.className = "btn btn-danger w-100 mb-2 fw-bold";
       if (btnText) btnText.innerText = "Stop";
       if (icon) icon.className = "fas fa-stop me-2";
@@ -46,7 +46,7 @@ export const AudioFeature = {
     } else {
       // Stop live audio
       this.stopLiveAudio();
-      
+
       if (btn) btn.className = "btn btn-success w-100 mb-2 fw-bold";
       if (btnText) btnText.innerText = "Start";
       if (icon) icon.className = "fas fa-power-off me-2";
@@ -55,10 +55,10 @@ export const AudioFeature = {
       UIManager.showToast("Live audio stopped", "info");
     }
   },
-  
+
   handleLiveAudio(arrayBuffer) {
     if (!isAudioActive) return;
-    
+
     const view = new DataView(arrayBuffer);
     const header = view.getUint8(0);
     if (header !== 0x04) return; // Only handle audio (0x04)
@@ -69,17 +69,23 @@ export const AudioFeature = {
 
   startLiveAudio() {
     if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)({
+        sampleRate: 16000,
+      });
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 2048;
       analyser.connect(audioCtx.destination);
       nextAudioTime = 0;
     }
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    
+    if (audioCtx.state === "suspended") audioCtx.resume();
+
+    // Hide placeholder
+    const placeholder = document.getElementById("audio-placeholder");
+    if (placeholder) placeholder.style.display = "none";
+
     // Send START_AUDIO command to server
     SocketService.send("START_AUDIO");
-    
+
     this.startVisualizer();
   },
 
@@ -89,17 +95,21 @@ export const AudioFeature = {
       animationId = null;
     }
     nextAudioTime = 0;
-    
+
     // Send STOP_AUDIO command to server
     SocketService.send("STOP_AUDIO");
-    
-    // Clear waveform
-    const canvas = document.getElementById('audio-waveform-canvas');
+
+    // Clear waveform and show placeholder
+    const canvas = document.getElementById("audio-waveform-canvas");
     if (canvas) {
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#000';
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
+    
+    // Show placeholder
+    const placeholder = document.getElementById("audio-placeholder");
+    if (placeholder) placeholder.style.display = "flex";
   },
 
   playAudioChunk(pcmBuffer) {
@@ -118,63 +128,63 @@ export const AudioFeature = {
     source.buffer = buffer;
     source.connect(analyser);
 
-    const startAt = Math.max(audioCtx.currentTime + 0.02, nextAudioTime || audioCtx.currentTime);
+    const startAt = Math.max(
+      audioCtx.currentTime + 0.02,
+      nextAudioTime || audioCtx.currentTime
+    );
     source.start(startAt);
     nextAudioTime = startAt + buffer.duration;
   },
 
   startVisualizer() {
-    const canvas = document.getElementById('audio-waveform-canvas');
+    const canvas = document.getElementById("audio-waveform-canvas");
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
     const draw = () => {
       if (!isAudioActive) return;
-      
+
       animationId = requestAnimationFrame(draw);
 
       analyser.getByteFrequencyData(dataArray);
 
-      ctx.fillStyle = 'rgb(0, 0, 0)';
+      ctx.fillStyle = "rgb(0, 0, 0)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = 'rgb(0, 200, 100)';
-      ctx.beginPath();
-
-      const sliceWidth = canvas.width / bufferLength;
+      ctx.fillStyle = "rgb(200, 200, 200)"; // White/gray bars
+      
+      // Draw mirrored vertical bars from center (like waveform)
+      const barWidth = Math.max(2, canvas.width / bufferLength);
+      const centerY = canvas.height / 2;
       let x = 0;
 
       for (let i = 0; i < bufferLength; i++) {
-        const v = dataArray[i] / 128.0;
-        const y = (v * canvas.height) / 2;
-
-        if (i === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-
-        x += sliceWidth;
+        const barHeight = (dataArray[i] / 255) * (canvas.height / 2);
+        
+        // Draw bar going UP from center
+        ctx.fillRect(x, centerY - barHeight, barWidth - 1, barHeight);
+        
+        // Draw bar going DOWN from center (mirror)
+        ctx.fillRect(x, centerY, barWidth - 1, barHeight);
+        
+        x += barWidth;
       }
-      ctx.lineTo(canvas.width, canvas.height / 2);
-      ctx.stroke();
     };
     draw();
   },
 
   startVolumeMonitor() {
     if (!analyser) return;
-    
+
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
     const updateVolume = () => {
       if (!isAudioActive) return;
-      
+
       analyser.getByteFrequencyData(dataArray);
-      
+
       // Calculate average volume
       let sum = 0;
       for (let i = 0; i < dataArray.length; i++) {
@@ -182,25 +192,25 @@ export const AudioFeature = {
       }
       const avg = sum / dataArray.length;
       const volume = (avg / 255) * 100;
-      
+
       // Update volume bar
-      const volumeBar = document.getElementById('audio-volume-bar');
+      const volumeBar = document.getElementById("audio-volume-bar");
       if (volumeBar) {
-        volumeBar.style.width = volume.toFixed(0) + '%';
+        volumeBar.style.width = volume.toFixed(0) + "%";
       }
-      
+
       // Update frequency display
-      const freqEl = document.getElementById('audio-freq');
+      const freqEl = document.getElementById("audio-freq");
       if (freqEl) {
         const maxFreq = 8000; // Display max 8kHz
-        freqEl.textContent = (maxFreq * (avg / 255)).toFixed(0) + ' Hz';
+        freqEl.textContent = (maxFreq * (avg / 255)).toFixed(0) + " Hz";
       }
-      
+
       requestAnimationFrame(updateVolume);
     };
     updateVolume();
   },
-  
+
   startRecording() {
     if (!isAudioActive)
       return UIManager.showToast("Hãy bật Audio trước!", "error");
@@ -218,10 +228,10 @@ export const AudioFeature = {
     if (durationInput) durationInput.disabled = true;
 
     // Update status to RECORDING
-    const statusBadge = document.getElementById('audio-status');
+    const statusBadge = document.getElementById("audio-status");
     if (statusBadge) {
-      statusBadge.className = 'badge bg-danger';
-      statusBadge.textContent = 'RECORDING';
+      statusBadge.className = "badge bg-danger";
+      statusBadge.textContent = "RECORDING";
     }
 
     this.startRecordingTimer(duration);
@@ -258,7 +268,7 @@ export const AudioFeature = {
     if (recent) {
       const item = document.createElement("div");
       item.className = "d-flex align-items-center justify-content-between mb-2";
-      
+
       // Giao diện chỉ có Tên file + Nút Play (Không có nút Download ở đây)
       item.innerHTML = `
         <div class="text-truncate me-2">
@@ -293,8 +303,8 @@ export const AudioFeature = {
     a.download = fileName;
     document.body.appendChild(a);
     a.click();
-    
-    // LƯU Ý QUAN TRỌNG: 
+
+    // LƯU Ý QUAN TRỌNG:
     // Mình đã xóa dòng URL.revokeObjectURL(url) ở đây.
     // Điều này giúp file vẫn tồn tại trong bộ nhớ trình duyệt để nút Play hoạt động.
     setTimeout(() => {
@@ -308,16 +318,16 @@ export const AudioFeature = {
     const durationInput = document.getElementById("audio-record-duration");
     const recordBtn = document.getElementById("btn-audio-record");
     const cancelBtn = document.getElementById("btn-audio-cancel");
-    
+
     if (durationInput) durationInput.disabled = false;
-    
+
     // Kiểm tra an toàn biến global
-    if (typeof isAudioActive !== 'undefined' && isAudioActive && recordBtn) {
-        recordBtn.disabled = false;
+    if (typeof isAudioActive !== "undefined" && isAudioActive && recordBtn) {
+      recordBtn.disabled = false;
     } else if (recordBtn) {
-        recordBtn.disabled = false; 
+      recordBtn.disabled = false;
     }
-    
+
     if (cancelBtn) cancelBtn.disabled = true;
     this.stopRecordingTimer();
   },
@@ -327,8 +337,8 @@ export const AudioFeature = {
     const countdownEl = document.getElementById("audio-recording-countdown");
     remainingSeconds = durationSec;
     if (timerEl) {
-      timerEl.classList.remove('d-none');
-      timerEl.classList.add('d-flex');
+      timerEl.classList.remove("d-none");
+      timerEl.classList.add("d-flex");
     }
     if (countdownEl) countdownEl.textContent = `${remainingSeconds}s`;
 
@@ -348,17 +358,17 @@ export const AudioFeature = {
     }
     const timerEl = document.getElementById("audio-recording-timer-container");
     if (timerEl) {
-      timerEl.classList.add('d-none');
-      timerEl.classList.remove('d-flex');
+      timerEl.classList.add("d-none");
+      timerEl.classList.remove("d-flex");
     }
     remainingSeconds = 0;
 
     // Reset status back to LIVE
     if (!forceHide && isAudioActive) {
-      const statusBadge = document.getElementById('audio-status');
+      const statusBadge = document.getElementById("audio-status");
       if (statusBadge) {
-        statusBadge.className = 'badge bg-success';
-        statusBadge.textContent = 'LIVE';
+        statusBadge.className = "badge bg-success";
+        statusBadge.textContent = "LIVE";
       }
     }
 

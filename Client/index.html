@@ -229,7 +229,12 @@
                 class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5"
               >
                 <li class="breadcrumb-item text-sm">
-                  <a class="opacity-5 text-dark" id="breadcrumb-root" href="javascript:;">Pages</a>
+                  <a
+                    class="opacity-5 text-dark"
+                    id="breadcrumb-root"
+                    href="javascript:;"
+                    >Pages</a
+                  >
                 </li>
                 <li
                   class="breadcrumb-item text-sm text-dark active font-weight-bolder"
@@ -246,21 +251,29 @@
               id="navbar"
             >
               <div class="ms-md-auto pe-md-3 d-flex align-items-center gap-3">
-                  <button id="theme-toggle" class="btn btn-outline-primary btn-sm border-radius-lg" title="Toggle Dark Mode">
-                      <i class="fas fa-moon me-2"></i>
-                      <span class="d-none d-sm-inline">Dark Mode</span>
-                  </button>
+                <button
+                  id="theme-toggle"
+                  class="btn btn-outline-primary btn-sm border-radius-lg"
+                  title="Toggle Dark Mode"
+                >
+                  <i class="fas fa-moon me-2"></i>
+                  <span class="d-none d-sm-inline">Dark Mode</span>
+                </button>
 
-                  <div id="ping-badge" class="ping-pill good" style="display: none;">
-                      <div class="ping-status">
-                          <span class="ping-dot"></span>
-                          <span>Online</span>
-                      </div>
-                      <div class="ping-latency">
-                          <i class="fas fa-wifi"></i>
-                          <span id="ping-value">-- ms</span>
-                      </div>
+                <div
+                  id="ping-badge"
+                  class="ping-pill good"
+                  style="display: none"
+                >
+                  <div class="ping-status">
+                    <span class="ping-dot"></span>
+                    <span>Online</span>
                   </div>
+                  <div class="ping-latency">
+                    <i class="fas fa-wifi"></i>
+                    <span id="ping-value">-- ms</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -275,16 +288,10 @@
                     <i class="fas fa-power-off text-danger"></i> Power Control
                   </div>
                   <div class="d-grid gap-2">
-                    <button
-                      id="btn-shutdown"
-                      class="btn btn-danger"
-                    >
+                    <button id="btn-shutdown" class="btn btn-danger">
                       <i class="fas fa-power-off"></i> SHUTDOWN SERVER
                     </button>
-                    <button
-                      id="btn-restart"
-                      class="btn btn-warning text-dark"
-                    >
+                    <button id="btn-restart" class="btn btn-warning text-dark">
                       <i class="fas fa-sync"></i> RESTART SERVER
                     </button>
                   </div>
@@ -350,7 +357,8 @@
               <!-- PHẦN DƯỚI TRÁI: System Information Cards -->
               <div class="col-lg-6">
                 <h5 class="section-title mb-3">
-                  <i class="fas fa-info-circle me-2 text-primary"></i>System Information
+                  <i class="fas fa-info-circle me-2 text-primary"></i>System
+                  Information
                 </h5>
                 <div class="system-info-cards">
                   <!-- OS Card -->
@@ -360,7 +368,9 @@
                     </div>
                     <div class="info-card__content">
                       <div class="info-card__label">HỆ ĐIỀU HÀNH</div>
-                      <div class="info-card__value" id="os-info">Loading...</div>
+                      <div class="info-card__value" id="os-info">
+                        Loading...
+                      </div>
                     </div>
                   </div>
 
@@ -371,7 +381,9 @@
                     </div>
                     <div class="info-card__content">
                       <div class="info-card__label">TÊN MÁY (HOSTNAME)</div>
-                      <div class="info-card__value" id="pc-name">Loading...</div>
+                      <div class="info-card__value" id="pc-name">
+                        Loading...
+                      </div>
                     </div>
                   </div>
 
@@ -382,7 +394,9 @@
                     </div>
                     <div class="info-card__content">
                       <div class="info-card__label">CPU MODEL</div>
-                      <div class="info-card__value" id="cpu-name">Loading...</div>
+                      <div class="info-card__value" id="cpu-name">
+                        Loading...
+                      </div>
                     </div>
                   </div>
 
@@ -404,7 +418,9 @@
                     </div>
                     <div class="info-card__content">
                       <div class="info-card__label">CARD ĐỒ HỌA (GPU)</div>
-                      <div class="info-card__value" id="gpu-name">Loading...</div>
+                      <div class="info-card__value" id="gpu-name">
+                        Loading...
+                      </div>
                     </div>
                   </div>
 
@@ -420,7 +436,7 @@
                   </div>
 
                   <!-- Hidden compatibility fields -->
-                  <div style="display: none;">
+                  <div style="display: none">
                     <span id="cpu-max">--</span>
                     <span id="cpu-cores">--</span>
                   </div>
@@ -430,7 +446,8 @@
               <!-- PHẦN DƯỚI PHẢI: Performance Stats 4-Grid -->
               <div class="col-lg-6">
                 <h5 class="section-title mb-3">
-                  <i class="fas fa-tachometer-alt me-2 text-success"></i>Performance
+                  <i class="fas fa-tachometer-alt me-2 text-success"></i
+                  >Performance
                 </h5>
                 <div class="performance-grid">
                   <!-- CPU Gauge - Top Left -->
@@ -438,15 +455,32 @@
                     <div class="perf-cell__title">CPU LOAD</div>
                     <div class="gauge gauge--md">
                       <svg class="gauge__svg" viewBox="0 0 140 140">
-                        <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
-                        <circle class="gauge__progress" id="stat-cpu-gauge" cx="70" cy="70" r="55" fill="none"></circle>
+                        <circle
+                          class="gauge__track"
+                          cx="70"
+                          cy="70"
+                          r="55"
+                          fill="none"
+                        ></circle>
+                        <circle
+                          class="gauge__progress"
+                          id="stat-cpu-gauge"
+                          cx="70"
+                          cy="70"
+                          r="55"
+                          fill="none"
+                        ></circle>
                       </svg>
                       <div class="gauge__center">
-                        <span class="gauge__value" id="stat-cpu-percent">0%</span>
+                        <span class="gauge__value" id="stat-cpu-percent"
+                          >0%</span
+                        >
                         <span class="gauge__sub" id="stat-cpu-freq">--</span>
                       </div>
                     </div>
-                    <span class="stat-badge state-ok" id="stat-cpu-badge">Normal</span>
+                    <span class="stat-badge state-ok" id="stat-cpu-badge"
+                      >Normal</span
+                    >
                   </div>
 
                   <!-- GPU Bar - Top Right -->
@@ -456,7 +490,9 @@
                       <div class="bar-vertical__fill" id="stat-gpu-bar"></div>
                     </div>
                     <div class="perf-cell__value" id="stat-gpu-percent">0%</div>
-                    <span class="stat-badge state-ok" id="stat-gpu-badge">Idle</span>
+                    <span class="stat-badge state-ok" id="stat-gpu-badge"
+                      >Idle</span
+                    >
                     <div class="perf-cell__info" id="stat-gpu-info">--</div>
                   </div>
 
@@ -467,7 +503,9 @@
                       <div class="bar-vertical__fill" id="stat-ram-bar"></div>
                     </div>
                     <div class="perf-cell__value" id="stat-ram-percent">0%</div>
-                    <span class="stat-badge state-ok" id="stat-ram-badge">OK</span>
+                    <span class="stat-badge state-ok" id="stat-ram-badge"
+                      >OK</span
+                    >
                     <div class="perf-cell__info" id="stat-ram-abs">--</div>
                   </div>
 
@@ -476,21 +514,38 @@
                     <div class="perf-cell__title">DISK (C:)</div>
                     <div class="gauge gauge--md">
                       <svg class="gauge__svg" viewBox="0 0 140 140">
-                        <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
-                        <circle class="gauge__progress" id="stat-ssd-gauge" cx="70" cy="70" r="55" fill="none"></circle>
+                        <circle
+                          class="gauge__track"
+                          cx="70"
+                          cy="70"
+                          r="55"
+                          fill="none"
+                        ></circle>
+                        <circle
+                          class="gauge__progress"
+                          id="stat-ssd-gauge"
+                          cx="70"
+                          cy="70"
+                          r="55"
+                          fill="none"
+                        ></circle>
                       </svg>
                       <div class="gauge__center">
-                        <span class="gauge__value" id="stat-ssd-percent">0%</span>
+                        <span class="gauge__value" id="stat-ssd-percent"
+                          >0%</span
+                        >
                       </div>
                     </div>
-                    <span class="stat-badge state-ok" id="stat-ssd-badge">Healthy</span>
+                    <span class="stat-badge state-ok" id="stat-ssd-badge"
+                      >Healthy</span
+                    >
                     <div class="gauge__sub-info">
                       <div id="stat-ssd-abs">--</div>
                     </div>
                   </div>
 
                   <!-- Hidden compatibility elements -->
-                  <div style="display: none;">
+                  <div style="display: none">
                     <span id="stat-ssd-name">Primary Disk</span>
                     <span id="stat-ssd-free">--</span>
                   </div>
@@ -519,7 +574,9 @@
                         </div>
                         <h6 class="mb-0 d-flex align-items-center gap-2">
                           Live Screen Streaming
-                          <span id="monitor-fps" class="badge bg-success">FPS: 0</span>
+                          <span id="monitor-fps" class="badge bg-success"
+                            >FPS: 0</span
+                          >
                         </h6>
                       </div>
                       <div class="d-flex gap-2 align-items-center">
@@ -877,7 +934,9 @@
               <div class="card-header pb-0">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="d-flex align-items-center">
-                    <div class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md me-2">
+                    <div
+                      class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md me-2"
+                    >
                       <i class="fas fa-microphone opacity-10"></i>
                     </div>
                     <h6 class="mb-0">Audio Recorder</h6>
@@ -889,11 +948,26 @@
                 <div class="row">
                   <div class="col-lg-8">
                     <div class="audio-container" id="audio-container">
-                      <canvas id="audio-waveform-canvas" width="600" height="200" style="display: block; width: 100%; background: #000; border-radius: 8px;"></canvas>
-                      <div class="audio-placeholder text-secondary" id="audio-placeholder">
+                      <canvas
+                        id="audio-waveform-canvas"
+                        width="600"
+                        height="200"
+                        style="
+                          display: block;
+                          width: 100%;
+                          background: #000;
+                          border-radius: 8px;
+                        "
+                      ></canvas>
+                      <div
+                        class="audio-placeholder text-secondary"
+                        id="audio-placeholder"
+                      >
                         <i class="fas fa-microphone fa-3x mb-2 opacity-60"></i>
                         <h6 class="text-secondary">No Audio</h6>
-                        <p class="text-xs text-secondary">Start audio to see waveform</p>
+                        <p class="text-xs text-secondary">
+                          Start audio to see waveform
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -905,35 +979,74 @@
                       </h5>
 
                       <div class="mb-3">
-                        <button id="btn-audio-toggle" onclick="toggleAudio()" class="btn btn-success w-100 mb-2 fw-bold">
-                          <i class="fas fa-power-off me-2" id="btn-audio-icon"></i>
+                        <button
+                          id="btn-audio-toggle"
+                          onclick="toggleAudio()"
+                          class="btn btn-success w-100 mb-2 fw-bold"
+                        >
+                          <i
+                            class="fas fa-power-off me-2"
+                            id="btn-audio-icon"
+                          ></i>
                           <span id="btn-audio-text">Start</span>
                         </button>
                       </div>
 
                       <div class="mb-3">
-                        <label class="form-label small fw-bold">Duration (sec):</label>
-                        <input type="number" id="audio-record-duration" class="form-control" value="10" min="3" max="60" />
+                        <label class="form-label small fw-bold"
+                          >Duration (sec):</label
+                        >
+                        <input
+                          type="number"
+                          id="audio-record-duration"
+                          class="form-control"
+                          value="10"
+                          min="3"
+                          max="60"
+                        />
                       </div>
 
-                      <div id="audio-recording-timer-container" class="recording-timer-container mb-2" style="display: none">
+                      <div
+                        id="audio-recording-timer-container"
+                        class="recording-timer-container mb-2"
+                        style="display: none"
+                      >
                         <span class="label">Remaining:</span>
-                        <span id="audio-recording-countdown" class="countdown">00s</span>
+                        <span id="audio-recording-countdown" class="countdown"
+                          >00s</span
+                        >
                       </div>
 
-                      <button id="btn-audio-record" onclick="startRecordAudio()" class="btn btn-danger w-100 fw-bold" disabled>
+                      <button
+                        id="btn-audio-record"
+                        onclick="startRecordAudio()"
+                        class="btn btn-danger w-100 fw-bold"
+                        disabled
+                      >
                         <i class="fas fa-record-vinyl"></i> RECORD & SAVE
                       </button>
-                      <button id="btn-audio-cancel" onclick="cancelRecordAudio()" class="btn btn-warning w-100 fw-bold mt-2" disabled>
+                      <button
+                        id="btn-audio-cancel"
+                        onclick="cancelRecordAudio()"
+                        class="btn btn-warning w-100 fw-bold mt-2"
+                        disabled
+                      >
                         <i class="fas fa-stop-circle"></i> CANCEL RECORD
                       </button>
 
                       <hr class="horizontal dark my-3" />
-                      <h6 class="text-xs text-uppercase text-secondary font-weight-bolder mb-2">
+                      <h6
+                        class="text-xs text-uppercase text-secondary font-weight-bolder mb-2"
+                      >
                         <i class="fas fa-history me-1"></i> Recent Recordings:
                       </h6>
-                      <div id="audio-recent" class="recent-recordings border rounded p-2 bg-gray-100 mt-2">
-                        <p class="text-xs text-secondary font-italic mb-0">No recordings yet</p>
+                      <div
+                        id="audio-recent"
+                        class="recent-recordings border rounded p-2 bg-gray-100 mt-2"
+                      >
+                        <p class="text-xs text-secondary font-italic mb-0">
+                          No recordings yet
+                        </p>
                       </div>
                       <div id="audio-preview-container" class="mt-2"></div>
                     </div>
@@ -1080,7 +1193,7 @@
                   ><i class="fas fa-list-alt text-primary"></i> Task
                   Manager</span
                 >
-                  <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
                   <button
                     id="btn-get-apps"
                     class="btn btn-outline-primary btn-sm"
@@ -1200,7 +1313,7 @@
             </div>
           </section>
         </div>
-        </main>
+      </main>
     </div>
 
     <div id="toast-container" class="toast-container"></div>

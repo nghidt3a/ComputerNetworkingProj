@@ -30,6 +30,8 @@ namespace RemoteControlServer.Services
                 // Cấu hình WaveIn (16kHz, 16bit, Mono)
                 _waveSource = new WaveInEvent();
                 _waveSource.WaveFormat = new WaveFormat(16000, 16, 1);
+                _waveSource.BufferMilliseconds = 50; // Giảm buffer để streaming mượt hơn
+                _waveSource.NumberOfBuffers = 3;
 
                 _waveSource.DataAvailable += (s, e) =>
                 {
