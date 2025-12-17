@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,14 +25,196 @@ namespace RemoteControlServer.Core
         // Lưu mật khẩu OTP tạm thời cho phiên (mỗi lần start sẽ random một mật khẩu)
         private static string _sessionPassword = "";
 
-        // Lấy danh sách các ứng dụng đang chạy (có cửa sổ hiển thị)
+        // Lấy danh sách tất cả apps cài đặt kèm trạng thái running
         internal static object GetCurrentApps()
         {
-            // Lấy danh sách các ứng dụng có cửa sổ (Window)
-            return Process.GetProcesses()
-                .Where(p => !string.IsNullOrEmpty(p.MainWindowTitle))
-                .Select(p => new { id = p.Id, name = p.ProcessName, title = p.MainWindowTitle })
-                .ToList();
+            var installedApps = new Dictionary<string, object>();
+            var runningProcesses = Process.GetProcesses().ToList();
+
+            try
+            {
+                // 1. Lấy apps đang chạy (running) từ processes có MainWindow
+                foreach (var proc in runningProcesses.Where(p => !string.IsNullOrEmpty(p.MainWindowTitle)))
+                {
+                    try
+                    {
+                        string appKey = proc.ProcessName.ToLower();
+                        if (!installedApps.ContainsKey(appKey))
+                        {
+                            installedApps[appKey] = new 
+                            { 
+                                id = proc.Id,
+                                name = proc.ProcessName,
+                                title = proc.MainWindowTitle,
+                                memory = GetMemoryUsage(proc),
+                                status = "running",
+                                path = proc.MainModule?.FileName ?? ""
+                            };
+                        }
+                    }
+                    catch { } // Skip processes we can't access
+                }
+
+                // 2. Lấy installed apps từ Registry (64-bit)
+                AddInstalledAppsFromRegistry(
+                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+                    installedApps,
+                    runningProcesses
+                );
+
+                // 3. Lấy installed apps từ Registry (32-bit on 64-bit)
+                AddInstalledAppsFromRegistry(
+                    @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall",
+                    installedApps,
+                    runningProcesses
+                );
+
+                // 4. Lấy apps từ Start Menu làm backup
+                AddAppsFromStartMenu(installedApps, runningProcesses);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting apps: {ex.Message}");
+            }
+
+            return installedApps.Values.OrderBy(x => ((dynamic)x).name).ToList();
+        }
+
+        private static void AddInstalledAppsFromRegistry(string registryPath, Dictionary<string, object> installedApps, List<Process> runningProcesses)
+        {
+            try
+            {
+                using (var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(registryPath))
+                {
+                    if (key == null) return;
+
+                    foreach (string subKeyName in key.GetSubKeyNames())
+                    {
+                        try
+                        {
+                            using (var subKey = key.OpenSubKey(subKeyName))
+                            {
+                                if (subKey == null) continue;
+
+                                string displayName = subKey.GetValue("DisplayName") as string;
+                                string installLocation = subKey.GetValue("InstallLocation") as string;
+                                
+                                if (string.IsNullOrEmpty(displayName)) continue;
+                                
+                                // Skip system components
+                                if (displayName.Contains("Update") || 
+                                    displayName.Contains("Redistributable") ||
+                                    displayName.Contains("Runtime") ||
+                                    displayName.StartsWith("Microsoft Visual C++"))
+                                    continue;
+
+                                string appKey = displayName.ToLower().Replace(" ", "");
+                                
+                                // Nếu app chưa có trong list (chưa running), thêm vào với status stopped
+                                if (!installedApps.ContainsKey(appKey))
+                                {
+                                    // Try to find matching running process
+                                    var matchingProcess = runningProcesses.FirstOrDefault(p =>
+                                        p.ProcessName.Contains(displayName, StringComparison.OrdinalIgnoreCase) ||
+                                        displayName.Contains(p.ProcessName, StringComparison.OrdinalIgnoreCase) ||
+                                        (!string.IsNullOrEmpty(p.MainWindowTitle) && 
+                                         p.MainWindowTitle.Contains(displayName, StringComparison.OrdinalIgnoreCase))
+                                    );
+
+                                    if (matchingProcess != null && !string.IsNullOrEmpty(matchingProcess.MainWindowTitle))
+                                    {
+                                        installedApps[appKey] = new
+                                        {
+                                            id = matchingProcess.Id,
+                                            name = displayName,
+                                            title = matchingProcess.MainWindowTitle,
+                                            memory = GetMemoryUsage(matchingProcess),
+                                            status = "running",
+                                            path = installLocation ?? ""
+                                        };
+                                    }
+                                    else
+                                    {
+                                        installedApps[appKey] = new
+                                        {
+                                            id = 0,
+                                            name = displayName,
+                                            title = displayName,
+                                            memory = "N/A",
+                                            status = "stopped",
+                                            path = installLocation ?? ""
+                                        };
+                                    }
+                                }
+                            }
+                        }
+                        catch { }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private static void AddAppsFromStartMenu(Dictionary<string, object> installedApps, List<Process> runningProcesses)
+        {
+            try
+            {
+                string commonStartMenu = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu) + "\\Programs";
+                string userStartMenu = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + "\\Programs";
+
+                var menuPaths = new[] { commonStartMenu, userStartMenu };
+
+                foreach (var menuPath in menuPaths)
+                {
+                    if (!Directory.Exists(menuPath)) continue;
+
+                    var files = Directory.GetFiles(menuPath, "*.lnk", SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(file);
+                        if (fileName.ToLower().Contains("uninstall") ||
+                            fileName.ToLower().Contains("help") ||
+                            fileName.ToLower().Contains("readme"))
+                            continue;
+
+                        string appKey = fileName.ToLower().Replace(" ", "");
+                        if (!installedApps.ContainsKey(appKey))
+                        {
+                            var matchingProcess = runningProcesses.FirstOrDefault(p =>
+                                p.ProcessName.Equals(fileName, StringComparison.OrdinalIgnoreCase) ||
+                                (!string.IsNullOrEmpty(p.MainWindowTitle) &&
+                                 p.MainWindowTitle.Contains(fileName, StringComparison.OrdinalIgnoreCase))
+                            );
+
+                            if (matchingProcess != null && !string.IsNullOrEmpty(matchingProcess.MainWindowTitle))
+                            {
+                                installedApps[appKey] = new
+                                {
+                                    id = matchingProcess.Id,
+                                    name = fileName,
+                                    title = matchingProcess.MainWindowTitle,
+                                    memory = GetMemoryUsage(matchingProcess),
+                                    status = "running",
+                                    path = file
+                                };
+                            }
+                            else
+                            {
+                                installedApps[appKey] = new
+                                {
+                                    id = 0,
+                                    name = fileName,
+                                    title = fileName,
+                                    memory = "N/A",
+                                    status = "stopped",
+                                    path = file
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
         }
 
         // Lấy danh sách tất cả tiến trình hiện tại
@@ -42,10 +225,23 @@ namespace RemoteControlServer.Core
                 .Select(p => new {
                     id = p.Id,
                     name = p.ProcessName,
-                    memory = (p.WorkingSet64 / 1024 / 1024) + " MB"
+                    memory = GetMemoryUsage(p)
                 })
                 .OrderByDescending(p => p.id)
                 .ToList();
+        }
+
+        private static string GetMemoryUsage(Process process)
+        {
+            try
+            {
+                double memoryMb = process.WorkingSet64 / 1048576.0;
+                return string.Format(CultureInfo.InvariantCulture, "{0:F1} MB", memoryMb);
+            }
+            catch
+            {
+                return "N/A";
+            }
         }
 
         // 1. Thêm hàm lấy danh sách Shortcut trong Start Menu

@@ -1229,6 +1229,56 @@
                   </button>
                 </div>
               </div>
+              <div
+                class="card-body"
+                id="search-filter-section"
+                style="
+                  display: none;
+                  padding: 10px;
+                  border-bottom: 1px solid #dee2e6;
+                "
+              >
+                <div class="row g-2 align-items-center">
+                  <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-text"
+                        ><i class="fas fa-search"></i
+                      ></span>
+                      <input
+                        type="text"
+                        id="task-search-input"
+                        class="form-control"
+                        placeholder="Search..."
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6" id="status-filter-buttons">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="small fw-bold text-secondary me-2"
+                        >Filter:</span
+                      >
+                      <button
+                        id="btn-filter-all"
+                        class="btn btn-primary btn-sm"
+                      >
+                        All
+                      </button>
+                      <button
+                        id="btn-filter-running"
+                        class="btn btn-outline-success btn-sm"
+                      >
+                        Running
+                      </button>
+                      <button
+                        id="btn-filter-stopped"
+                        class="btn btn-outline-secondary btn-sm"
+                      >
+                        Stopped
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div style="max-height: 500px; overflow-y: auto">
                 <table class="table table-hover table-custom" id="procTable">
                   <thead>
@@ -1236,6 +1286,7 @@
                       <th>ID</th>
                       <th>Name / Title</th>
                       <th>Memory</th>
+                      <th>Status</th>
                       <th>Action</th>
                     </tr>
                   </thead>
