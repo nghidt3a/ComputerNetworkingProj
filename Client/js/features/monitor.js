@@ -479,7 +479,7 @@ export const MonitorFeature = {
   cancelRecording() {
     this.stopRecordingTimer();
     SocketService.send("CANCEL_RECORD");
-    UIManager.showToast('Screen recording cancelled', 'info');
+    UIManager.showToast("Screen recording cancelled", "info");
   },
 
   handleStreamFrame(arrayBuffer) {
