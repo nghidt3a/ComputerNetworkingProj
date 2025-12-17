@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Nguyễn Văn A",
+    "role": "Nhóm trưởng",
+    "avatar": "../../assets/team/a.jpg",
+    "github": "https://github.com/example",
+    "linkedin": "https://linkedin.com/in/example",
+    "email": "example@gmail.com"
+  },
+  {
+    "name": "Trần Thị B",
+    "role": "Backend",
+    "avatar": "../../assets/team/b.jpg",
+    "github": "https://github.com/example",
+    "linkedin": "https://linkedin.com/in/example",
+    "email": "example@gmail.com"
+  }
+]

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RCS — Landing</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Reuse existing design tokens & base styles -->
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/soft-ui-base.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="landing-header">
+      <div class="container d-flex align-items-center justify-content-between">
+        <a class="brand d-flex align-items-center gap-2" href="#" aria-label="Trang chủ">
+          <i class="fas fa-network-wired text-primary" style="font-size: 1.25rem"></i>
+          <span class="fw-bold text-primary">RCS SYSTEM</span>
+        </a>
+        <div class="header-actions d-flex align-items-center gap-2">
+          <button class="theme-toggle" id="themeToggle" aria-label="Đổi giao diện" title="Đổi giao diện">
+            <i class="fas fa-moon"></i>
+          </button>
+          <button class="nav-toggle" id="navToggle" aria-label="Mở menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+        <nav class="landing-nav" id="landingNav">
+          <a href="#about" class="nav-link">Giới thiệu</a>
+          <a href="#members" class="nav-link">Thành viên</a>
+          <a href="#demo" class="nav-link">Demo</a>
+          <a href="../index.html" class="btn btn-primary ms-2">Đăng nhập</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero section-padding text-center reveal">
+        <div class="container">
+          <h1 class="display-5 fw-800 mb-3">Remote Control System</h1>
+          <p class="lead text-secondary mx-auto maxw-720">
+            Nền tảng điều khiển và giám sát hệ thống từ xa với giao diện Soft UI
+            đồng bộ, tối ưu trải nghiệm và hiệu năng.
+          </p>
+          <div class="mt-4 d-flex gap-2 justify-content-center">
+            <a href="../index.html" class="btn btn-primary btn-lg">Đăng nhập hệ thống</a>
+            <a href="#demo" class="btn btn-outline-primary btn-lg">Xem Demo</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Team -->
+      <section id="about" class="section-padding reveal">
+        <div class="container">
+          <div class="card shadow-sm">
+            <div class="card-body p-4 p-md-5">
+              <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                  <h2 class="h3 fw-bold mb-3">Giới thiệu Đồ án & Team</h2>
+                  <p class="mb-3 text-secondary">
+                    Dự án tập trung vào các tính năng: giám sát màn hình, điều khiển webcam,
+                    ghi âm, quản lý tiến trình, quản lý file, và terminal logs — tất cả được
+                    kết nối qua socket với khả năng mở rộng linh hoạt.
+                  </p>
+                  <ul class="list-unstyled text-secondary mb-0">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Giao diện Soft UI đồng bộ</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Tối ưu cho Dark/Light mode</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Trải nghiệm mượt, responsive</li>
+                  </ul>
+                </div>
+                <div class="col-lg-5">
+                  <div class="about-visual card-background bg-gradient-primary border-radius-xl p-0 overflow-hidden">
+                    <div class="full-background opacity-100"></div>
+                    <div class="p-4 text-white position-relative" style="z-index:1">
+                      <h3 class="h5 mb-2">RCS Overview</h3>
+                      <p class="mb-0">Soft shadows • Smooth interactions • Clean tokens</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Members -->
+      <section id="members" class="section-padding bg-section reveal">
+        <div class="container">
+          <div class="text-center mb-4">
+            <h2 class="h3 fw-bold mb-2">Thành viên Nhóm</h2>
+            <p class="text-secondary mb-0">Ảnh, tên và vai trò.</p>
+          </div>
+          <div id="membersGrid" class="member-grid"></div>
+        </div>
+      </section>
+
+      <!-- Demo YouTube -->
+      <section id="demo" class="section-padding reveal">
+        <div class="container">
+          <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+              <h2 class="h3 fw-bold mb-3">Video Demo</h2>
+              <p class="text-secondary mb-3">
+                Xem video demo chức năng chính của hệ thống. Nhấn vào nút để mở trên YouTube.
+              </p>
+              <div class="d-flex gap-2">
+                <a id="btnYoutube" class="btn btn-primary" href="#" target="_blank" rel="noopener">
+                  Xem trên YouTube
+                </a>
+                <a href="../index.html" class="btn btn-outline-primary">Đăng nhập hệ thống</a>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="video-frame">
+                <iframe id="ytFrame" title="RCS Demo" loading="lazy" allowfullscreen></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="landing-footer text-center text-secondary">
+      <div class="container py-4">
+        <small>© <span id="year"></span> RCS Team — All rights reserved.</small>
+      </div>
+    </footer>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
