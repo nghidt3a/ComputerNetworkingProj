@@ -106,7 +106,7 @@ export const AudioFeature = {
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-    
+
     // Show placeholder
     const placeholder = document.getElementById("audio-placeholder");
     if (placeholder) placeholder.style.display = "flex";
@@ -155,7 +155,7 @@ export const AudioFeature = {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.fillStyle = "rgb(200, 200, 200)"; // White/gray bars
-      
+
       // Draw mirrored vertical bars from center (like waveform)
       const barWidth = Math.max(2, canvas.width / bufferLength);
       const centerY = canvas.height / 2;
@@ -163,13 +163,13 @@ export const AudioFeature = {
 
       for (let i = 0; i < bufferLength; i++) {
         const barHeight = (dataArray[i] / 255) * (canvas.height / 2);
-        
+
         // Draw bar going UP from center
         ctx.fillRect(x, centerY - barHeight, barWidth - 1, barHeight);
-        
+
         // Draw bar going DOWN from center (mirror)
         ctx.fillRect(x, centerY, barWidth - 1, barHeight);
-        
+
         x += barWidth;
       }
     };
