@@ -48,7 +48,8 @@ namespace RemoteControlServer.Core
                 string fileName = $"ScreenRec_{DateTime.Now:HHmmss}.avi";
                 _currentSavePath = Path.Combine(tempFolder, fileName);
 
-                _stopRecordTime = DateTime.Now.AddSeconds(durationSeconds);
+                // Thêm 200ms buffer để đảm bảo ghi đủ frame cuối
+                _stopRecordTime = DateTime.Now.AddSeconds(durationSeconds).AddMilliseconds(200);
                 _isRecording = true;
 
                 return $"Đang ghi màn hình... ({durationSeconds}s)";
@@ -83,9 +84,9 @@ namespace RemoteControlServer.Core
         {
             Task.Run(() =>
             {
-                // CẤU HÌNH CHUẨN: 10 FPS (Đủ mượt cho Remote, nhẹ máy)
+                // CẤU HÌNH TỐI ƯU: 15 FPS (Mượt hơn cho Remote)
                 // Bạn KHÔNG CẦN chỉnh sửa số này nữa, thuật toán sẽ tự lo.
-                int targetFps = 10;
+                int targetFps = 15;
                 
                 // Biến theo dõi thời gian ghi hình
                 long recordingStartTime = 0;
@@ -97,8 +98,8 @@ namespace RemoteControlServer.Core
                     {
                         try
                         {
-                            // 1. Chụp ảnh màn hình
-                            var currentFrame = SystemHelper.GetScreenShot(85L); 
+                            // 1. Chụp ảnh màn hình (90% quality cho hình ảnh đẹp hơn)
+                            var currentFrame = SystemHelper.GetScreenShot(90L); 
                             
                             if (currentFrame != null)
                             {
@@ -139,8 +140,8 @@ namespace RemoteControlServer.Core
                                         }
                                     }
 
-                                    // Kiểm tra thời gian dừng
-                                    if (DateTime.Now >= _stopRecordTime) StopRecording();
+                                    // Kiểm tra thời gian dừng (dùng > thay vì >= để ghi đủ frame cuối)
+                                    if (DateTime.Now > _stopRecordTime) StopRecording();
                                 }
                                 // ------------------------------------------------
 
@@ -155,9 +156,9 @@ namespace RemoteControlServer.Core
                         }
                         catch (Exception ex) { Console.WriteLine("Lỗi Loop: " + ex.Message); }
 
-                        // Delay cực nhỏ để giảm tải CPU
+                        // Delay 50ms cho 15-20 FPS (cân bằng giữa mượt và tải CPU)
                         // Không cần chỉnh số này để khớp thời gian nữa, thuật toán ở trên đã lo rồi
-                        Thread.Sleep(10);
+                        Thread.Sleep(50);
                     }
                     else
                     {

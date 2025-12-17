@@ -51,8 +51,8 @@ namespace RemoteControlServer.Services
 
                 _waveSource.StartRecording();
 
-                // Hẹn giờ tắt
-                Task.Delay(seconds * 1000).ContinueWith(_ => StopRecording());
+                // Hẹn giờ tắt (thêm 100ms buffer để đảm bảo ghi đủ)
+                Task.Delay(seconds * 1000 + 100).ContinueWith(_ => StopRecording());
 
                 return $"Đang ghi âm {seconds} giây...";
             }

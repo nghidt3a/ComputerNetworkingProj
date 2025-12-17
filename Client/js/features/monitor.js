@@ -12,6 +12,10 @@ let startX, startY, scrollLeft, scrollTop;
 let isControlEnabled = false;
 let lastMoveTime = 0;
 
+// Performance optimization
+let frameUpdateScheduled = false;
+let pendingFrameBlob = null;
+
 // Chart.js instances
 let cpuChart = null;
 let ramChart = null;
@@ -28,7 +32,7 @@ const timeLabels = [];
 export const MonitorFeature = {
   init() {
     // 1. Đăng ký lắng nghe sự kiện từ Server
-    SocketService.on("BINARY_STREAM", this.handleStreamFrame);
+    SocketService.on("BINARY_STREAM", this.handleStreamFrame.bind(this));
     SocketService.on("SCREEN_CAPTURE", this.handleSnapshotPreview);
     SocketService.on("SCREENSHOT_FILE", this.handleSnapshotDownload);
 
@@ -486,53 +490,51 @@ export const MonitorFeature = {
 
     // Chỉ hiển thị màn hình khi đang stream và đúng header
     if (!isStreaming || header !== 0x01) {
-      console.warn(
-        "❌ handleStreamFrame ignored (isStreaming=",
-        isStreaming,
-        " header=",
-        header,
-        ")"
-      );
       return;
     }
 
-    console.log("✅ Received stream frame, size:", blobData.byteLength);
-
-    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    // Tạo blob và lưu tạm để xử lý với requestAnimationFrame
     const blob = new Blob([blobData], { type: "image/jpeg" });
-    objectUrl = URL.createObjectURL(blob);
+    pendingFrameBlob = blob;
+
+    // Sử dụng requestAnimationFrame để throttle việc update UI
+    if (!frameUpdateScheduled) {
+      frameUpdateScheduled = true;
+      requestAnimationFrame(() => {
+        MonitorFeature.updateFrameDisplay();
+        frameUpdateScheduled = false;
+      });
+    }
+  },
+
+  // Hàm mới để update frame display (được gọi bởi requestAnimationFrame)
+  updateFrameDisplay() {
+    if (!pendingFrameBlob) return;
+
+    // Giải phóng URL cũ
+    if (objectUrl) {
+      URL.revokeObjectURL(objectUrl);
+    }
+
+    // Tạo URL mới
+    objectUrl = URL.createObjectURL(pendingFrameBlob);
+    pendingFrameBlob = null;
 
     const img = document.getElementById("live-screen");
     const placeholder = document.getElementById("screen-placeholder");
 
-    console.log("📸 Elements found:", {
-      img: !!img,
-      placeholder: !!placeholder,
-    });
-
-    if (img) {
+    if (img && objectUrl) {
       img.src = objectUrl;
-      // Trigger reflow to allow transition
-      img.offsetHeight;
       img.classList.add("visible");
-
-      console.log("✓ Image displayed");
 
       // Apply current zoom and fit mode
       this.applyZoom(currentZoom);
       this.applyFitMode(fitMode);
-    } else {
-      console.error("❌ #live-screen element not found!");
     }
 
     if (placeholder) {
-      // Use class-based approach for smooth fade
       placeholder.classList.add("hidden");
       placeholder.setAttribute("data-hidden", "true");
-
-      console.log("✓ Placeholder hidden");
-    } else {
-      console.error("❌ #screen-placeholder element not found!");
     }
   },
 
