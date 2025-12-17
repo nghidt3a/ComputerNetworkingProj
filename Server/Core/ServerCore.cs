@@ -222,13 +222,13 @@ namespace RemoteControlServer.Core
                     {
                         if (File.Exists(filePath))
                         {
-                            Console.WriteLine(">> Đang gửi file ghi âm về Client...");
+                            // Console.WriteLine(">> Đang gửi file ghi âm về Client...");
                             byte[] fileBytes = File.ReadAllBytes(filePath);
                             string base64File = Convert.ToBase64String(fileBytes);
                             
                             // Gửi về client với type AUDIO_RECORD_FILE
                             SocketManager.BroadcastJson("AUDIO_RECORD_FILE", base64File);
-                            SocketManager.BroadcastJson("LOG", $"Đã tải file ghi âm ({fileBytes.Length / 1024} KB)!");
+                            // SocketManager.BroadcastJson("LOG", $"Đã tải file ghi âm ({fileBytes.Length / 1024} KB)!");
 
                             // Xóa file tạm
                             File.Delete(filePath);

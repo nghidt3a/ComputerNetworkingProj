@@ -11,6 +11,9 @@ let analyser = null;
 let animationId = null;
 let workletNode = null; // AudioWorklet-backed jitter buffer
 let audioBuffer = new Uint8Array(2048);
+// Preview playback state
+let currentPreviewItem = null;
+let currentPreviewButton = null;
 
 export const AudioFeature = {
   init() {
@@ -303,58 +306,192 @@ export const AudioFeature = {
     const url = URL.createObjectURL(blob); // Tạo URL cho file âm thanh
 
     const time = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
-    const fileName = `Audio_Rec_${time}.wav`;
+    let fileName = `Audio_Rec_${time}.wav`;
 
-    // 2. Cập nhật giao diện: Chỉ hiện nút Play
+    // 2. Cập nhật giao diện: Hiện Play + Download (icon-only), inline Rename trên tên, X ở góc phải
     const recent = document.getElementById("audio-recent");
     if (recent) {
       const item = document.createElement("div");
-      item.className = "d-flex align-items-center justify-content-between mb-2";
+      item.className =
+        "d-flex align-items-center justify-content-between mb-2 position-relative audio-item";
+      item.style.cssText = "padding: 6px 8px;";
+      item.dataset.url = url;
+      item.dataset.name = fileName;
 
-      // Giao diện chỉ có Tên file + Nút Play (Không có nút Download ở đây)
-      item.innerHTML = `
-        <div class="text-truncate me-2">
-            <i class="fas fa-file-audio me-2"></i>${fileName}
-        </div>
-        <div>
-            <button class="btn btn-sm btn-outline-success" onclick="(function(u){
-                const container = document.getElementById('audio-preview-container');
-                container.innerHTML = ''; 
-                
-                const audio = document.createElement('audio');
-                audio.src = u;
-                audio.controls = true;
-                audio.style.width = '100%';
-                audio.style.marginTop = '10px';
-                
-                container.appendChild(audio);
-                audio.play();
-            })('${url}')">
-                <i class="fas fa-play me-1"></i> Play
-            </button>
-        </div>`;
+      const left = document.createElement("div");
+      left.className =
+        "text-truncate me-2 flex-grow-1 d-flex align-items-center";
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "audio-file-name";
+      // Tách tên file và .wav
+      const baseName = fileName.replace(/\.wav$/i, "");
+      nameSpan.textContent = baseName;
+      nameSpan.style.cssText =
+        "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+      const wavLabel = document.createElement("span");
+      wavLabel.style.cssText =
+        "display: inline-block; background: #e0e0e0; color: #666; font-size: 12px; padding: 2px 6px; margin-left: 6px; border-radius: 3px; white-space: nowrap; flex-shrink: 0;";
+      wavLabel.textContent = ".wav";
+
+      const fileIcon = document.createElement("i");
+      fileIcon.className = "fas fa-file-audio me-2";
+      left.appendChild(fileIcon);
+      left.appendChild(nameSpan);
+      left.appendChild(wavLabel);
+
+      const right = document.createElement("div");
+      right.className = "d-flex gap-2 align-items-center";
+      right.style.cssText = "margin-top: 2px; margin-left: 0;";
+      // Play (icon-only)
+      const playBtn = document.createElement("button");
+      playBtn.className = "btn btn-sm btn-outline-success";
+      playBtn.innerHTML = `<i class=\"fas fa-play\"></i>`;
+      playBtn.title = "Play";
+      playBtn.style.width = "24px";
+      playBtn.style.height = "24px";
+      playBtn.style.padding = "0";
+      playBtn.style.fontSize = "12px";
+      playBtn.onclick = () => {
+        const container = document.getElementById("audio-preview-container");
+        if (!container) return;
+        const existing = container.querySelector("audio");
+        // Toggle stop if this item is currently playing
+        if (currentPreviewItem === item && existing) {
+          try {
+            existing.pause();
+          } catch {}
+          container.innerHTML = "";
+          if (currentPreviewButton)
+            currentPreviewButton.innerHTML = `<i class=\"fas fa-play\"></i>`;
+          currentPreviewItem = null;
+          currentPreviewButton = null;
+          return;
+        }
+        // Stop any previous
+        if (existing) {
+          try {
+            existing.pause();
+          } catch {}
+          container.innerHTML = "";
+          if (currentPreviewButton)
+            currentPreviewButton.innerHTML = `<i class=\"fas fa-play\"></i>`;
+        }
+        const audioEl = document.createElement("audio");
+        audioEl.src = item.dataset.url;
+        audioEl.controls = true;
+        audioEl.style.width = "100%";
+        audioEl.style.marginTop = "10px";
+        container.appendChild(audioEl);
+        audioEl.play();
+        currentPreviewItem = item;
+        currentPreviewButton = playBtn;
+        playBtn.innerHTML = `<i class=\"fas fa-stop\"></i>`;
+      };
+
+      // Download (icon-only)
+      const dlBtn = document.createElement("button");
+      dlBtn.className = "btn btn-sm btn-outline-primary";
+      dlBtn.innerHTML = `<i class=\"fas fa-download\"></i>`;
+      dlBtn.title = "Download";
+      dlBtn.style.width = "24px";
+      dlBtn.style.height = "24px";
+      dlBtn.style.padding = "0";
+      dlBtn.style.fontSize = "12px";
+      dlBtn.onclick = () => {
+        const a = document.createElement("a");
+        a.href = item.dataset.url;
+        a.download = item.dataset.name || fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => document.body.removeChild(a), 50);
+        UIManager.showToast(`Đang tải xuống ${a.download}`, "info");
+        // Thông báo server về việc tải xuống
+        SocketService.send("AUDIO_DOWNLOADED", a.download);
+      };
+
+      // Delete (trash icon, red, same row as play/download)
+      const delBtn = document.createElement("button");
+      delBtn.className = "btn btn-sm btn-outline-danger";
+      delBtn.innerHTML = `<i class=\"fas fa-trash\"></i>`;
+      delBtn.title = "Delete";
+      delBtn.style.width = "24px";
+      delBtn.style.height = "24px";
+      delBtn.style.padding = "0";
+      delBtn.onclick = () => {
+        const u = item.dataset.url;
+        // Nếu item đang được play, dừng và clear preview
+        if (currentPreviewItem === item) {
+          const container = document.getElementById("audio-preview-container");
+          if (container) container.innerHTML = "";
+          if (currentPreviewButton)
+            currentPreviewButton.innerHTML = `<i class=\"fas fa-play\"></i>`;
+          currentPreviewItem = null;
+          currentPreviewButton = null;
+        }
+        item.remove();
+        try {
+          URL.revokeObjectURL(u);
+        } catch {}
+        if (!recent.children.length) {
+          recent.innerHTML = `<p class=\"text-xs text-secondary font-italic mb-0\">No recordings yet</p>`;
+        }
+      };
+
+      // Inline rename: click on name to open input (chỉ đổi tên, không .wav)
+      nameSpan.style.cursor = "text";
+      nameSpan.title = "Click để đổi tên";
+      nameSpan.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const currentName = baseName;
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = currentName;
+        input.style.cssText =
+          "width: 120px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px;";
+
+        const parent = nameSpan.parentElement;
+        parent.replaceChild(input, nameSpan);
+        input.focus();
+        input.select();
+
+        const saveRename = () => {
+          let newName = input.value.trim();
+          if (!newName) newName = currentName;
+          // Loại bỏ ký tự không hợp lệ trong tên file
+          newName = newName.replace(/[\\/:*?\"<>|.]/g, "-");
+          // Cập nhật item.dataset.name với .wav
+          const fullName = newName + ".wav";
+          item.dataset.name = fullName;
+          nameSpan.textContent = newName;
+          parent.replaceChild(nameSpan, input);
+          UIManager.showToast("Đã đổi tên file", "info");
+        };
+
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            saveRename();
+          } else if (e.key === "Escape") {
+            e.preventDefault();
+            parent.replaceChild(nameSpan, input);
+          }
+        });
+        input.addEventListener("blur", saveRename);
+      });
+
+      right.appendChild(playBtn);
+      right.appendChild(dlBtn);
+      right.appendChild(delBtn);
+
+      item.appendChild(left);
+      item.appendChild(right);
 
       if (recent.querySelector("p")) recent.innerHTML = "";
       recent.prepend(item);
     }
 
-    // 3. TỰ ĐỘNG TẢI XUỐNG (Đã thêm lại phần này)
-    const a = document.createElement("a");
-    a.style.display = "none";
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-
-    // LƯU Ý QUAN TRỌNG:
-    // Mình đã xóa dòng URL.revokeObjectURL(url) ở đây.
-    // Điều này giúp file vẫn tồn tại trong bộ nhớ trình duyệt để nút Play hoạt động.
-    setTimeout(() => {
-      document.body.removeChild(a);
-      // Không revoke URL ở đây nữa!
-    }, 100);
-
-    UIManager.showToast("Đã lưu file & sẵn sàng phát!", "success");
+    // 3. Không tự động tải xuống nữa; hiển thị trong Recent để người dùng thao tác
+    // Không hiển thị toast tự động
 
     // 4. Reset trạng thái các nút
     const durationInput = document.getElementById("audio-record-duration");

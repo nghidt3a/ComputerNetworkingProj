@@ -108,7 +108,7 @@ namespace RemoteControlServer.Services
                 _recSource.RecordingStopped += (s, e) =>
                 {
                     DisposeRecordingResources();
-                    Console.WriteLine($">> Đã lưu file ghi âm: {_currentFilePath}");
+                    // Console.WriteLine($">> Đã lưu file ghi âm: {_currentFilePath}");
                     OnAudioSaved?.Invoke(_currentFilePath);
                 };
 

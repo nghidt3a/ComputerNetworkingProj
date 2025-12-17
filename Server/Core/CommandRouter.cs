@@ -180,7 +180,10 @@ namespace RemoteControlServer.Core
                     break;
                 case "SEARCH_FILE":
                     CommandHandler.SearchFile(socket, packet.param);
-                    break;    
+                    break;
+                case "AUDIO_DOWNLOADED":
+                    Console.WriteLine($">> Client đã tải xuống file: {packet.param}");
+                    break;
                 default: break;
             }
         }
