@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenCvSharp;
+using NAudio.Wave;
 
 namespace RemoteControlServer.Services
 {
@@ -16,13 +17,22 @@ namespace RemoteControlServer.Services
         private static VideoWriter _writer;
         private static bool _isRecording = false;
         private static Thread _cameraThread;
+        private static WaveInEvent _micSource;
         
         // Biến lưu thông tin ghi hình
         private static DateTime _stopRecordTime;
         private static string _currentSavePath;
 
+        // Âm thanh kèm webcam
+        private const int AudioSampleRate = 16000; // Hz
+        private const int AudioChannels = 1;       // Mono
+        private const int AudioBits = 16;          // 16-bit PCM
+        private const int AudioBufferMs = 80;      // Chunk ~80ms để giảm độ trễ
+
         /// <summary>Fires with JPEG bytes for live feed frames.</summary>
         public static event Action<byte[]> OnFrameCaptured;
+        /// <summary>Fires with PCM bytes for live audio chunks.</summary>
+        public static event Action<byte[]> OnAudioCaptured;
         /// <summary>Fires when a recorded video file is saved.</summary>
         public static event Action<string> OnVideoSaved; 
 
@@ -33,6 +43,9 @@ namespace RemoteControlServer.Services
             _isStreaming = true;
             _cameraThread = new Thread(CameraLoop) { IsBackground = true };
             _cameraThread.Start();
+
+            // Bắt đầu ghi âm (stream kèm audio)
+            StartMicCapture();
         }
 
         /// <summary>Stop webcam capture and release resources.</summary>
@@ -46,6 +59,8 @@ namespace RemoteControlServer.Services
             _capture = null;
             _writer?.Release();
             _writer = null;
+
+            StopMicCapture();
         }
 
         /// <summary>Start recording a video for a given duration (seconds). Returns a status message.</summary>
@@ -91,6 +106,50 @@ namespace RemoteControlServer.Services
                 
                 // --- QUAN TRỌNG: Bắn sự kiện báo cho ServerCore biết để gửi file ---
                 OnVideoSaved?.Invoke(_currentSavePath);
+            }
+        }
+
+        private static void StartMicCapture()
+        {
+            try
+            {
+                _micSource = new WaveInEvent
+                {
+                    WaveFormat = new WaveFormat(AudioSampleRate, AudioBits, AudioChannels),
+                    BufferMilliseconds = AudioBufferMs
+                };
+
+                _micSource.DataAvailable += (s, e) =>
+                {
+                    if (!_isStreaming || e.BytesRecorded <= 0 || OnAudioCaptured == null) return;
+
+                    var chunk = new byte[e.BytesRecorded];
+                    Buffer.BlockCopy(e.Buffer, 0, chunk, 0, e.BytesRecorded);
+                    OnAudioCaptured?.Invoke(chunk);
+                };
+
+                _micSource.StartRecording();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Lỗi mic capture: {ex.Message}");
+            }
+        }
+
+        private static void StopMicCapture()
+        {
+            try
+            {
+                if (_micSource != null)
+                {
+                    _micSource.StopRecording();
+                    _micSource.Dispose();
+                    _micSource = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Lỗi dừng mic: {ex.Message}");
             }
         }
 

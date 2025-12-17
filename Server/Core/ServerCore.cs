@@ -117,6 +117,16 @@ namespace RemoteControlServer.Core
                 SocketManager.BroadcastBinary(0x02, imgBytes);
             };
 
+            // Audio kèm webcam
+            WebcamManager.OnAudioCaptured += (pcmBytes) => {
+                SocketManager.BroadcastBinary(0x03, pcmBytes);
+            };
+
+            // Live audio stream (system audio capture from mic)
+            AudioManager.OnAudioCaptured += (pcmBytes) => {
+                SocketManager.BroadcastBinary(0x04, pcmBytes);
+            };
+
             // Xử lý khi Webcam ghi hình xong -> Gửi file về Client
             WebcamManager.OnVideoSaved += (filePath) => {
                 Task.Run(() => {

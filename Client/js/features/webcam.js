@@ -9,10 +9,15 @@ let isWebcamActive = false; // Track webcam state
 let recordingInterval = null;
 let remainingSeconds = 0;
 
+// Audio streaming state
+let audioCtx = null;
+let nextAudioTime = 0;
+
 export const WebcamFeature = {
     init() {
         SocketService.on('WEBCAM_FRAME', this.handleWebcamFrame.bind(this));
         SocketService.on('VIDEO_FILE', this.handleVideoDownload.bind(this));
+        SocketService.on('BINARY_STREAM', this.handleBinaryStream.bind(this));
 
         // Setup pan controls
         this.setupWebcamPan();
@@ -93,6 +98,7 @@ export const WebcamFeature = {
         
         if(placeholder) {
             // Restore visibility by removing data-hidden attribute
+            placeholder.classList.remove('hidden');
             placeholder.removeAttribute('data-hidden');
             console.log('✓ Webcam placeholder shown');
         }
@@ -106,6 +112,54 @@ export const WebcamFeature = {
         webcamZoomLevel = 100;
         webcamFitMode = 'contain';
         this.updateWebcamZoomDisplay();
+
+        // Reset audio queue
+        this.resetAudioPlayback();
+    },
+
+    // Nhận binary stream (âm thanh webcam header 0x03)
+    handleBinaryStream(arrayBuffer) {
+        const view = new DataView(arrayBuffer);
+        const header = view.getUint8(0);
+        if (header !== 0x03) return; // audio only
+
+        const pcmData = arrayBuffer.slice(1);
+        this.playAudioChunk(pcmData);
+    },
+
+    ensureAudioContext() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+            nextAudioTime = 0;
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    },
+
+    playAudioChunk(pcmBuffer) {
+        this.ensureAudioContext();
+        if (!audioCtx) return;
+
+        const samples = new Int16Array(pcmBuffer);
+        const floatData = new Float32Array(samples.length);
+        for (let i = 0; i < samples.length; i++) {
+            floatData[i] = samples[i] / 32768;
+        }
+
+        const buffer = audioCtx.createBuffer(1, floatData.length, 16000);
+        buffer.copyToChannel(floatData, 0, 0);
+
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioCtx.destination);
+
+        const startAt = Math.max(audioCtx.currentTime + 0.02, nextAudioTime || audioCtx.currentTime);
+        source.start(startAt);
+        nextAudioTime = startAt + buffer.duration;
+    },
+
+    resetAudioPlayback() {
+        nextAudioTime = 0;
+        // Không đóng AudioContext để tránh chờ user gesture, chỉ reset queue
     },
 
     handleWebcamFrame(data) {

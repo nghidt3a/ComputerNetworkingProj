@@ -160,6 +160,14 @@ namespace RemoteControlServer.Core
                     string recMsg = StreamManager.StartRecording(sec);
                     SocketManager.SendJson(socket, "LOG", recMsg);
                     break;
+                case "START_AUDIO":
+                    AudioManager.StartStreaming();
+                    SocketManager.SendJson(socket, "LOG", "Đã bật stream âm thanh");
+                    break;
+                case "STOP_AUDIO":
+                    AudioManager.StopStreaming();
+                    SocketManager.SendJson(socket, "LOG", "Đã tắt stream âm thanh");
+                    break;
                 case "RECORD_AUDIO":
                     int audioSec = 10; // Mặc định 10s
                     int.TryParse(packet.param, out audioSec);

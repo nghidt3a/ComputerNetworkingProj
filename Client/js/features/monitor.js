@@ -12,6 +12,11 @@ let startX, startY, scrollLeft, scrollTop;
 let isControlEnabled = false;
 let lastMoveTime = 0;
 
+// FPS tracking
+let fpsCount = 0;
+let lastFpsTimestamp = performance.now();
+let currentFps = 0;
+
 // Performance optimization
 let frameUpdateScheduled = false;
 let pendingFrameBlob = null;
@@ -342,6 +347,7 @@ export const MonitorFeature = {
 
     if (placeholder) {
       // Restore visibility by removing data-hidden attribute
+      placeholder.classList.remove("hidden");
       placeholder.removeAttribute("data-hidden");
       console.log("Placeholder shown");
     }
@@ -350,6 +356,12 @@ export const MonitorFeature = {
     currentZoom = 100;
     fitMode = "contain";
     this.updateZoomIndicator();
+
+    // Reset FPS indicator
+    fpsCount = 0;
+    currentFps = 0;
+    lastFpsTimestamp = performance.now();
+    this.updateFpsIndicator();
   },
 
   // --- Recording ---
@@ -493,6 +505,17 @@ export const MonitorFeature = {
       return;
     }
 
+    // FPS counting
+    fpsCount += 1;
+    const now = performance.now();
+    const elapsed = now - lastFpsTimestamp;
+    if (elapsed >= 1000) {
+      currentFps = Math.round((fpsCount * 1000) / elapsed);
+      fpsCount = 0;
+      lastFpsTimestamp = now;
+      this.updateFpsIndicator();
+    }
+
     // Tạo blob và lưu tạm để xử lý với requestAnimationFrame
     const blob = new Blob([blobData], { type: "image/jpeg" });
     pendingFrameBlob = blob;
@@ -536,6 +559,11 @@ export const MonitorFeature = {
       placeholder.classList.add("hidden");
       placeholder.setAttribute("data-hidden", "true");
     }
+  },
+
+  updateFpsIndicator() {
+    const fpsEl = document.getElementById("monitor-fps");
+    if (fpsEl) fpsEl.textContent = `FPS: ${currentFps}`;
   },
 
   // Xử lý ảnh xem trước (Base64)

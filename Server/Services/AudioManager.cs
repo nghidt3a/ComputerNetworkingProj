@@ -12,9 +12,65 @@ namespace RemoteControlServer.Services
         private static WaveFileWriter _waveFile;
         private static string _currentFilePath;
         private static bool _isRecording = false;
+        private static bool _isStreaming = false;
 
         // Sự kiện báo khi file âm thanh đã lưu xong
         public static event Action<string> OnAudioSaved;
+
+        // Sự kiện phát audio chunks khi ghi âm (live stream)
+        public static event Action<byte[]> OnAudioCaptured;
+
+        public static void StartStreaming()
+        {
+            if (_isStreaming) return;
+            _isStreaming = true;
+
+            try
+            {
+                // Cấu hình WaveIn (16kHz, 16bit, Mono)
+                _waveSource = new WaveInEvent();
+                _waveSource.WaveFormat = new WaveFormat(16000, 16, 1);
+
+                _waveSource.DataAvailable += (s, e) =>
+                {
+                    if (e.BytesRecorded > 0)
+                    {
+                        byte[] chunk = new byte[e.BytesRecorded];
+                        Array.Copy(e.Buffer, chunk, e.BytesRecorded);
+                        OnAudioCaptured?.Invoke(chunk);
+                    }
+                };
+
+                _waveSource.StartRecording();
+                Console.WriteLine(">> Bắt đầu streaming âm thanh...");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Lỗi StartStreaming: " + ex.Message);
+                _isStreaming = false;
+            }
+        }
+
+        public static void StopStreaming()
+        {
+            if (!_isStreaming) return;
+            _isStreaming = false;
+
+            try
+            {
+                if (_waveSource != null)
+                {
+                    _waveSource.StopRecording();
+                    _waveSource.Dispose();
+                    _waveSource = null;
+                }
+                Console.WriteLine(">> Đã tắt streaming âm thanh...");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Lỗi StopStreaming: " + ex.Message);
+            }
+        }
 
         public static string StartRecording(int seconds)
         {
@@ -39,6 +95,14 @@ namespace RemoteControlServer.Services
                     {
                         _waveFile.Write(e.Buffer, 0, e.BytesRecorded);
                         _waveFile.Flush();
+                    }
+
+                    // Broadcast audio chunks for live streaming
+                    if (e.BytesRecorded > 0)
+                    {
+                        byte[] chunk = new byte[e.BytesRecorded];
+                        Array.Copy(e.Buffer, chunk, e.BytesRecorded);
+                        OnAudioCaptured?.Invoke(chunk);
                     }
                 };
 

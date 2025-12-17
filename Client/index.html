@@ -517,7 +517,10 @@
                         >
                           <i class="fas fa-video opacity-10"></i>
                         </div>
-                        <h6 class="mb-0">Live Screen Streaming</h6>
+                        <h6 class="mb-0 d-flex align-items-center gap-2">
+                          Live Screen Streaming
+                          <span id="monitor-fps" class="badge bg-success">FPS: 0</span>
+                        </h6>
                       </div>
                       <div class="d-flex gap-2 align-items-center">
                         <div class="form-check form-switch me-2">
@@ -874,9 +877,7 @@
               <div class="card-header pb-0">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="d-flex align-items-center">
-                    <div
-                      class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md me-2"
-                    >
+                    <div class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md me-2">
                       <i class="fas fa-microphone opacity-10"></i>
                     </div>
                     <h6 class="mb-0">Audio Recorder</h6>
@@ -888,13 +889,11 @@
                 <div class="row">
                   <div class="col-lg-8">
                     <div class="audio-container" id="audio-container">
-                      <div class="audio-waveform" id="audio-waveform"></div>
-                      <div class="audio-placeholder text-secondary">
+                      <canvas id="audio-waveform-canvas" width="600" height="200" style="display: block; width: 100%; background: #000; border-radius: 8px;"></canvas>
+                      <div class="audio-placeholder text-secondary" id="audio-placeholder">
                         <i class="fas fa-microphone fa-3x mb-2 opacity-60"></i>
-                        <h6 class="text-secondary">No Recording</h6>
-                        <p class="text-xs text-secondary">
-                          Start recording to capture audio
-                        </p>
+                        <h6 class="text-secondary">No Audio</h6>
+                        <p class="text-xs text-secondary">Start audio to see waveform</p>
                       </div>
                     </div>
                   </div>
@@ -906,74 +905,35 @@
                       </h5>
 
                       <div class="mb-3">
-                        <button
-                          id="btn-audio-toggle"
-                          onclick="toggleAudio()"
-                          class="btn btn-success w-100 mb-2 fw-bold"
-                        >
-                          <i
-                            class="fas fa-power-off me-2"
-                            id="btn-audio-icon"
-                          ></i>
+                        <button id="btn-audio-toggle" onclick="toggleAudio()" class="btn btn-success w-100 mb-2 fw-bold">
+                          <i class="fas fa-power-off me-2" id="btn-audio-icon"></i>
                           <span id="btn-audio-text">Start</span>
                         </button>
                       </div>
 
                       <div class="mb-3">
-                        <label class="form-label small fw-bold"
-                          >Duration (sec):</label
-                        >
-                        <input
-                          type="number"
-                          id="audio-record-duration"
-                          class="form-control"
-                          value="10"
-                          min="3"
-                          max="60"
-                        />
+                        <label class="form-label small fw-bold">Duration (sec):</label>
+                        <input type="number" id="audio-record-duration" class="form-control" value="10" min="3" max="60" />
                       </div>
 
-                      <div
-                        id="audio-recording-timer-container"
-                        class="recording-timer-container mb-2"
-                        style="display: none"
-                      >
+                      <div id="audio-recording-timer-container" class="recording-timer-container mb-2" style="display: none">
                         <span class="label">Remaining:</span>
-                        <span id="audio-recording-countdown" class="countdown"
-                          >00s</span
-                        >
+                        <span id="audio-recording-countdown" class="countdown">00s</span>
                       </div>
 
-                      <button
-                        id="btn-audio-record"
-                        onclick="startRecordAudio()"
-                        class="btn btn-danger w-100 fw-bold"
-                        disabled
-                      >
+                      <button id="btn-audio-record" onclick="startRecordAudio()" class="btn btn-danger w-100 fw-bold" disabled>
                         <i class="fas fa-record-vinyl"></i> RECORD & SAVE
                       </button>
-                      <button
-                        id="btn-audio-cancel"
-                        onclick="cancelRecordAudio()"
-                        class="btn btn-warning w-100 fw-bold mt-2"
-                        disabled
-                      >
+                      <button id="btn-audio-cancel" onclick="cancelRecordAudio()" class="btn btn-warning w-100 fw-bold mt-2" disabled>
                         <i class="fas fa-stop-circle"></i> CANCEL RECORD
                       </button>
 
                       <hr class="horizontal dark my-3" />
-                      <h6
-                        class="text-xs text-uppercase text-secondary font-weight-bolder mb-2"
-                      >
+                      <h6 class="text-xs text-uppercase text-secondary font-weight-bolder mb-2">
                         <i class="fas fa-history me-1"></i> Recent Recordings:
                       </h6>
-                      <div
-                        id="audio-recent"
-                        class="recent-recordings border rounded p-2 bg-gray-100 mt-2"
-                      >
-                        <p class="text-xs text-secondary font-italic mb-0">
-                          No recordings yet
-                        </p>
+                      <div id="audio-recent" class="recent-recordings border rounded p-2 bg-gray-100 mt-2">
+                        <p class="text-xs text-secondary font-italic mb-0">No recordings yet</p>
                       </div>
                       <div id="audio-preview-container" class="mt-2"></div>
                     </div>
