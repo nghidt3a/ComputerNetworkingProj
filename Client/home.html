@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RCS — Entry</title>
+    <title>N-SIGHT — Entry</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
       rel="stylesheet"
@@ -52,12 +52,12 @@
   <body>
     <main class="gateway">
       <div class="d-flex justify-content-between align-items-center mb-2">
-        <span class="badge-soft">RCS</span>
+        <span class="badge-soft">N-SIGHT</span>
         <button class="btn btn-sm btn-outline-secondary" id="themeToggle" aria-label="Đổi giao diện">
           <i class="fas fa-moon"></i>
         </button>
       </div>
-      <h1>Remote Control System</h1>
+      <h1>N-SIGHT — Remote Control System</h1>
       <p>Chọn điểm bắt đầu: xem landing giới thiệu hoặc đi thẳng vào dashboard điều khiển.</p>
       <div class="btn-group-custom mb-3">
         <a class="btn btn-primary btn-large" href="landing/landing.html">
@@ -74,7 +74,7 @@
       (() => {
         const root = document.documentElement;
         const btn = document.getElementById('themeToggle');
-        const KEY = 'rcs-entry-theme';
+        const KEY = 'nsight-entry-theme';
         const saved = localStorage.getItem(KEY);
         if (saved === 'dark') root.setAttribute('data-theme', 'dark');
         const sync = () => {

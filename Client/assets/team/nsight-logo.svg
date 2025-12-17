@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title>N-SIGHT Logo</title>
+  <desc>Minimal eye logo for N-SIGHT using project primary blues</desc>
+  <defs>
+    <linearGradient id="g-main" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <linearGradient id="g-accent" x1="30%" y1="20%" x2="70%" y2="80%">
+      <stop offset="0%" stop-color="#1e40af" />
+      <stop offset="100%" stop-color="#60a5fa" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer eye shape -->
+  <path d="M24 128c30-48 74-72 104-72s74 24 104 72c-30 48-74 72-104 72s-74-24-104-72z"
+        fill="none" stroke="url(#g-main)" stroke-width="12" stroke-linecap="round" />
+
+  <!-- Iris -->
+  <circle cx="128" cy="128" r="44" fill="url(#g-accent)" />
+
+  <!-- Pupil -->
+  <circle cx="128" cy="128" r="22" fill="#0f172a" />
+
+  <!-- Radial spokes -->
+  <g stroke="#dbeafe" stroke-width="4" stroke-linecap="round">
+    <line x1="128" y1="84" x2="128" y2="70" />
+    <line x1="128" y1="188" x2="128" y2="174" />
+    <line x1="84" y1="128" x2="70" y2="128" />
+    <line x1="188" y1="128" x2="174" y2="128" />
+    <line x1="155" y1="101" x2="166" y2="90" />
+    <line x1="101" y1="155" x2="90" y2="166" />
+    <line x1="155" y1="155" x2="166" y2="166" />
+    <line x1="101" y1="101" x2="90" y2="90" />
+  </g>
+
+  <!-- Highlight -->
+  <circle cx="152" cy="108" r="10" fill="#dbeafe" opacity="0.85" />
+</svg>

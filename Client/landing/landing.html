@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RCS — Landing</title>
+    <title>Remote Control System — Landing</title>
 
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
@@ -28,11 +28,19 @@
   </head>
   <body>
     <header class="landing-header">
-      <div class="container d-flex align-items-center justify-content-between">
+      <div class="container d-flex align-items-center justify-content-between gap-3">
         <a class="brand d-flex align-items-center gap-2" href="#" aria-label="Trang chủ">
-          <i class="fas fa-network-wired text-primary" style="font-size: 1.25rem"></i>
-          <span class="fw-bold text-primary">RCS SYSTEM</span>
+          <img src="../assets/team/nsight-logo.svg" alt="N-SIGHT Team" style="height: 32px; width: auto" loading="lazy" />
+          <span class="fw-bold text-primary">N-SIGHT</span>
         </a>
+        <nav class="landing-nav" id="landingNav">
+          <a href="#about" class="nav-link">Giới thiệu</a>
+          <a href="#core-features" class="nav-link">Tính năng cốt lõi</a>
+          <a href="#architecture" class="nav-link">Kiến trúc hệ thống</a>
+          <a href="#members" class="nav-link">Thành viên</a>
+          <a href="#demo" class="nav-link">Demo</a>
+          <a href="../index.html" class="btn btn-primary ms-2">Đăng nhập</a>
+        </nav>
         <div class="header-actions d-flex align-items-center gap-2">
           <button class="theme-toggle" id="themeToggle" aria-label="Đổi giao diện" title="Đổi giao diện">
             <i class="fas fa-moon"></i>
@@ -41,12 +49,6 @@
             <span></span><span></span><span></span>
           </button>
         </div>
-        <nav class="landing-nav" id="landingNav">
-          <a href="#about" class="nav-link">Giới thiệu</a>
-          <a href="#members" class="nav-link">Thành viên</a>
-          <a href="#demo" class="nav-link">Demo</a>
-          <a href="../index.html" class="btn btn-primary ms-2">Đăng nhập</a>
-        </nav>
       </div>
     </header>
 
@@ -54,7 +56,9 @@
       <!-- Hero -->
       <section class="hero section-padding text-center reveal">
         <div class="container">
-          <h1 class="display-5 fw-800 mb-3">Remote Control System</h1>
+          <h1 class="display-5 fw-800 mb-3">
+            Remote Control System — Computer Networking 24CTT5
+          </h1>
           <p class="lead text-secondary mx-auto maxw-720">
             Nền tảng điều khiển và giám sát hệ thống từ xa với giao diện Soft UI
             đồng bộ, tối ưu trải nghiệm và hiệu năng.
@@ -89,7 +93,7 @@
                   <div class="about-visual card-background bg-gradient-primary border-radius-xl p-0 overflow-hidden">
                     <div class="full-background opacity-100"></div>
                     <div class="p-4 text-white position-relative" style="z-index:1">
-                      <h3 class="h5 mb-2">RCS Overview</h3>
+                      <h3 class="h5 mb-2">Remote Control System Overview</h3>
                       <p class="mb-0">Soft shadows • Smooth interactions • Clean tokens</p>
                     </div>
                   </div>
@@ -226,7 +230,7 @@
             </div>
             <div class="col-lg-6">
               <div class="video-frame">
-                <iframe id="ytFrame" title="RCS Demo" loading="lazy" allowfullscreen></iframe>
+                <iframe id="ytFrame" title="N-SIGHT Demo" loading="lazy" allowfullscreen></iframe>
               </div>
             </div>
           </div>
@@ -236,7 +240,7 @@
 
     <footer class="landing-footer text-center text-secondary">
       <div class="container py-4">
-        <small>© <span id="year"></span> RCS Team — All rights reserved.</small>
+        <small>© <span id="year"></span> N-SIGHT Team — All rights reserved.</small>
       </div>
     </footer>
 

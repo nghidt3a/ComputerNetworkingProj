@@ -3,16 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RCS - Remote Control System</title>
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖥️</text></svg>"
+    <meta
+      name="description"
+      content="Remote monitoring and control dashboard for screen, webcam, audio, files, and processes. Computer Networking project - Class 24CTT5."
     />
+    <title>Overview | Computer Networking 24CTT5</title>
+    <link rel="icon" href="assets/team/nsight-logo.svg" type="image/svg+xml" />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Consolas&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800&family=Inter:wght@300;400;500;600;800&display=swap"
       rel="stylesheet"
     />
+
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -39,47 +43,57 @@
   <body>
     <section id="login-overlay" class="overlay-container">
       <div class="login-card">
-        <h2 class="mb-4 fw-bold text-primary">
-          <i class="fas fa-shield-alt"></i> RCS Login
-        </h2>
-        <form id="login-form" onsubmit="event.preventDefault();">
-          <div class="mb-3 text-start">
+        <div class="login-card__header">
+          <div class="login-icon">
+            <img src="assets/team/nsight-logo.svg" alt="N-SIGHT Logo" />
+          </div>
+          <div>
+            <p class="login-eyebrow">Remote Access</p>
+            <h2>N-SIGHT Login</h2>
+            <p class="login-subtitle">Kết nối bảo mật tới hệ thống điều khiển.</p>
+          </div>
+        </div>
+
+        <form id="login-form" class="login-form" onsubmit="event.preventDefault();">
+          <div class="input-group-custom">
             <label class="form-label small fw-bold">Server IP</label>
-            <input
-              type="text"
-              id="server-ip"
-              class="form-control mb-2"
-              value="localhost"
-            />
-            <div class="row">
-              <div class="col-6">
-                <label class="form-label small fw-bold">Port</label>
-                <input
-                  type="number"
-                  id="server-port"
-                  class="form-control mb-2"
-                  value="8181"
-                />
+            <div class="input-with-icon">
+              <i class="fas fa-server input-icon"></i>
+              <input type="text" id="server-ip" class="form-control" value="localhost" />
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-6">
+              <label class="form-label small fw-bold">Port</label>
+              <div class="input-with-icon">
+                <i class="fas fa-plug input-icon"></i>
+                <input type="number" id="server-port" class="form-control" value="8181" />
               </div>
-              <div class="col-6">
-                <label class="form-label small fw-bold">Password</label>
-                <input
-                  type="password"
-                  id="auth-pass"
-                  class="form-control mb-2"
-                  value="123"
-                />
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-bold">Password</label>
+              <div class="input-with-icon input-affix">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="auth-pass" class="form-control" value="123" />
+                <button type="button" class="affix-btn" aria-label="Toggle password visibility" id="toggle-pass">
+                  <i class="fas fa-eye-slash"></i>
+                </button>
               </div>
             </div>
           </div>
-          <button
-            type="submit"
-            id="btn-connect"
-            class="btn btn-primary w-100 fw-bold py-2"
-          >
+
+          <div class="login-meta">
+            <p id="login-error" class="login-status small"></p>
+          </div>
+
+          <button type="submit" id="btn-connect" class="btn btn-primary w-100 fw-bold py-2">
             CONNECT SYSTEM
           </button>
-          <p id="login-error" class="mt-3 text-danger fw-bold small"></p>
+
+          <p class="login-footnote small text-muted mt-1">
+            Chỉ quản trị viên được phép truy cập bảng điều khiển.
+          </p>
         </form>
       </div>
     </section>
@@ -90,6 +104,14 @@
         id="sidebar"
       >
         <div class="sidenav-header">
+          <button
+            id="menu-toggle"
+            class="btn btn-link text-dark p-0 d-inline-flex align-items-center justify-content-center hero-menu-toggle me-2"
+            style="font-size: 1.25rem; z-index: 10;"
+            aria-label="Toggle menu"
+          >
+            <i class="fas fa-bars"></i>
+          </button>
           <i
             class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
             aria-hidden="true"
@@ -101,11 +123,13 @@
             id="logo-heading"
             title="Back to Dashboard"
           >
-            <i
-              class="fas fa-network-wired text-primary"
-              style="font-size: 1.5rem"
-            ></i>
-            <span class="ms-2 font-weight-bold text-primary">RCS SYSTEM</span>
+            <img
+              src="assets/team/nsight-logo.svg"
+              alt="Remote Control System - 24CTT5"
+              style="height: 40px; width: auto"
+              loading="lazy"
+            />
+            <span class="ms-2 font-weight-bold text-primary">N-SIGHT</span>
           </a>
         </div>
         <hr class="horizontal dark mt-0 mb-0" />
@@ -216,41 +240,24 @@
           class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl"
           id="navbarBlur"
         >
-          <div class="container-fluid py-1 px-3">
-            <button
-              id="menu-toggle"
-              class="btn btn-link text-dark p-0 me-3 d-inline-block"
-              style="font-size: 1.25rem"
-            >
-              <i class="fas fa-bars"></i>
-            </button>
-            <nav aria-label="breadcrumb">
-              <ol
-                class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5"
-              >
-                <li class="breadcrumb-item text-sm">
-                  <a
-                    class="opacity-5 text-dark"
-                    id="breadcrumb-root"
-                    href="javascript:;"
-                    >Pages</a
-                  >
-                </li>
-                <li
-                  class="breadcrumb-item text-sm text-dark active font-weight-bolder"
-                  aria-current="page"
-                  id="breadcrumb-current"
-                >
-                  Overview
-                </li>
-              </ol>
-              <h6 class="font-weight-bolder mb-0" id="page-title">Overview</h6>
-            </nav>
+          <div class="container-fluid py-2 px-3">
             <div
-              class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4"
-              id="navbar"
+              class="hero-bar d-flex flex-wrap align-items-center justify-content-between w-100 gap-3 position-relative"
             >
-              <div class="ms-md-auto pe-md-3 d-flex align-items-center gap-3">
+              <div class="d-flex align-items-center flex-wrap gap-3">
+                <div class="hero-title-block">
+                  <div class="hero-title" id="hero-title">
+                    <span class="hero-title-line">
+                      <span class="hero-title-chunk">Remote Control System</span>
+                    </span>
+                    <span class="hero-title-line hero-title-secondary">
+                      <span class="hero-title-chunk">24CTT5 — Đồ án Mạng Máy Tính</span>
+                    </span>
+                  </div>
+                  <div class="hero-subtitle" id="hero-subtitle">Tổng quan hệ thống điều khiển từ xa</div>
+                </div>
+              </div>
+              <div class="d-flex align-items-center flex-wrap gap-3 hero-actions">
                 <button
                   id="theme-toggle"
                   class="btn btn-outline-primary btn-sm border-radius-lg"
@@ -275,6 +282,8 @@
                   </div>
                 </div>
               </div>
+              <button
+                <!-- Hamburger button đã chuyển vào sidebar -->
             </div>
           </div>
         </nav>
@@ -1490,6 +1499,22 @@
         </div>
       </div>
     </div>
+
+    <script>
+      (() => {
+        const passInput = document.getElementById('auth-pass');
+        const toggleBtn = document.getElementById('toggle-pass');
+
+        if (passInput && toggleBtn) {
+          toggleBtn.addEventListener('click', () => {
+            const isHidden = passInput.type === 'password';
+            passInput.type = isHidden ? 'text' : 'password';
+            const icon = toggleBtn.querySelector('i');
+            if (icon) icon.className = isHidden ? 'fas fa-eye' : 'fas fa-eye-slash';
+          });
+        }
+      })();
+    </script>
 
     <script type="module" src="js/main.js"></script>
   </body>

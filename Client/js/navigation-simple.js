@@ -8,11 +8,24 @@
  * 3. Nếu hoạt động, vấn đề là do animations. Nếu không, vấn đề khác.
  */
 
+const subtitleMap = {
+  dashboard: "Tổng quan hệ thống điều khiển từ xa",
+  monitor: "Giám sát màn hình theo thời gian thực",
+  webcam: "Theo dõi webcam và ghi hình an toàn",
+  audio: "Ghi âm và phát lại âm thanh từ xa",
+  processes: "Quản lý tiến trình, ứng dụng và tài nguyên",
+  files: "Duyệt, tải lên và tải xuống tệp",
+  terminal: "Theo dõi log và lệnh hệ thống"
+};
+
+let heroSubtitleEl = null;
+
 export function setupSimpleNavigation() {
   console.log("=== SIMPLE NAVIGATION INITIALIZED ===");
 
   // Find all navigation buttons (support both old and new structure)
   const navButtons = document.querySelectorAll("[data-tab]");
+  heroSubtitleEl = document.getElementById("hero-subtitle");
 
   console.log(`Found ${navButtons.length} navigation buttons`);
 
@@ -20,6 +33,14 @@ export function setupSimpleNavigation() {
     console.error("No navigation buttons found! Check HTML structure.");
     return;
   }
+
+  // Update tab names
+  navButtons.forEach((button) => {
+    if (button.dataset.tab === "Remote System") {
+      button.dataset.tab = "Overview";
+      button.textContent = "Overview"; // Cập nhật văn bản hiển thị
+    }
+  });
 
   // Attach click handlers
   navButtons.forEach((btn, index) => {
@@ -31,6 +52,13 @@ export function setupSimpleNavigation() {
       handleTabChange(targetId, btn);
     });
   });
+
+  // Set initial subtitle based on the active tab (fallback to dashboard)
+  const activeBtn = document.querySelector("[data-tab].active") || navButtons[0];
+  if (activeBtn) {
+    const initialTab = activeBtn.getAttribute("data-tab") || "dashboard";
+    updateHeroSubtitle(initialTab);
+  }
 
   // Disconnect button
   const disconnectBtn = document.getElementById("btn-disconnect");
@@ -76,35 +104,8 @@ function handleTabChange(targetId, clickedBtn) {
   targetTab.classList.add("active");
   console.log("Active class added to tab");
 
-  // 6. Update page title
-  const titleMap = {
-    dashboard: "Overview",
-    monitor: "Screen Monitor",
-    webcam: "Webcam Control",
-    processes: "Process Manager",
-    files: "File Explorer",
-    terminal: "Terminal Logs",
-    audio: "Audio Recorder",
-  };
-
-  const newTitle = titleMap[targetId] || "RCS";
-  const pageTitleEl = document.getElementById("page-title");
-
-  if (pageTitleEl) {
-    pageTitleEl.innerText = newTitle;
-    console.log(`Title updated to: ${newTitle}`);
-  }
-
-  // 6.1 Update breadcrumb to be consistent and professional
-  const breadcrumbCurrent = document.getElementById("breadcrumb-current");
-  if (breadcrumbCurrent) {
-    breadcrumbCurrent.textContent = newTitle;
-  }
-  // Keep the root breadcrumb stable (e.g., "Pages")
-  const breadcrumbRoot = document.getElementById("breadcrumb-root");
-  if (breadcrumbRoot && breadcrumbRoot.textContent.trim().length === 0) {
-    breadcrumbRoot.textContent = "Pages";
-  }
+  // 6. Update hero subtitle per tab
+  updateHeroSubtitle(targetId);
 
   // 7. Verify final state
   console.log(
@@ -113,6 +114,11 @@ function handleTabChange(targetId, clickedBtn) {
   );
   console.log("Active tab:", document.querySelector(".tab-content.active")?.id);
   console.log("=== TAB CHANGE COMPLETE ===\n");
+}
+
+function updateHeroSubtitle(tabId) {
+  if (!heroSubtitleEl) return;
+  heroSubtitleEl.textContent = subtitleMap[tabId] || "Tổng quan hệ thống điều khiển từ xa";
 }
 
 /**

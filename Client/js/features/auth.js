@@ -19,6 +19,39 @@ export const AuthFeature = {
                 this.handleLogin();
             });
         }
+
+        // Attach password visibility toggle
+        this.setupPasswordToggle();
+    },
+
+    setupPasswordToggle() {
+        const passInput = document.getElementById('auth-pass');
+        const toggleBtn = document.getElementById('toggle-pass');
+        if (!passInput || !toggleBtn) return;
+
+        const icon = toggleBtn.querySelector('i');
+
+        const setVisible = (isVisible) => {
+            passInput.type = isVisible ? 'text' : 'password';
+            if (icon) {
+                icon.classList.remove('fa-eye', 'fa-eye-slash');
+                icon.classList.add(isVisible ? 'fa-eye' : 'fa-eye-slash');
+            }
+            toggleBtn.setAttribute('aria-pressed', String(isVisible));
+            toggleBtn.setAttribute('aria-label', isVisible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+        };
+
+        // Default to hidden
+        setVisible(false);
+
+        toggleBtn.addEventListener('click', () => {
+            const isVisible = passInput.type === 'password';
+            setVisible(isVisible);
+            // keep focus at end of input for better UX
+            passInput.focus({ preventScroll: true });
+            const len = passInput.value.length;
+            passInput.setSelectionRange(len, len);
+        });
     },
 
     async handleLogin() {

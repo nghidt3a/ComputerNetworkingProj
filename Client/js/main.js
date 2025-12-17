@@ -152,31 +152,7 @@ function setupNavigation() {
         currentTab && currentTab !== targetTab ? 200 : 0
       );
 
-      // 4. Update Title and Breadcrumb with animation
-      const titleMap = {
-        dashboard: "Overview",
-        monitor: "Screen Monitor",
-        webcam: "Webcam Control",
-        processes: "Process Manager",
-        files: "File Explorer",
-        terminal: "Terminal Logs",
-      };
-      const newTitle = titleMap[targetId] || "RCS";
-      const pageTitle = document.getElementById("page-title");
-      if (pageTitle) {
-        pageTitle.style.transition = "opacity 0.2s ease";
-        pageTitle.style.opacity = "0";
-        setTimeout(() => {
-          pageTitle.innerText = newTitle;
-          pageTitle.style.opacity = "1";
-        }, 200);
-      }
-
-      // Update breadcrumb if exists
-      const breadcrumb = document.getElementById("breadcrumb-current");
-      if (breadcrumb) {
-        breadcrumb.innerText = newTitle;
-      }
+      // 4. Header remains static for unified branding; no breadcrumb/title updates
 
       // 6. Scroll to top smoothly
       window.scrollTo({ top: 0, behavior: "smooth" });
