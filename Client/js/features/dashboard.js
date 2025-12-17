@@ -264,12 +264,15 @@ export const DashboardFeature = {
 
         const elGpuInfo = document.getElementById('stat-gpu-info');
         if (elGpuInfo) {
-            if (perf.gpuClock !== undefined && perf.gpuClockMax !== undefined) {
-                elGpuInfo.textContent = `${perf.gpuClock}/${perf.gpuClockMax} MHz`;
-            } else if (perf.vramUsedGB !== undefined && perf.vramTotalGB !== undefined) {
-                elGpuInfo.textContent = `${Number(perf.vramUsedGB).toFixed(1)}/${Number(perf.vramTotalGB).toFixed(1)} GB`;
+            // Show GPU clock speed similar to CPU (current/max GHz)
+            const gpuCur = Number(perf.gpuClockCurrent);
+            const gpuMax = Number(perf.gpuClockMax);
+            if (!Number.isNaN(gpuCur) && gpuCur > 0 && !Number.isNaN(gpuMax) && gpuMax > 0) {
+                elGpuInfo.textContent = `${gpuCur.toFixed(2)}/${gpuMax.toFixed(2)} GHz`;
+            } else if (!Number.isNaN(gpuMax) && gpuMax > 0) {
+                elGpuInfo.textContent = `Max ${gpuMax.toFixed(2)} GHz`;
             } else {
-                elGpuInfo.textContent = '--';
+                elGpuInfo.textContent = `Util ${gpuUsage}%`;
             }
         }
 
@@ -298,7 +301,7 @@ export const DashboardFeature = {
 
         const diskUsage = clampPercent(perf.diskUsage);
         const ssdGauge = document.getElementById('stat-ssd-gauge');
-        setGauge(ssdGauge, diskUsage, 44);
+        setGauge(ssdGauge, diskUsage, 55);
         const elSsdPercent = document.getElementById('stat-ssd-percent');
         if (elSsdPercent) elSsdPercent.textContent = `${diskUsage}%`;
 

@@ -7,6 +7,7 @@ using System.Management;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace RemoteControlServer.Helpers
 {
@@ -15,8 +16,14 @@ namespace RemoteControlServer.Helpers
         private static PerformanceCounter cpuCounter;
         private static PerformanceCounter ramCounter;
         private static PerformanceCounter cpuFreqCounter;
+        private static PerformanceCounter cpuPerfCounter; // % Processor Performance
+        private static PerformanceCounter cpuActualFreqCounter; // Processor Frequency (MHz)
+        private static List<PerformanceCounter> gpu3dCounters;
         private static double _totalRamMB = 0;
-        private static double _cpuMaxSpeedGHz = 0;
+        private static double _cpuBaseSpeedGHz = 0;  // Base clock from WMI
+        private static double _cpuTurboMaxGHz = 0;   // Turbo max (tracked or estimated)
+        private static double _gpuMaxClockMHz = 0;
+        private static bool _gpuMaxClockCached = false;
 
         public static void InitCounters()
         {
@@ -29,11 +36,210 @@ namespace RemoteControlServer.Helpers
                     cpuFreqCounter = new PerformanceCounter("Processor", "% Processor Frequency", "_Total");
                     cpuCounter.NextValue(); // Gọi mồi
                     cpuFreqCounter.NextValue(); // Gọi mồi tần số
-                    CacheCpuMaxSpeed();
+                    
+                    // Init % Processor Performance counter for turbo detection
+                    try {
+                        cpuPerfCounter = new PerformanceCounter("Processor Information", "% Processor Performance", "_Total");
+                        cpuPerfCounter.NextValue();
+                    } catch { }
+                    
+                    // Init Processor Frequency counter for actual MHz
+                    try {
+                        cpuActualFreqCounter = new PerformanceCounter("Processor Information", "Processor Frequency", "_Total");
+                        cpuActualFreqCounter.NextValue();
+                    } catch { }
+                    
+                    InitGpuCounters();
+                    CacheCpuBaseSpeed();
+                    EstimateTurboMax();
+                    CacheGpuMaxClock();
                     GetTotalRam();
                 }
             }
             catch { }
+        }
+
+        private static void InitGpuCounters()
+        {
+            try
+            {
+                gpu3dCounters = new List<PerformanceCounter>();
+                var gpuCategory = new PerformanceCounterCategory("GPU Engine");
+                var instances = gpuCategory.GetInstanceNames();
+
+                foreach (var instanceName in instances)
+                {
+                    // Track 3D engines only; summing gives a decent overall signal.
+                    if (!instanceName.Contains("engtype_3D", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    var counter = new PerformanceCounter("GPU Engine", "Utilization Percentage", instanceName);
+                    counter.NextValue(); // warm-up
+                    gpu3dCounters.Add(counter);
+                }
+            }
+            catch
+            {
+                gpu3dCounters = null;
+            }
+        }
+
+        private static double GetCpuCurrentSpeedGHz()
+        {
+            try
+            {
+                // WMI CurrentClockSpeed - returns current MHz
+                using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT CurrentClockSpeed FROM Win32_Processor"))
+                {
+                    double totalMhz = 0;
+                    int count = 0;
+                    foreach (var obj in searcher.Get())
+                    {
+                        if (obj["CurrentClockSpeed"] != null)
+                        {
+                            totalMhz += Convert.ToDouble(obj["CurrentClockSpeed"]);
+                            count++;
+                        }
+                    }
+                    if (count > 0)
+                    {
+                        return (totalMhz / count) / 1000.0;
+                    }
+                }
+            }
+            catch { }
+            return 0;
+        }
+
+        // Cache GPU max clock at startup (only once)
+        private static void CacheGpuMaxClock()
+        {
+            if (_gpuMaxClockCached) return;
+            _gpuMaxClockCached = true;
+
+            try
+            {
+                // Try nvidia-smi for NVIDIA GPUs
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "nvidia-smi",
+                    Arguments = "--query-gpu=clocks.max.graphics --format=csv,noheader,nounits",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using (var proc = Process.Start(psi))
+                {
+                    if (proc != null)
+                    {
+                        var output = proc.StandardOutput.ReadToEnd().Trim();
+                        proc.WaitForExit(2000);
+                        if (double.TryParse(output, out double maxMHz))
+                        {
+                            _gpuMaxClockMHz = maxMHz;
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        // Get current GPU clock speed from nvidia-smi
+        private static double GetGpuCurrentClockMHz()
+        {
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "nvidia-smi",
+                    Arguments = "--query-gpu=clocks.current.graphics --format=csv,noheader,nounits",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using (var proc = Process.Start(psi))
+                {
+                    if (proc != null)
+                    {
+                        var output = proc.StandardOutput.ReadToEnd().Trim();
+                        proc.WaitForExit(1000);
+                        if (double.TryParse(output, out double curMHz))
+                        {
+                            return curMHz;
+                        }
+                    }
+                }
+            }
+            catch { }
+            return 0;
+        }
+
+        private static long GetBestVideoRamBytes()
+        {
+            // Method 1: Try nvidia-smi for accurate VRAM (NVIDIA GPUs)
+            try
+            {
+                string nvidiaSmiPath = @"C:\Windows\system32\nvidia-smi.exe";
+                if (System.IO.File.Exists(nvidiaSmiPath))
+                {
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = nvidiaSmiPath,
+                        Arguments = "--query-gpu=memory.total --format=csv,noheader,nounits",
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+                    using (var proc = Process.Start(psi))
+                    {
+                        if (proc != null)
+                        {
+                            var output = proc.StandardOutput.ReadToEnd().Trim();
+                            proc.WaitForExit(2000);
+                            if (proc.ExitCode == 0 && double.TryParse(output, out double mib))
+                            {
+                                // nvidia-smi returns MiB, convert to bytes
+                                return (long)(mib * 1024 * 1024);
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            // Method 2: Fallback to WMI
+            try
+            {
+                using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT Name, AdapterRAM FROM Win32_VideoController"))
+                {
+                    long bestRam = -1;
+                    foreach (var obj in searcher.Get())
+                    {
+                        var name = obj["Name"]?.ToString();
+                        if (string.IsNullOrWhiteSpace(name)) continue;
+
+                        var lowered = name.ToLowerInvariant();
+                        if (lowered.Contains("microsoft basic") || lowered.Contains("remote") || lowered.Contains("virtual") || lowered.Contains("citrix"))
+                            continue;
+
+                        long ram = 0;
+                        try
+                        {
+                            if (obj["AdapterRAM"] != null)
+                                ram = Convert.ToInt64(obj["AdapterRAM"]);
+                        }
+                        catch { ram = 0; }
+
+                        if (ram > bestRam)
+                            bestRam = ram;
+                    }
+
+                    if (bestRam > 0) return bestRam;
+                }
+            }
+            catch { }
+            return 0;
         }
 
         private static void GetTotalRam()
@@ -84,9 +290,11 @@ namespace RemoteControlServer.Helpers
             }
         }
 
-        private static void CacheCpuMaxSpeed()
+        private static void CacheCpuBaseSpeed()
         {
-            if (_cpuMaxSpeedGHz > 0) return;
+            if (_cpuBaseSpeedGHz > 0) return;
+            
+            // Use WMI MaxClockSpeed (base clock)
             try
             {
                 using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT MaxClockSpeed FROM Win32_Processor"))
@@ -95,13 +303,56 @@ namespace RemoteControlServer.Helpers
                     {
                         if (obj["MaxClockSpeed"] != null)
                         {
-                            _cpuMaxSpeedGHz = Convert.ToDouble(obj["MaxClockSpeed"]) / 1000.0;
+                            _cpuBaseSpeedGHz = Convert.ToDouble(obj["MaxClockSpeed"]) / 1000.0;
                         }
                         break;
                     }
                 }
             }
             catch { }
+        }
+
+        private static void EstimateTurboMax()
+        {
+            if (_cpuTurboMaxGHz > 0) return;
+            
+            // Estimate turbo max: typically 1.8x - 2.2x base clock for modern Intel CPUs
+            // i7-12700H: base 2.3 GHz, turbo 4.7 GHz = ~2.04x
+            // We'll use 2.0x as default multiplier, then track actual max observed
+            if (_cpuBaseSpeedGHz > 0)
+            {
+                _cpuTurboMaxGHz = _cpuBaseSpeedGHz * 2.0;
+            }
+            
+            // Try to get better estimate from % Processor Performance
+            try
+            {
+                if (cpuPerfCounter != null)
+                {
+                    // If performance > 100%, we can calculate turbo
+                    float perf = cpuPerfCounter.NextValue();
+                    System.Threading.Thread.Sleep(100);
+                    perf = cpuPerfCounter.NextValue();
+                    
+                    if (perf > 100 && _cpuBaseSpeedGHz > 0)
+                    {
+                        // Current actual speed = base * (perf/100)
+                        // This gives us a data point for turbo capability
+                        double actualGHz = _cpuBaseSpeedGHz * (perf / 100.0);
+                        if (actualGHz > _cpuTurboMaxGHz)
+                        {
+                            _cpuTurboMaxGHz = actualGHz;
+                        }
+                    }
+                }
+            }
+            catch { }
+            
+            // Minimum turbo max = base speed
+            if (_cpuTurboMaxGHz <= 0 && _cpuBaseSpeedGHz > 0)
+            {
+                _cpuTurboMaxGHz = _cpuBaseSpeedGHz;
+            }
         }
 
         public static object GetSystemInfo()
@@ -111,10 +362,38 @@ namespace RemoteControlServer.Helpers
             string vram = "N/A";
             double cpuMaxSpeedGHz = 0;
             int cpuCores = 0;
+            int cpuLogical = 0;
             long vramBytes = 0;
+            string osPretty = "Windows";
+            string osVersion = Environment.OSVersion.ToString();
 
             try
             {
+                // 0. OS (Caption + Version + Build) for human-readable output
+                try
+                {
+                    using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT Caption, Version, BuildNumber FROM Win32_OperatingSystem"))
+                    {
+                        foreach (var obj in searcher.Get())
+                        {
+                            var caption = obj["Caption"]?.ToString()?.Trim();
+                            var version = obj["Version"]?.ToString()?.Trim();
+                            var build = obj["BuildNumber"]?.ToString()?.Trim();
+                            if (!string.IsNullOrWhiteSpace(caption))
+                            {
+                                if (!string.IsNullOrWhiteSpace(version) && !string.IsNullOrWhiteSpace(build))
+                                    osPretty = $"{caption} ({version} Build {build})";
+                                else if (!string.IsNullOrWhiteSpace(version))
+                                    osPretty = $"{caption} ({version})";
+                                else
+                                    osPretty = caption;
+                            }
+                            break;
+                        }
+                    }
+                }
+                catch { }
+
                 // 1. CPU - lấy thêm max clock và cores
                 using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_Processor"))
                 {
@@ -124,39 +403,85 @@ namespace RemoteControlServer.Helpers
                         if (obj["MaxClockSpeed"] != null)
                         {
                             cpuMaxSpeedGHz = Convert.ToDouble(obj["MaxClockSpeed"]) / 1000.0;
-                            _cpuMaxSpeedGHz = cpuMaxSpeedGHz;
+                            _cpuBaseSpeedGHz = cpuMaxSpeedGHz;
                         }
                         if (obj["NumberOfCores"] != null)
                         {
                             cpuCores = Convert.ToInt32(obj["NumberOfCores"]);
                         }
-                        break;
-                    }
-                }
-
-                // 2. GPU & VRAM
-                using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_VideoController"))
-                {
-                    foreach (var obj in searcher.Get())
-                    {
-                        gpuName = obj["Name"]?.ToString();
-                        if (obj["AdapterRAM"] != null)
+                        if (obj["NumberOfLogicalProcessors"] != null)
                         {
-                            vramBytes = Convert.ToInt64(obj["AdapterRAM"]);
-                            if (vramBytes > 0) vram = (vramBytes / 1024 / 1024) + " MB";
+                            cpuLogical = Convert.ToInt32(obj["NumberOfLogicalProcessors"]);
                         }
                         break;
                     }
                 }
+
+                // 2. GPU Name & VRAM (use GetBestVideoRamBytes for accurate VRAM via nvidia-smi)
+                try
+                {
+                    // Get GPU name from WMI
+                    using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT Name FROM Win32_VideoController"))
+                    {
+                        string bestName = null;
+
+                        foreach (var obj in searcher.Get())
+                        {
+                            var name = obj["Name"]?.ToString();
+                            if (string.IsNullOrWhiteSpace(name)) continue;
+
+                            // Skip common virtual/basic adapters
+                            var lowered = name.ToLowerInvariant();
+                            if (lowered.Contains("microsoft basic") || lowered.Contains("remote") || lowered.Contains("virtual") || lowered.Contains("citrix"))
+                                continue;
+
+                            // Prefer NVIDIA/AMD over Intel
+                            if (bestName == null || lowered.Contains("nvidia") || lowered.Contains("amd") || lowered.Contains("radeon"))
+                            {
+                                bestName = name;
+                                if (lowered.Contains("nvidia") || lowered.Contains("amd") || lowered.Contains("radeon"))
+                                    break; // Found dedicated GPU, stop searching
+                            }
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(bestName)) gpuName = bestName;
+                    }
+                    
+                    // Get VRAM using nvidia-smi (accurate) or WMI fallback
+                    vramBytes = GetBestVideoRamBytes();
+                    if (vramBytes > 0)
+                    {
+                        vram = (vramBytes / 1024 / 1024) + " MB";
+                    }
+                }
+                catch { }
             }
             catch { }
 
-            var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.IsReady && d.Name.StartsWith("C"));
-            string diskInfo = drive != null ? $"{drive.TotalSize / 1024 / 1024 / 1024} GB" : "N/A";
+            // Disk: total size across fixed drives (more representative than only C:)
+            string diskInfo = "N/A";
+            try
+            {
+                long totalFixedBytes = 0;
+                foreach (var d in DriveInfo.GetDrives().Where(d => d.IsReady && d.DriveType == DriveType.Fixed))
+                {
+                    totalFixedBytes += d.TotalSize;
+                }
+                if (totalFixedBytes > 0)
+                {
+                    diskInfo = $"{totalFixedBytes / 1024 / 1024 / 1024} GB";
+                }
+            }
+            catch { }
+
+            // Ensure total RAM cache is present
+            if (_totalRamMB <= 0) GetTotalRam();
+            var totalRamGB = Math.Round((_totalRamMB > 0 ? _totalRamMB : 0) / 1024.0, 1);
 
             return new
             {
-                os = Environment.OSVersion.ToString(),
+                os = osPretty,
+                osRaw = osVersion,
                 pcName = Environment.MachineName,
                 cpuName = cpuName,
                 gpuName = gpuName,
@@ -164,6 +489,8 @@ namespace RemoteControlServer.Helpers
                 totalDisk = diskInfo,
                 cpuMaxSpeedGHz = cpuMaxSpeedGHz,
                 cpuCores = cpuCores,
+                cpuLogical = cpuLogical > 0 ? cpuLogical : Environment.ProcessorCount,
+                totalRamGB = totalRamGB,
                 vramBytes = vramBytes
             };
         }
@@ -221,28 +548,27 @@ namespace RemoteControlServer.Helpers
                 diskUsedGB = (totalSizeAll - totalFreeAll) / 1024.0 / 1024.0 / 1024.0;
             }
 
-            // GPU load: thử nhiều phương pháp, fallback mô phỏng
+            // GPU load: try GPU Engine counters (cached), else fallback to 0 (avoid fake values)
             int gpuLoad = 0;
             bool gpuLoadFound = false;
 
-            // GPU Engine counters (Windows 10+)
             try
             {
-                var gpuCategory = new PerformanceCounterCategory("GPU Engine");
-                var counterNames = gpuCategory.GetInstanceNames();
-                foreach (var instanceName in counterNames)
+                if (gpu3dCounters == null)
                 {
-                    if (instanceName.Contains("engtype_3D") || instanceName.Contains("Graphics"))
+                    InitGpuCounters();
+                }
+
+                if (gpu3dCounters != null && gpu3dCounters.Count > 0)
+                {
+                    double sum = 0;
+                    foreach (var c in gpu3dCounters)
                     {
-                        var gpuCounter = new PerformanceCounter("GPU Engine", "Utilization Percentage", instanceName);
-                        float value = gpuCounter.NextValue();
-                        if (value > 0)
-                        {
-                            gpuLoad = (int)value;
-                            gpuLoadFound = true;
-                            break;
-                        }
+                        try { sum += c.NextValue(); } catch { }
                     }
+                    // Sum can exceed 100 depending on engines; clamp.
+                    gpuLoad = (int)Math.Round(Math.Max(0, Math.Min(100, sum)));
+                    gpuLoadFound = true;
                 }
             }
             catch { }
@@ -259,73 +585,75 @@ namespace RemoteControlServer.Helpers
                 catch { }
             }
 
-            // Fallback mô phỏng dựa trên CPU
-            if (!gpuLoadFound)
-            {
-                var rng = new Random();
-                int cpuInt = (int)cpu;
-                if (cpuInt > 50)
-                {
-                    gpuLoad = (int)(cpuInt * 0.6) + rng.Next(-5, 10);
-                }
-                else if (cpuInt > 20)
-                {
-                    gpuLoad = (int)(cpuInt * 0.4) + rng.Next(-5, 5);
-                }
-                else
-                {
-                    gpuLoad = rng.Next(5, 15);
-                }
-                gpuLoad = Math.Max(0, Math.Min(100, gpuLoad));
-            }
-
-            // CPU frequency hiện tại
+            // CPU frequency - create fresh counter each time for real-time updates
             double cpuCurrentSpeedGHz = 0;
-            CacheCpuMaxSpeed();
+            CacheCpuBaseSpeed();
+            if (_cpuTurboMaxGHz <= 0) EstimateTurboMax();
+            
+            // Create new counter each call to ensure fresh value
             try
             {
-                float freqPercent = cpuFreqCounter != null ? cpuFreqCounter.NextValue() : 0;
-                if (_cpuMaxSpeedGHz > 0 && freqPercent > 0)
+                using (var perfCounter = new PerformanceCounter("Processor Information", "% Processor Performance", "_Total"))
                 {
-                    cpuCurrentSpeedGHz = _cpuMaxSpeedGHz * (freqPercent / 100.0);
-                }
-                else if (freqPercent > 0)
-                {
-                    cpuCurrentSpeedGHz = freqPercent / 100.0;
-                }
-            }
-            catch
-            {
-                cpuCurrentSpeedGHz = _cpuMaxSpeedGHz > 0 ? _cpuMaxSpeedGHz * 0.8 : 0;
-            }
-
-            // VRAM total + ước tính used
-            double vramTotalGB = 0;
-            double vramUsedGB = 0;
-            try
-            {
-                using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT AdapterRAM FROM Win32_VideoController"))
-                {
-                    foreach (var obj in searcher.Get())
+                    perfCounter.NextValue(); // First call returns 0, need warm-up
+                    System.Threading.Thread.Sleep(50); // Small delay
+                    float perf = perfCounter.NextValue(); // Second call gives real value
+                    
+                    if (perf > 0 && _cpuBaseSpeedGHz > 0)
                     {
-                        if (obj["AdapterRAM"] != null)
-                        {
-                            long bytes = Convert.ToInt64(obj["AdapterRAM"]);
-                            if (bytes > 0)
-                            {
-                                vramTotalGB = bytes / 1024.0 / 1024.0 / 1024.0;
-                                vramUsedGB = vramTotalGB * (gpuLoad / 100.0);
-                            }
-                        }
-                        break;
+                        cpuCurrentSpeedGHz = _cpuBaseSpeedGHz * (perf / 100.0);
                     }
                 }
             }
             catch { }
+            
+            // Fallback: Use Processor Frequency counter
+            if (cpuCurrentSpeedGHz <= 0)
+            {
+                try
+                {
+                    using (var freqCounter = new PerformanceCounter("Processor Information", "Processor Frequency", "_Total"))
+                    {
+                        freqCounter.NextValue();
+                        System.Threading.Thread.Sleep(50);
+                        float freqMHz = freqCounter.NextValue();
+                        if (freqMHz > 0)
+                        {
+                            cpuCurrentSpeedGHz = freqMHz / 1000.0;
+                        }
+                    }
+                }
+                catch { }
+            }
+            
+            // Update turbo max if we see higher speed
+            if (cpuCurrentSpeedGHz > _cpuTurboMaxGHz && cpuCurrentSpeedGHz > 0)
+            {
+                _cpuTurboMaxGHz = cpuCurrentSpeedGHz;
+            }
+            
+            // Last fallback to WMI
+            if (cpuCurrentSpeedGHz <= 0)
+            {
+                cpuCurrentSpeedGHz = GetCpuCurrentSpeedGHz();
+            }
+
+            // GPU clock frequency (NVIDIA via nvidia-smi)
+            double gpuClockCurrentMHz = GetGpuCurrentClockMHz();
+            if (!_gpuMaxClockCached) CacheGpuMaxClock();
+
+            // Calculate CPU percentage based on current/turboMax
+            int cpuFreqPercent = 0;
+            if (_cpuTurboMaxGHz > 0)
+            {
+                cpuFreqPercent = (int)Math.Round((cpuCurrentSpeedGHz / _cpuTurboMaxGHz) * 100.0);
+                cpuFreqPercent = Math.Max(0, Math.Min(100, cpuFreqPercent));
+            }
 
             return new
             {
-                cpu = (int)cpu,
+                cpu = cpuFreqPercent,  // Now based on GHz current / turbo max
+                cpuUsage = (int)cpu,   // Original CPU utilization %
                 ram = ramPercent,
                 diskUsage = diskPercent,
                 gpu = gpuLoad,
@@ -334,9 +662,9 @@ namespace RemoteControlServer.Helpers
                 diskUsedGB = diskUsedGB,
                 diskTotalGB = diskTotalGB,
                 cpuFreqCurrent = Math.Round(cpuCurrentSpeedGHz, 2),
-                cpuFreqMax = Math.Round(_cpuMaxSpeedGHz, 2),
-                vramUsedGB = Math.Round(vramUsedGB, 2),
-                vramTotalGB = Math.Round(vramTotalGB, 2)
+                cpuFreqMax = Math.Round(_cpuTurboMaxGHz, 2),  // Turbo max instead of base
+                gpuClockCurrent = Math.Round(gpuClockCurrentMHz / 1000.0, 2),
+                gpuClockMax = Math.Round(_gpuMaxClockMHz / 1000.0, 2)
             };
         }
 
