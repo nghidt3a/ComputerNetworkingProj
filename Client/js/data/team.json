@@ -4,15 +4,15 @@
     "role": "Nhóm trưởng",
     "avatar": "../../assets/team/a.jpg",
     "github": "https://github.com/example",
-    "linkedin": "https://linkedin.com/in/example",
+    "facebook": "https://facebook.com/example",
     "email": "example@gmail.com"
   },
   {
-    "name": "Trần Thị B",
+    "name": "Mai Hoàng Nhật",
     "role": "Backend",
-    "avatar": "../../assets/team/b.jpg",
+    "avatar": "../../assets/team/MHN.jpg",
     "github": "https://github.com/example",
-    "linkedin": "https://linkedin.com/in/example",
+    "facebook": "https://facebook.com/example",
     "email": "example@gmail.com"
   }
 ]

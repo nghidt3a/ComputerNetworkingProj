@@ -100,6 +100,103 @@
         </div>
       </section>
 
+      <!-- Core Features -->
+      <section id="core-features" class="section-padding reveal">
+        <div class="container">
+          <div class="text-center mb-4">
+            <h2 class="h3 fw-bold mb-2">Tính năng cốt lõi</h2>
+            <p class="text-secondary mb-0">Các module kỹ thuật chính của hệ thống.</p>
+          </div>
+          <div class="row g-3 g-md-4">
+            <div class="col-12 col-sm-6 col-lg-4">
+              <div class="feature-card h-100">
+                <div class="feature-icon text-primary mb-3"><i class="fas fa-window-restore"></i></div>
+                <h3 class="h6 fw-bold mb-2">Quản lý Ứng dụng</h3>
+                <p class="text-secondary small mb-0">Điều phối app với giao diện Soft UI, cập nhật trạng thái thời gian thực.</p>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4">
+              <div class="feature-card h-100">
+                <div class="feature-icon text-success mb-3"><i class="fas fa-microchip"></i></div>
+                <h3 class="h6 fw-bold mb-2">Quản lý Tiến trình</h3>
+                <p class="text-secondary small mb-0">Theo dõi CPU/RAM và thao tác process qua socket hai chiều.</p>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4">
+              <div class="feature-card h-100">
+                <div class="feature-icon text-info mb-3"><i class="fas fa-desktop"></i></div>
+                <h3 class="h6 fw-bold mb-2">Chụp màn hình</h3>
+                <p class="text-secondary small mb-0">Truyền tải khung hình nén thời gian thực qua Socket.</p>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4">
+              <div class="feature-card h-100">
+                <div class="feature-icon text-warning mb-3"><i class="fas fa-keyboard"></i></div>
+                <h3 class="h6 fw-bold mb-2">Keylogger</h3>
+                <p class="text-secondary small mb-0">Ghi nhận sự kiện phím với buffer an toàn, stream về dashboard.</p>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4">
+              <div class="feature-card h-100">
+                <div class="feature-icon text-danger mb-3"><i class="fas fa-power-off"></i></div>
+                <h3 class="h6 fw-bold mb-2">Điều khiển Nguồn</h3>
+                <p class="text-secondary small mb-0">Gửi lệnh shutdown/restart qua kênh bảo mật, xác nhận hai bước.</p>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-4">
+              <div class="feature-card h-100">
+                <div class="feature-icon text-primary mb-3"><i class="fas fa-video"></i></div>
+                <h3 class="h6 fw-bold mb-2">Giám sát Webcam</h3>
+                <p class="text-secondary small mb-0">Streaming video/audio với kiểm soát start/stop và bitrate.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- System Architecture -->
+      <section id="architecture" class="section-padding reveal">
+        <div class="container">
+          <div class="text-center mb-4">
+            <h2 class="h3 fw-bold mb-2">Kiến trúc hệ thống</h2>
+            <p class="text-secondary mb-0">Luồng dữ liệu giữa Client (Web), Server (C#) và Target PC (Agent).</p>
+          </div>
+          <div class="arch-wrapper">
+            <div class="arch-node arch-client">
+              <h3 class="h6 fw-bold mb-1">Client</h3>
+              <p class="text-secondary small mb-0">Web Browser + Dashboard UI</p>
+            </div>
+
+            <div class="arch-arrow arch-arrow-down">
+              <span>WebSocket / Socket.io</span>
+            </div>
+
+            <div class="arch-node arch-server">
+              <h3 class="h6 fw-bold mb-1">Server</h3>
+              <p class="text-secondary small mb-1">C# Signal Router</p>
+              <p class="text-secondary small mb-0">Auth • Routing • Logging</p>
+            </div>
+
+            <div class="arch-arrow arch-arrow-down">
+              <span>TCP Socket</span>
+            </div>
+
+            <div class="arch-node arch-agent">
+              <h3 class="h6 fw-bold mb-1">Target PC</h3>
+              <p class="text-secondary small mb-1">Agent Service</p>
+              <p class="text-secondary small mb-0">Screen • Webcam • Keylogger • Power</p>
+            </div>
+
+            <div class="arch-arrow arch-arrow-up arch-arrow-left">
+              <span>Control Commands</span>
+            </div>
+            <div class="arch-arrow arch-arrow-up arch-arrow-right">
+              <span>Telemetry / Streams</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Members -->
       <section id="members" class="section-padding bg-section reveal">
         <div class="container">

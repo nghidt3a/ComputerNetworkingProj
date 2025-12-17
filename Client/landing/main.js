@@ -77,7 +77,7 @@
       role: 'Nhóm trưởng',
       avatar: '../assets/team/a.jpg',
       github: 'https://github.com/example',
-      linkedin: 'https://linkedin.com/in/example',
+      facebook: 'https://facebook.com/example',
       email: 'example@gmail.com'
     },
     {
@@ -85,7 +85,7 @@
       role: 'Backend',
       avatar: '../assets/team/b.jpg',
       github: 'https://github.com/example',
-      linkedin: 'https://linkedin.com/in/example',
+      facebook: 'https://facebook.com/example',
       email: 'example@gmail.com'
     }
   ];
@@ -145,10 +145,10 @@
         a.href = m.github; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'GitHub';
         actions.appendChild(a);
       }
-      if (m.linkedin) {
+      if (m.facebook) {
         const a = document.createElement('a');
         a.className = 'btn btn-outline-secondary btn-sm';
-        a.href = m.linkedin; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'LinkedIn';
+        a.href = m.facebook; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Facebook';
         actions.appendChild(a);
       }
       if (m.email) {
