@@ -299,3 +299,78 @@ function updateThemeIcon(theme) {
     if (text) text.textContent = "Dark Mode";
   }
 }
+
+// === VIDEO PREVIEW MODAL FUNCTIONS ===
+
+/**
+ * Show video preview modal with video player, filename input, and download button
+ * @param {string} videoUrl - URL of video blob
+ * @param {string} fileName - Default file name (without .mp4 extension)
+ */
+window.showVideoPreviewModal = function (videoUrl, fileName) {
+  const modal = document.getElementById("video-preview-modal");
+  const player = document.getElementById("video-preview-player");
+  const filenameInput = document.getElementById("video-filename-input");
+
+  if (!modal || !player || !filenameInput) {
+    console.error("Video preview modal elements not found");
+    return;
+  }
+
+  // Set video source
+  player.src = videoUrl;
+
+  // Set filename input (without .mp4 extension)
+  filenameInput.value = fileName;
+
+  // Show modal
+  modal.classList.remove("hidden");
+};
+
+/**
+ * Close video preview modal
+ */
+window.closeVideoPreviewModal = function () {
+  const modal = document.getElementById("video-preview-modal");
+  if (modal) {
+    modal.classList.add("hidden");
+  }
+};
+
+/**
+ * Download video with custom filename from modal
+ */
+window.downloadVideoPreview = function () {
+  const player = document.getElementById("video-preview-player");
+  const filenameInput = document.getElementById("video-filename-input");
+
+  if (!player || !player.src || !filenameInput) {
+    console.error("Video player or filename input not found");
+    return;
+  }
+
+  let fileName = filenameInput.value.trim();
+  if (!fileName) {
+    fileName = `Video_${new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace(/:/g, "-")}`;
+  }
+
+  // Sanitize filename
+  fileName = fileName.replace(/[\\/:*?"<>|]/g, "-");
+  if (!fileName.endsWith(".mp4")) {
+    fileName += ".mp4";
+  }
+
+  // Download video
+  const a = document.createElement("a");
+  a.href = player.src;
+  a.download = fileName;
+  a.click();
+
+  // Show confirmation
+  if (window.UIManager && window.UIManager.showToast) {
+    window.UIManager.showToast(`Downloading ${fileName}`, "success");
+  }
+};

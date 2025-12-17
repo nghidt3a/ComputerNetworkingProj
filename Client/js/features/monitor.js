@@ -592,7 +592,6 @@ export const MonitorFeature = {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    UIManager.showToast("Screen video downloaded!", "success");
   },
 
   // NEW: Zoom Controls

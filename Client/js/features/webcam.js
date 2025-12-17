@@ -260,7 +260,6 @@ export const WebcamFeature = {
 
   handleVideoDownload(data) {
     const payload = data.payload || data;
-    // Chuyển đổi Base64 sang Binary Blob để tải video
     const binaryString = window.atob(payload);
     const len = binaryString.length;
     const bytes = new Uint8Array(len);
@@ -268,25 +267,15 @@ export const WebcamFeature = {
       bytes[i] = binaryString.charCodeAt(i);
     }
 
-    const blob = new Blob([bytes], { type: "video/avi" });
+    const blob = new Blob([bytes], { type: "video/mp4" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.style.display = "none";
-    a.href = url;
-
     const time = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
-    a.download = `Server_Rec_${time}.avi`;
+    const fileName = `Webcam_Rec_${time}`;
 
-    document.body.appendChild(a);
-    a.click();
+    // Show modal with video preview
+    showVideoPreviewModal(url, fileName);
 
-    setTimeout(() => {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }, 100);
-
-    UIManager.showToast("Đã tải video về máy!", "success");
-    // Re-enable controls after video is ready
+    // Re-enable controls
     const durationInput = document.getElementById("record-duration");
     const recordBtn = document.getElementById("btn-webcam-record");
     const cancelBtn = document.getElementById("btn-webcam-cancel");
