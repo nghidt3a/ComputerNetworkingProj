@@ -267,8 +267,292 @@
         </nav>
         <div class="container-fluid py-4">
           <section id="tab-dashboard" class="tab-content active">
-            <!-- PHẦN TRÊN: Power Control & Quick Launch -->
+            <div class="system-stats-grid">
+              <!-- CPU Card -->
+              <div class="stat-card">
+                <div class="stat-card__header">
+                  <span class="stat-card__title">CPU Load</span>
+                  <span class="stat-badge state-ok" id="stat-cpu-badge">Normal</span>
+                </div>
+                <div class="stat-card__body">
+                  <div class="gauge gauge--lg">
+                    <svg class="gauge__svg" viewBox="0 0 140 140">
+                      <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
+                      <!-- Decorative ticks for CPU gauge -->
+                      <circle class="gauge__ticks" cx="70" cy="70" r="55" pathLength="100" fill="none"></circle>
+                      <circle class="gauge__progress" id="stat-cpu-gauge" cx="70" cy="70" r="55" fill="none"></circle>
+                    </svg>
+                    <div class="gauge__center">
+                      <span class="gauge__label">CPU</span>
+                      <span class="gauge__value" id="stat-cpu-percent">0%</span>
+                      <span class="gauge__sub" id="stat-cpu-freq">--</span>
+                    </div>
+                  </div>
+                  <div class="stat-footer">Threads optimized</div>
+                </div>
+              </div>
+
+              <!-- GPU Card -->
+              <div class="stat-card">
+                <div class="stat-card__header">
+                  <span class="stat-card__title">GPU Activity</span>
+                  <span class="stat-badge state-ok" id="stat-gpu-badge">Idle</span>
+                </div>
+                <div class="stat-card__body stat-card__body--split">
+                  <div class="bar-vertical">
+                    <div class="bar-vertical__fill" id="stat-gpu-bar"></div>
+                  </div>
+                  <div class="stat-values">
+                    <span class="stat-values__label">Usage</span>
+                    <span class="stat-values__value" id="stat-gpu-percent">0%</span>
+                    <span class="stat-values__sub" id="stat-gpu-info">--</span>
+                  </div>
+                </div>
+                <div class="stat-footer">VRAM allocation</div>
+              </div>
+
+              <!-- RAM Card -->
+              <div class="stat-card">
+                <div class="stat-card__header">
+                  <span class="stat-card__title">Memory</span>
+                  <span class="stat-badge state-ok" id="stat-ram-badge">OK</span>
+                </div>
+                <div class="stat-card__body stat-card__body--split">
+                  <div class="bar-vertical">
+                    <div class="bar-vertical__fill" id="stat-ram-bar"></div>
+                  </div>
+                  <div class="stat-values">
+                    <span class="stat-values__label">Usage</span>
+                    <span class="stat-values__value" id="stat-ram-percent">0%</span>
+                    <span class="stat-values__sub" id="stat-ram-abs">--</span>
+                  </div>
+                </div>
+                <div class="stat-footer">RAM availability</div>
+              </div>
+
+              <!-- SSD Card -->
+              <div class="stat-card">
+                <div class="stat-card__header">
+                  <span class="stat-card__title" id="stat-ssd-name">Primary Disk</span>
+                  <span class="stat-badge state-ok" id="stat-ssd-badge">Healthy</span>
+                </div>
+                <div class="stat-card__body">
+                  <div class="gauge gauge--sm">
+                    <svg class="gauge__svg" viewBox="0 0 120 120">
+                      <circle class="gauge__track" cx="60" cy="60" r="44" fill="none"></circle>
+                      <circle class="gauge__progress" id="stat-ssd-gauge" cx="60" cy="60" r="44" fill="none"></circle>
+                    </svg>
+                    <div class="gauge__center">
+                      <span class="gauge__label">SSD</span>
+                      <span class="gauge__value" id="stat-ssd-percent">0%</span>
+                    </div>
+                  </div>
+                  <!-- SSD metrics displayed outside the gauge for clarity -->
+                  <div class="text-center">
+                    <div class="gauge__sub" id="stat-ssd-abs">--</div>
+                    <div class="gauge__sub" id="stat-ssd-free">--</div>
+                  </div>
+                  <div class="stat-footer">Disk utilization</div>
+                </div>
+              </div>
+            </div>
+
             <div class="row mb-4">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="icon icon-shape bg-gradient-success shadow me-3"
+                      >
+                        <i class="fas fa-server"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-0">System Information</h6>
+                        <p class="text-sm mb-0 text-secondary">
+                          Hardware & Configuration Details
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive p-4">
+                      <table class="table align-items-center mb-0">
+                        <tbody>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
+                                  <i
+                                    class="fab fa-windows text-primary me-2"
+                                  ></i>
+                                </div>
+                                <div
+                                  class="d-flex flex-column justify-content-center"
+                                >
+                                  <h6 class="mb-0 text-sm">Operating System</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p
+                                class="text-sm font-weight-bold mb-0"
+                                id="os-info"
+                              >
+                                Loading...
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
+                                  <i class="fas fa-desktop text-info me-2"></i>
+                                </div>
+                                <div
+                                  class="d-flex flex-column justify-content-center"
+                                >
+                                  <h6 class="mb-0 text-sm">Hostname</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p
+                                class="text-sm font-weight-bold mb-0"
+                                id="pc-name"
+                              >
+                                Loading...
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
+                                  <i
+                                    class="fas fa-microchip text-warning me-2"
+                                  ></i>
+                                </div>
+                                <div
+                                  class="d-flex flex-column justify-content-center"
+                                >
+                                  <h6 class="mb-0 text-sm">CPU Model</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p
+                                class="text-sm font-weight-bold mb-0"
+                                id="cpu-name"
+                              >
+                                Loading...
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
+                                  <i class="fas fa-tachometer-alt text-secondary me-2"></i>
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                  <h6 class="mb-0 text-sm">CPU Max Clock</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p class="text-sm font-weight-bold mb-0" id="cpu-max">
+                                --
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
+                                  <i class="fas fa-layer-group text-info me-2"></i>
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                  <h6 class="mb-0 text-sm">CPU Cores</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p class="text-sm font-weight-bold mb-0" id="cpu-cores">
+                                --
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
+                                  <i class="fas fa-video text-danger me-2"></i>
+                                </div>
+                                <div
+                                  class="d-flex flex-column justify-content-center"
+                                >
+                                  <h6 class="mb-0 text-sm">GPU Model</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p
+                                class="text-sm font-weight-bold mb-0"
+                                id="gpu-name"
+                              >
+                                Loading...
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
+                                  <i class="fas fa-memory text-success me-2"></i>
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                  <h6 class="mb-0 text-sm">VRAM</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p class="text-sm font-weight-bold mb-0" id="vram-val">
+                                --
+                              </p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="w-30">
+                              <div class="d-flex px-2 py-1">
+                                <div>
+                                  <i class="fas fa-hdd text-success me-2"></i>
+                                </div>
+                                <div
+                                  class="d-flex flex-column justify-content-center"
+                                >
+                                  <h6 class="mb-0 text-sm">Primary Disk</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p
+                                class="text-sm font-weight-bold mb-0"
+                                id="disk-name"
+                              >
+                                ---
+                              </p>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
               <div class="col-md-6">
                 <div class="card-custom">
                   <div class="card-header-custom">
@@ -340,163 +624,6 @@
                     >
                       <i class="fab fa-google"></i> Web
                     </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- PHẦN DƯỚI: System Information (trái) + Performance Stats (phải) -->
-            <div class="row">
-              <!-- PHẦN DƯỚI TRÁI: System Information Cards -->
-              <div class="col-lg-6">
-                <h5 class="section-title mb-3">
-                  <i class="fas fa-info-circle me-2 text-primary"></i>System Information
-                </h5>
-                <div class="system-info-cards">
-                  <!-- OS Card -->
-                  <div class="info-card">
-                    <div class="info-card__icon">
-                      <i class="fab fa-windows"></i>
-                    </div>
-                    <div class="info-card__content">
-                      <div class="info-card__label">HỆ ĐIỀU HÀNH</div>
-                      <div class="info-card__value" id="os-info">Loading...</div>
-                    </div>
-                  </div>
-
-                  <!-- Hostname Card -->
-                  <div class="info-card">
-                    <div class="info-card__icon">
-                      <i class="fas fa-desktop"></i>
-                    </div>
-                    <div class="info-card__content">
-                      <div class="info-card__label">TÊN MÁY (HOSTNAME)</div>
-                      <div class="info-card__value" id="pc-name">Loading...</div>
-                    </div>
-                  </div>
-
-                  <!-- CPU Model Card -->
-                  <div class="info-card">
-                    <div class="info-card__icon">
-                      <i class="fas fa-microchip"></i>
-                    </div>
-                    <div class="info-card__content">
-                      <div class="info-card__label">CPU MODEL</div>
-                      <div class="info-card__value" id="cpu-name">Loading...</div>
-                    </div>
-                  </div>
-
-                  <!-- Disk Card -->
-                  <div class="info-card">
-                    <div class="info-card__icon">
-                      <i class="fas fa-hdd"></i>
-                    </div>
-                    <div class="info-card__content">
-                      <div class="info-card__label">Ổ CỨNG CHÍNH</div>
-                      <div class="info-card__value" id="disk-name">---</div>
-                    </div>
-                  </div>
-
-                  <!-- GPU Card -->
-                  <div class="info-card">
-                    <div class="info-card__icon">
-                      <i class="fas fa-video"></i>
-                    </div>
-                    <div class="info-card__content">
-                      <div class="info-card__label">CARD ĐỒ HỌA (GPU)</div>
-                      <div class="info-card__value" id="gpu-name">Loading...</div>
-                    </div>
-                  </div>
-
-                  <!-- VRAM Card -->
-                  <div class="info-card">
-                    <div class="info-card__icon">
-                      <i class="fas fa-memory"></i>
-                    </div>
-                    <div class="info-card__content">
-                      <div class="info-card__label">VRAM</div>
-                      <div class="info-card__value" id="vram-val">--</div>
-                    </div>
-                  </div>
-
-                  <!-- Hidden compatibility fields -->
-                  <div style="display: none;">
-                    <span id="cpu-max">--</span>
-                    <span id="cpu-cores">--</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- PHẦN DƯỚI PHẢI: Performance Stats 4-Grid -->
-              <div class="col-lg-6">
-                <h5 class="section-title mb-3">
-                  <i class="fas fa-tachometer-alt me-2 text-success"></i>Performance
-                </h5>
-                <div class="performance-grid">
-                  <!-- CPU Gauge - Top Left -->
-                  <div class="perf-cell perf-cell--gauge">
-                    <div class="perf-cell__title">CPU LOAD</div>
-                    <div class="gauge gauge--md">
-                      <svg class="gauge__svg" viewBox="0 0 140 140">
-                        <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
-                        <circle class="gauge__progress" id="stat-cpu-gauge" cx="70" cy="70" r="55" fill="none"></circle>
-                      </svg>
-                      <div class="gauge__center">
-                        <span class="gauge__value" id="stat-cpu-percent">0%</span>
-                        <span class="gauge__sub" id="stat-cpu-freq">--</span>
-                      </div>
-                    </div>
-                    <span class="stat-badge state-ok" id="stat-cpu-badge">Normal</span>
-                  </div>
-
-                  <!-- GPU Bar - Top Right -->
-                  <div class="perf-cell perf-cell--bar">
-                    <div class="perf-cell__title">GPU</div>
-                    <div class="bar-vertical bar-vertical--lg">
-                      <div class="bar-vertical__fill" id="stat-gpu-bar"></div>
-                    </div>
-                    <div class="perf-cell__value" id="stat-gpu-percent">0%</div>
-                    <span class="stat-badge state-ok" id="stat-gpu-badge">Idle</span>
-                    <div class="perf-cell__info" id="stat-gpu-info">--</div>
-                  </div>
-
-                  <!-- RAM Bar - Bottom Left -->
-                  <div class="perf-cell perf-cell--bar">
-                    <div class="perf-cell__title">RAM</div>
-                    <div class="bar-vertical bar-vertical--lg">
-                      <div class="bar-vertical__fill" id="stat-ram-bar"></div>
-                    </div>
-                    <div class="perf-cell__value" id="stat-ram-percent">0%</div>
-                    <span class="stat-badge state-ok" id="stat-ram-badge">OK</span>
-                    <div class="perf-cell__info" id="stat-ram-abs">--</div>
-                  </div>
-
-                  <!-- DISK Gauge - Bottom Right -->
-                  <div class="perf-cell perf-cell--gauge">
-                    <div class="perf-cell__title">DISK (C:)</div>
-                    <div class="gauge gauge--md">
-                      <svg class="gauge__svg" viewBox="0 0 140 140">
-                        <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
-                        <circle class="gauge__progress" id="stat-ssd-gauge" cx="70" cy="70" r="55" fill="none"></circle>
-                      </svg>
-                      <div class="gauge__center">
-                        <span class="gauge__value" id="stat-ssd-percent">0%</span>
-                      </div>
-                    </div>
-                    <span class="stat-badge state-ok" id="stat-ssd-badge">Healthy</span>
-                    <div class="gauge__sub-info">
-                      <div id="stat-ssd-abs">--</div>
-                    </div>
-                  </div>
-
-                  <!-- Hidden compatibility elements -->
-                  <div style="display: none;">
-                    <span id="stat-ssd-name">Primary Disk</span>
-                    <span id="stat-ssd-free">--</span>
-                  </div>
-
-                  <div class="realtime-indicator">
-                    <i class="fas fa-sync-alt"></i> Cập nhật thời gian thực...
                   </div>
                 </div>
               </div>

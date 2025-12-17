@@ -205,12 +205,11 @@ export const DashboardFeature = {
         const elVram = document.getElementById('vram-val');
         if (elVram) elVram.innerText = info.vram || 'N/A';
 
-        const diskName = info.totalDisk || info.diskName || 'N/A';
+        // Keep sidebar label and SSD header human-readable; avoid showing raw capacity like "275 GB" in the title
+        const diskName = info.diskName || 'Primary Disk';
         const elDisk = document.getElementById('disk-name');
-        if (elDisk) elDisk.innerText = diskName;
-
-        const statDisk = document.getElementById('stat-ssd-name');
-        if (statDisk) statDisk.textContent = diskName;
+        if (elDisk) elDisk.innerText = info.totalDisk || 'N/A';
+        // Do not override the SSD card title; leave as defined in HTML ("Primary Disk")
     },
     
     updatePerformanceStats(perf) {
@@ -223,10 +222,14 @@ export const DashboardFeature = {
 
         const elCpuFreq = document.getElementById('stat-cpu-freq');
         if (elCpuFreq) {
-            if (perf.cpuFreqCurrent && perf.cpuFreqMax) {
-                elCpuFreq.textContent = `${perf.cpuFreqCurrent}/${perf.cpuFreqMax} GHz`;
-            } else if (perf.cpuTemp) {
-                elCpuFreq.textContent = `Temp ${perf.cpuTemp}°C`;
+            const cur = Number(perf.cpuFreqCurrent);
+            const max = Number(perf.cpuFreqMax);
+            if (!Number.isNaN(cur) && cur > 0 && !Number.isNaN(max) && max > 0) {
+                elCpuFreq.textContent = `${cur.toFixed(2)}/${max.toFixed(2)} GHz`;
+            } else if (!Number.isNaN(max) && max > 0) {
+                elCpuFreq.textContent = `Max ${max.toFixed(2)} GHz`;
+            } else if (perf.cpuTemp !== undefined && perf.cpuTemp !== null) {
+                elCpuFreq.textContent = `Temp ${Number(perf.cpuTemp).toFixed(0)}°C`;
             } else {
                 elCpuFreq.textContent = '--';
             }
@@ -300,10 +303,16 @@ export const DashboardFeature = {
         if (elSsdPercent) elSsdPercent.textContent = `${diskUsage}%`;
 
         const elSsdAbs = document.getElementById('stat-ssd-abs');
-        if (elSsdAbs && perf.diskUsedGB !== undefined && perf.diskTotalGB !== undefined) {
-            elSsdAbs.textContent = `${Number(perf.diskUsedGB).toFixed(0)} / ${Number(perf.diskTotalGB).toFixed(0)} GB`;
-        } else if (elSsdAbs) {
-            elSsdAbs.textContent = '--';
+        const elSsdFree = document.getElementById('stat-ssd-free');
+        if (perf.diskUsedGB !== undefined && perf.diskTotalGB !== undefined) {
+            const used = Number(perf.diskUsedGB);
+            const total = Number(perf.diskTotalGB);
+            const free = Math.max(0, total - used);
+            if (elSsdAbs) elSsdAbs.textContent = `Used ${used.toFixed(1)} / ${total.toFixed(1)} GB`;
+            if (elSsdFree) elSsdFree.textContent = `Free ${free.toFixed(1)} GB`;
+        } else {
+            if (elSsdAbs) elSsdAbs.textContent = '--';
+            if (elSsdFree) elSsdFree.textContent = '--';
         }
 
         const elSsdBadge = document.getElementById('stat-ssd-badge');
@@ -312,8 +321,8 @@ export const DashboardFeature = {
             elSsdBadge.className = `stat-badge state-${state}`;
             elSsdBadge.textContent = getStateLabel(diskUsage, {
                 ok: 'Healthy',
-                warn: 'Low',
-                danger: 'Full',
+                warn: 'Warning',
+                danger: 'Critical',
             });
         }
     },

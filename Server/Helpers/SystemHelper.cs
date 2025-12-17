@@ -38,17 +38,50 @@ namespace RemoteControlServer.Helpers
 
         private static void GetTotalRam()
         {
-            try 
+            // Try multiple methods to determine total RAM to avoid 0/undefined on some systems
+            try
             {
-                using (var searcher = new ManagementObjectSearcher("Select TotalVisibleMemorySize From Win32_OperatingSystem"))
+                // Method 1: Win32_OperatingSystem.TotalVisibleMemorySize (KB)
+                using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT TotalVisibleMemorySize FROM Win32_OperatingSystem"))
                 {
                     foreach (var mObj in searcher.Get())
                     {
-                        _totalRamMB = Convert.ToDouble(mObj["TotalVisibleMemorySize"]) / 1024;
+                        if (mObj["TotalVisibleMemorySize"] != null)
+                        {
+                            _totalRamMB = Convert.ToDouble(mObj["TotalVisibleMemorySize"]) / 1024.0; // -> MB
+                        }
+                        break;
                     }
                 }
             }
-            catch { _totalRamMB = 8192; }
+            catch { }
+
+            if (_totalRamMB <= 0)
+            {
+                try
+                {
+                    // Method 2: Win32_ComputerSystem.TotalPhysicalMemory (bytes)
+                    using (var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
+                    {
+                        foreach (var mObj in searcher.Get())
+                        {
+                            if (mObj["TotalPhysicalMemory"] != null)
+                            {
+                                double bytes = Convert.ToDouble(mObj["TotalPhysicalMemory"]);
+                                _totalRamMB = bytes / 1024.0 / 1024.0; // -> MB
+                            }
+                            break;
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            // Conservative fallback default (8 GB) if everything failed
+            if (_totalRamMB <= 0)
+            {
+                _totalRamMB = 8192; // MB
+            }
         }
 
         private static void CacheCpuMaxSpeed()
@@ -150,12 +183,15 @@ namespace RemoteControlServer.Helpers
                 if (cpuCounter != null) cpu = cpuCounter.NextValue();
                 if (ramCounter != null) ramAvailable = ramCounter.NextValue();
 
+                // If total RAM wasn't detected at startup, retry here
+                if (_totalRamMB <= 0) GetTotalRam();
+
                 if (_totalRamMB > 0)
                 {
-                    ramPercent = (int)((1.0 - (ramAvailable / _totalRamMB)) * 100);
+                    ramPercent = (int)Math.Round((1.0 - (ramAvailable / _totalRamMB)) * 100.0);
                     // Tính toán số GB
                     ramTotalGB = _totalRamMB / 1024.0;
-                    ramUsedGB = (_totalRamMB - ramAvailable) / 1024.0;
+                    ramUsedGB = Math.Max(0, (_totalRamMB - ramAvailable) / 1024.0);
                 }
             }
             catch { }
