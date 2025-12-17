@@ -458,25 +458,49 @@
                       <div class="bar-vertical bar-vertical--lg">
                         <div class="bar-vertical__fill" id="stat-gpu-bar"></div>
                       </div>
-                      <div class="perf-cell__value" id="stat-gpu-percent">0%</div>
-                      <span class="stat-badge state-ok" id="stat-gpu-badge">Idle</span>
+                      <div class="perf-cell__value" id="stat-gpu-percent">
+                        0%
+                      </div>
+                      <span class="stat-badge state-ok" id="stat-gpu-badge"
+                        >Idle</span
+                      >
                       <div class="perf-cell__info" id="stat-gpu-info">--</div>
                     </div>
 
                     <!-- CPU - Center Large (spans 2 rows) -->
-                    <div class="perf-cell perf-cell--gauge perf-cell--cpu" id="perf-cpu">
+                    <div
+                      class="perf-cell perf-cell--gauge perf-cell--cpu"
+                      id="perf-cpu"
+                    >
                       <div class="perf-cell__title">CPU</div>
                       <div class="gauge gauge--xl">
                         <svg class="gauge__svg" viewBox="0 0 140 140">
-                          <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
-                          <circle class="gauge__progress" id="stat-cpu-gauge" cx="70" cy="70" r="55" fill="none"></circle>
+                          <circle
+                            class="gauge__track"
+                            cx="70"
+                            cy="70"
+                            r="55"
+                            fill="none"
+                          ></circle>
+                          <circle
+                            class="gauge__progress"
+                            id="stat-cpu-gauge"
+                            cx="70"
+                            cy="70"
+                            r="55"
+                            fill="none"
+                          ></circle>
                         </svg>
                         <div class="gauge__center">
-                          <span class="gauge__value" id="stat-cpu-percent">0%</span>
+                          <span class="gauge__value" id="stat-cpu-percent"
+                            >0%</span
+                          >
                           <span class="gauge__sub" id="stat-cpu-freq">--</span>
                         </div>
                       </div>
-                      <span class="stat-badge state-ok" id="stat-cpu-badge">Normal</span>
+                      <span class="stat-badge state-ok" id="stat-cpu-badge"
+                        >Normal</span
+                      >
                     </div>
 
                     <!-- RAM - Bottom Left -->
@@ -485,26 +509,52 @@
                       <div class="bar-vertical bar-vertical--lg">
                         <div class="bar-vertical__fill" id="stat-ram-bar"></div>
                       </div>
-                      <div class="perf-cell__value" id="stat-ram-percent">0%</div>
-                      <span class="stat-badge state-ok" id="stat-ram-badge">OK</span>
+                      <div class="perf-cell__value" id="stat-ram-percent">
+                        0%
+                      </div>
+                      <span class="stat-badge state-ok" id="stat-ram-badge"
+                        >OK</span
+                      >
                       <div class="perf-cell__info" id="stat-ram-abs">--</div>
                     </div>
                   </div>
 
                   <!-- RIGHT BLOCK: SSD standalone -->
                   <div class="perf-grid-right">
-                    <div class="perf-cell perf-cell--gauge perf-cell--ssd" id="perf-ssd">
-                      <div class="perf-cell__title"><i class="fas fa-hdd"></i> SSD</div>
+                    <div
+                      class="perf-cell perf-cell--gauge perf-cell--ssd"
+                      id="perf-ssd"
+                    >
+                      <div class="perf-cell__title">
+                        <i class="fas fa-hdd"></i> SSD
+                      </div>
                       <div class="gauge gauge--lg">
                         <svg class="gauge__svg" viewBox="0 0 140 140">
-                          <circle class="gauge__track" cx="70" cy="70" r="55" fill="none"></circle>
-                          <circle class="gauge__progress" id="stat-ssd-gauge" cx="70" cy="70" r="55" fill="none"></circle>
+                          <circle
+                            class="gauge__track"
+                            cx="70"
+                            cy="70"
+                            r="55"
+                            fill="none"
+                          ></circle>
+                          <circle
+                            class="gauge__progress"
+                            id="stat-ssd-gauge"
+                            cx="70"
+                            cy="70"
+                            r="55"
+                            fill="none"
+                          ></circle>
                         </svg>
                         <div class="gauge__center">
-                          <span class="gauge__value" id="stat-ssd-percent">0%</span>
+                          <span class="gauge__value" id="stat-ssd-percent"
+                            >0%</span
+                          >
                         </div>
                       </div>
-                      <span class="stat-badge state-ok" id="stat-ssd-badge">Healthy</span>
+                      <span class="stat-badge state-ok" id="stat-ssd-badge"
+                        >Healthy</span
+                      >
                       <div class="gauge__sub-info">
                         <div id="stat-ssd-abs">--</div>
                         <div class="text-muted small mt-1">SKHynix_HFS...</div>
