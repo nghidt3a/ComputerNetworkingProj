@@ -93,13 +93,46 @@ namespace RemoteControlServer.Core
                     {
                         string request = packet.param;
                         string fileNameToRun = request;
-                        if (request.Contains('.') && !request.Contains(" ") && !request.StartsWith("http")) fileNameToRun = "https://" + request;
-                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = fileNameToRun, UseShellExecute = true });
-                        SocketManager.SendJson(socket, "LOG", $"Đang mở: {fileNameToRun}...");
+                        
+                        // Phân biệt URL thật vs đường dẫn file
+                        // URL thật: có dạng domain.com, không có :\, không bắt đầu bằng shell: hoặc C:\
+                        bool isWebUrl = request.Contains('.') && 
+                                      !request.Contains(" ") && 
+                                      !request.Contains("\\") && 
+                                      !request.Contains(":") && 
+                                      !request.StartsWith("http") && 
+                                      !request.StartsWith("shell:") &&
+                                      !System.IO.Path.IsPathRooted(request);
+                        
+                        if (isWebUrl)
+                        {
+                            fileNameToRun = "https://" + request;
+                        }
+                        
+                        Console.WriteLine($">> Attempting to launch: {fileNameToRun}");
+                        
+                        // Dùng ProcessStartInfo với UseShellExecute=true để hỗ trợ shell:AppsFolder và .lnk
+                        var psi = new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = fileNameToRun,
+                            UseShellExecute = true,
+                            WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal
+                        };
+                        
+                        System.Diagnostics.Process.Start(psi);
+                        SocketManager.SendJson(socket, "LOG", $"Đang mở: {System.IO.Path.GetFileName(request)}...");
+                        
                         // Chờ cập nhật danh sách
-                        System.Threading.Tasks.Task.Run(() => { Thread.Sleep(2000); SocketManager.BroadcastJson("APP_LIST", ServerCore.GetCurrentApps()); });
+                        System.Threading.Tasks.Task.Run(() => { 
+                            Thread.Sleep(2000); 
+                            SocketManager.BroadcastJson("APP_LIST", ServerCore.GetCurrentApps()); 
+                        });
                     }
-                    catch { SocketManager.SendJson(socket, "LOG", "Lỗi: Không thể mở yêu cầu này!"); }
+                    catch (Exception ex) 
+                    { 
+                        Console.WriteLine($">> Launch failed: {ex.Message}");
+                        SocketManager.SendJson(socket, "LOG", "Lỗi: Không thể mở ứng dụng này!"); 
+                    }
                     break;
                 case "SHUTDOWN": System.Diagnostics.Process.Start("shutdown", "/s /t 5"); break;
                 case "RESTART": System.Diagnostics.Process.Start("shutdown", "/r /t 5"); break;
