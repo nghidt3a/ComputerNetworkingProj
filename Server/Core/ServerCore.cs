@@ -140,6 +140,42 @@ namespace RemoteControlServer.Core
             var finalApps = new List<dynamic>();
             var processedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
+                // 1.5. Lấy background apps (chạy ngầm) - VD: Unikey, Dropbox, OneDrive
+                var backgroundApps = runningProcesses
+                    .Where(p => string.IsNullOrEmpty(p.MainWindowTitle) && IsBackgroundApp(p))
+                    .GroupBy(p => p.ProcessName, StringComparer.OrdinalIgnoreCase)
+                    .Select(g => g.First())
+                    .ToList();
+                Console.WriteLine($">> Background processes detected: {backgroundApps.Count}");
+
+                foreach (var proc in backgroundApps)
+                {
+                    try
+                    {
+                        string appKey = NormalizeAppKey(proc.ProcessName);
+                        if (!candidateApps.ContainsKey(appKey))
+                        {
+                            candidateApps[appKey] = new List<dynamic>();
+                        }
+
+                        string exePath = proc.MainModule?.FileName ?? "";
+                        bool alreadySamePath = candidateApps[appKey].Any(c => string.Equals((string)c.path ?? "", exePath, StringComparison.OrdinalIgnoreCase));
+                        if (!alreadySamePath)
+                        {
+                            candidateApps[appKey].Add(new
+                            {
+                                id = proc.Id,
+                                name = proc.ProcessName,
+                                title = proc.ProcessName + " (Background)",
+                                memory = GetMemoryUsage(proc),
+                                status = "running",
+                                path = exePath
+                            });
+                        }
+                    }
+                    catch { }
+                }
+
             foreach (var app in candidatesList.OrderByDescending(a => a.status == "running" ? 1 : 0))
             {
                 string appName = ((string)app.name ?? "").ToLower();
@@ -448,6 +484,36 @@ namespace RemoteControlServer.Core
             catch { }
         }
 
+        private static bool IsBackgroundApp(Process proc)
+        {
+            {
+                try
+                {
+                    var path = proc.MainModule?.FileName ?? "";
+                    if (string.IsNullOrWhiteSpace(path)) return false;
+
+                    var lowerPath = path.ToLower();
+
+                    // Loại bỏ Windows system processes
+                    var systemPaths = new[] { "\\windows\\system32", "\\windows\\syswow64", "\\windows\\winsxs" };
+                    if (systemPaths.Any(sp => lowerPath.Contains(sp))) return false;
+
+                    // Loại bỏ system services
+                    var systemProcesses = new[] { "svchost", "dwm", "csrss", "lsass", "services", "smss", "wininit", "winlogon", "explorer" };
+                    if (systemProcesses.Any(sp => proc.ProcessName.Equals(sp, StringComparison.OrdinalIgnoreCase))) return false;
+
+                    // Chỉ lấy apps từ các thư mục user apps
+                    // Chỉ cần: là file .exe và KHÔNG nằm trong thư mục hệ thống
+                    if (!lowerPath.EndsWith(".exe")) return false;
+                    return true; 
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
         private static string NormalizeAppKey(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return Guid.NewGuid().ToString();
@@ -490,6 +556,23 @@ namespace RemoteControlServer.Core
 
                 // Loại bỏ nếu name hoặc title chứa đường dẫn folder đầy đủ
                 if (title.Contains("\\") && title.Contains(":") && !title.Contains(".exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+
+                // Loại bỏ Windows system processes
+                var lowerPath = path.ToLower();
+                var systemPaths = new[] { "\\windows\\system32", "\\windows\\syswow64", "\\windows\\winsxs" };
+                if (systemPaths.Any(sp => lowerPath.Contains(sp)))
+                {
+                    return false;
+                }
+
+                // Loại bỏ system process names
+                var lowerName = name.ToLower();
+                var systemNames = new[] { "svchost", "dwm", "csrss", "lsass", "services", "smss", "wininit", "winlogon", 
+                                         "conhost", "fontdrvhost", "taskhostw", "rundll32", "dllhost" };
+                if (systemNames.Any(sn => lowerName == sn))
                 {
                     return false;
                 }
