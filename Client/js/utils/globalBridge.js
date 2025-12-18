@@ -255,6 +255,11 @@ window.startRecordScreen = function () {
 window.cancelRecordScreen = function () {
   MonitorFeature.cancelRecording();
 };
+
+window.toggleScreenAudio = function () {
+  MonitorFeature.toggleScreenAudio();
+};
+
 // --- AUDIO ---
 window.toggleAudio = function () {
   AudioFeature.toggleAudio();

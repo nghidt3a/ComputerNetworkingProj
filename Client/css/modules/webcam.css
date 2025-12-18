@@ -221,11 +221,8 @@
 .audio-toggle-toolbar {
   display: flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
   padding: 6px 12px;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Toggle Switch Container */
@@ -302,5 +299,66 @@
 }
 
 .audio-label i.fa-volume-up {
+  color: #22c55e;
+}
+
+/* ========================================
+   MINI AUDIO TOGGLE (for header/toolbar)
+   ======================================== */
+.audio-toggle-switch-mini {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.audio-toggle-switch-mini input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.audio-slider-mini {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  background: #dc2626;
+  border-radius: 18px;
+  transition: all 0.3s ease;
+}
+
+.audio-slider-mini::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 2px;
+  bottom: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.audio-toggle-switch-mini input:checked + .audio-slider-mini {
+  background: #22c55e;
+}
+
+.audio-toggle-switch-mini input:checked + .audio-slider-mini::before {
+  transform: translateX(14px);
+}
+
+.audio-label-mini {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.audio-label-mini i.fa-volume-mute {
+  color: #ef4444;
+}
+
+.audio-label-mini i.fa-volume-up {
   color: #22c55e;
 }

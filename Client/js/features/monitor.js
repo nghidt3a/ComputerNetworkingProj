@@ -27,6 +27,12 @@ let ramChart = null;
 // Recording helpers
 let recordingInterval = null;
 let remainingSeconds = 0;
+let isScreenAudioEnabled = true; // Audio toggle state
+let isScreenAudioMuted = false; // Live audio mute state
+
+// Screen Audio playback
+let screenAudioCtx = null;
+let screenNextAudioTime = 0;
 
 // Chart data storage (last 20 points)
 const maxDataPoints = 20;
@@ -40,6 +46,9 @@ export const MonitorFeature = {
     SocketService.on("BINARY_STREAM", this.handleStreamFrame.bind(this));
     SocketService.on("SCREEN_CAPTURE", this.handleSnapshotPreview);
     SocketService.on("SCREENSHOT_FILE", this.handleSnapshotDownload);
+    
+    // Screen audio stream - dùng cùng AUDIO_STREAM event (header 0x04) với tab Audio
+    SocketService.on("AUDIO_STREAM", this.handleScreenAudio.bind(this));
 
     // Listen for performance stats to update charts
     SocketService.on("PERF_STATS", (data) => {
@@ -61,6 +70,10 @@ export const MonitorFeature = {
       btnStart.onclick = () => {
         isStreaming = true; // cho phép nhận frame
         SocketService.send("START_STREAM");
+        // Khởi tạo AudioContext để nghe realtime
+        if (isScreenAudioEnabled) {
+          this.ensureScreenAudioContext();
+        }
         // Enable record button when stream starts
         const recBtn = document.getElementById("btn-monitor-record");
         if (recBtn) recBtn.disabled = false;
@@ -69,6 +82,8 @@ export const MonitorFeature = {
       btnStop.onclick = () => {
         isStreaming = false;
         SocketService.send("STOP_STREAM");
+        // Reset audio playback
+        this.resetScreenAudio();
         this.resetScreen();
         // Disable record button when stream stops
         const recBtn = document.getElementById("btn-monitor-record");
@@ -284,9 +299,14 @@ export const MonitorFeature = {
     const btnIcon = btn?.querySelector("i");
 
     if (!isStreaming) {
-      // Bật Stream
+      // Bật Stream (server tự động bật audio streaming kèm)
       SocketService.send("START_STREAM");
       isStreaming = true;
+      
+      // Khởi tạo AudioContext trước (cần user interaction) để nghe realtime
+      if (isScreenAudioEnabled) {
+        this.ensureScreenAudioContext();
+      }
 
       // Đổi giao diện nút sang Stop
       if (btn) {
@@ -300,9 +320,12 @@ export const MonitorFeature = {
       const recBtn = document.getElementById("btn-monitor-record");
       if (recBtn) recBtn.disabled = false;
     } else {
-      // Tắt Stream
+      // Tắt Stream (server tự động tắt audio streaming kèm)
       SocketService.send("STOP_STREAM");
       isStreaming = false;
+      
+      // Reset audio playback
+      this.resetScreenAudio();
 
       // Reset giao diện
       this.resetScreen();
@@ -382,20 +405,115 @@ export const MonitorFeature = {
 
     const recordBtn = document.getElementById("btn-monitor-record");
     const cancelBtn = document.getElementById("btn-monitor-cancel");
+    const audioSwitch = document.getElementById("screen-audio-switch");
     if (recordBtn) recordBtn.disabled = true;
     if (cancelBtn) cancelBtn.disabled = false;
     if (durationInput) durationInput.disabled = true;
+    if (audioSwitch) audioSwitch.disabled = true;
 
     this.startRecordingTimer(duration);
-    SocketService.send("RECORD_SCREEN", duration);
-    UIManager.showToast(`Recording screen ${duration}s...`, "info");
+    
+    // Send command with audio flag
+    const payload = JSON.stringify({ duration, audio: isScreenAudioEnabled });
+    SocketService.send("RECORD_SCREEN", payload);
+    
+    const mode = isScreenAudioEnabled ? "video + audio" : "video only";
+    UIManager.showToast(`Recording screen ${mode} ${duration}s...`, "info");
+  },
+
+  /**
+   * Toggle screen audio on/off (cả live playback và recording)
+   * Audio luôn được server stream kèm video, toggle này chỉ control mute/unmute ở client
+   */
+  toggleScreenAudio() {
+    isScreenAudioEnabled = !isScreenAudioEnabled;
+    isScreenAudioMuted = !isScreenAudioEnabled;
+    
+    const icon = document.getElementById("screen-audio-icon");
+    
+    if (isScreenAudioEnabled) {
+      if (icon) icon.className = "fas fa-volume-up";
+      // Khởi tạo AudioContext ngay khi bật (user interaction required)
+      this.ensureScreenAudioContext();
+    } else {
+      if (icon) icon.className = "fas fa-volume-mute";
+      this.resetScreenAudio();
+    }
+    
+    const status = isScreenAudioEnabled ? "🔊 Screen Audio ON" : "🔇 Screen Audio OFF";
+    UIManager.showToast(status, "info");
+  },
+  
+  // --- Screen Audio Playback ---
+  handleScreenAudio(arrayBuffer) {
+    // Chỉ xử lý khi đang streaming và audio enabled
+    if (!isStreaming || isScreenAudioMuted || !isScreenAudioEnabled) {
+      return;
+    }
+    
+    // AUDIO_STREAM format: [header 0x04 (1 byte)] [timestamp (4 bytes)] [PCM data]
+    let pcmData;
+    if (arrayBuffer instanceof ArrayBuffer) {
+      // Skip header (1 byte) + timestamp (4 bytes) = 5 bytes
+      pcmData = arrayBuffer.slice(5);
+    } else if (arrayBuffer instanceof Blob) {
+      // Handle Blob case
+      arrayBuffer.arrayBuffer().then(ab => {
+        this.playScreenAudioChunk(ab.slice(5));
+      });
+      return;
+    } else {
+      console.warn("Unknown audio data type:", typeof arrayBuffer);
+      return;
+    }
+    
+    this.playScreenAudioChunk(pcmData);
+  },
+  
+  ensureScreenAudioContext() {
+    if (!screenAudioCtx) {
+      screenAudioCtx = new (window.AudioContext || window.webkitAudioContext)({
+        sampleRate: 16000,
+      });
+      screenNextAudioTime = 0;
+    }
+    if (screenAudioCtx.state === "suspended") screenAudioCtx.resume();
+  },
+  
+  playScreenAudioChunk(pcmBuffer) {
+    this.ensureScreenAudioContext();
+    if (!screenAudioCtx) return;
+
+    const samples = new Int16Array(pcmBuffer);
+    const floatData = new Float32Array(samples.length);
+    for (let i = 0; i < samples.length; i++) {
+      floatData[i] = samples[i] / 32768;
+    }
+
+    const buffer = screenAudioCtx.createBuffer(1, floatData.length, 16000);
+    buffer.copyToChannel(floatData, 0, 0);
+
+    const source = screenAudioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(screenAudioCtx.destination);
+
+    const startAt = Math.max(
+      screenAudioCtx.currentTime + 0.02,
+      screenNextAudioTime || screenAudioCtx.currentTime
+    );
+    source.start(startAt);
+    screenNextAudioTime = startAt + buffer.duration;
+  },
+  
+  resetScreenAudio() {
+    screenNextAudioTime = 0;
   },
 
   handleScreenRecordDownload(data) {
     const payload = data.payload || data;
     if (!payload) return;
 
-    // Convert base64 to blob and trigger download
+    // Convert base64 to blob
     const binaryString = window.atob(payload);
     const len = binaryString.length;
     const bytes = new Uint8Array(len);
@@ -403,30 +521,23 @@ export const MonitorFeature = {
       bytes[i] = binaryString.charCodeAt(i);
     }
 
-    const blob = new Blob([bytes], { type: "video/avi" });
+    const blob = new Blob([bytes], { type: "video/webm" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.style.display = "none";
-    a.href = url;
-
     const time = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
-    a.download = `Screen_Rec_${time}.avi`;
+    const fileName = `Screen_Rec_${time}`;
 
-    document.body.appendChild(a);
-    a.click();
+    // Show modal with video preview (giống webcam)
+    showVideoPreviewModal(url, fileName);
 
-    setTimeout(() => {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }, 100);
-
-    UIManager.showToast("Screenshot saved to device!", "success");
+    UIManager.showToast("Screen recording ready!", "success");
 
     // Re-enable controls after video is ready
     const durationInput = document.getElementById("monitor-record-duration");
     const recordBtn = document.getElementById("btn-monitor-record");
     const cancelBtn = document.getElementById("btn-monitor-cancel");
+    const audioSwitch = document.getElementById("screen-audio-switch");
     if (durationInput) durationInput.disabled = false;
+    if (audioSwitch) audioSwitch.disabled = false;
     if (isStreaming && recordBtn) recordBtn.disabled = false;
     if (cancelBtn) cancelBtn.disabled = true;
     this.stopRecordingTimer();

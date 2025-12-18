@@ -31,6 +31,14 @@ namespace RemoteControlServer.Core
                     StreamManager.StopStreaming();
                     SocketManager.SendJson(socket, "LOG", "Đã dừng Stream");
                     break;
+                case "START_SCREEN_AUDIO":
+                    StreamManager.StartAudioStreaming();
+                    SocketManager.SendJson(socket, "LOG", "Đã bật âm thanh màn hình");
+                    break;
+                case "STOP_SCREEN_AUDIO":
+                    StreamManager.StopAudioStreaming();
+                    SocketManager.SendJson(socket, "LOG", "Đã tắt âm thanh màn hình");
+                    break;
                 case "RENAME_FILE":
                     CommandHandler.RenameFile(socket, packet.param);
                     break;
@@ -171,10 +179,22 @@ namespace RemoteControlServer.Core
                     try { SocketManager.SendJson(socket, "PONG", packet.param); } catch { }
                     break;
                 case "RECORD_SCREEN":
-                    int sec = 10;
-                    int.TryParse(packet.param, out sec);
-                    string recMsg = StreamManager.StartRecording(sec);
-                    SocketManager.SendJson(socket, "LOG", recMsg);
+                    try
+                    {
+                        dynamic recParams = JsonConvert.DeserializeObject(packet.param);
+                        int sec = (int)(recParams.duration ?? 10);
+                        bool includeAudio = (bool)(recParams.audio ?? false);
+                        string recMsg = StreamManager.StartRecording(sec, includeAudio);
+                        SocketManager.SendJson(socket, "LOG", recMsg);
+                    }
+                    catch
+                    {
+                        // Fallback: parse as plain number
+                        int sec = 10;
+                        int.TryParse(packet.param, out sec);
+                        string recMsg = StreamManager.StartRecording(sec, false);
+                        SocketManager.SendJson(socket, "LOG", recMsg);
+                    }
                     break;
                 case "START_AUDIO":
                     AudioManager.StartStreaming();

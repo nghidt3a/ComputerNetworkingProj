@@ -17,8 +17,8 @@ let currentPreviewButton = null;
 
 export const AudioFeature = {
   init() {
-    // Listen for live audio chunks (header 0x04)
-    SocketService.on("BINARY_STREAM", this.handleLiveAudio.bind(this));
+    // Listen for live audio chunks (header 0x04) - dispatched as AUDIO_STREAM
+    SocketService.on("AUDIO_STREAM", this.handleLiveAudio.bind(this));
     // Listen for server-sent audio file when recording completes
     SocketService.on("AUDIO_RECORD_FILE", this.handleAudioDownload.bind(this));
 
@@ -62,24 +62,12 @@ export const AudioFeature = {
   handleLiveAudio(arrayBuffer) {
     if (!isAudioActive) return;
 
+    // AUDIO_STREAM format: [header 0x04 (1 byte)] [timestamp (4 bytes)] [PCM data]
+    // Header đã được filter bởi socket.js, chỉ cần parse timestamp và PCM
     const view = new DataView(arrayBuffer);
-    const header = view.getUint8(0);
-    if (header !== 0x04) return; // Only handle audio (0x04)
-    // Parse optional 4-byte little-endian timestamp (ms)
-    let offset = 1;
-    let timestampMs = null;
-    if (arrayBuffer.byteLength >= 5) {
-      const ts =
-        view.getUint8(1) |
-        (view.getUint8(2) << 8) |
-        (view.getUint8(3) << 16) |
-        (view.getUint8(4) << 24);
-      // Convert to signed 32-bit if needed, then to number
-      timestampMs = ts >>> 0; // ensure unsigned
-      offset = 5;
-    }
-
-    const pcmData = arrayBuffer.slice(offset);
+    
+    // Skip header (1 byte) + timestamp (4 bytes) = 5 bytes
+    const pcmData = arrayBuffer.slice(5);
     this.playAudioChunk(pcmData);
   },
 

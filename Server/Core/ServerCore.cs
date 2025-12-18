@@ -319,6 +319,7 @@ namespace RemoteControlServer.Core
             };
 
             // Live audio stream (system audio capture from mic)
+            // Dùng cho cả tab Audio và Screen Monitor audio
             AudioManager.OnAudioCaptured += (pcmBytes) => {
                 try
                 {

@@ -23,7 +23,29 @@ export const SocketService = {
 
                 socket.onmessage = (event) => {
                     if (event.data instanceof ArrayBuffer) {
-                        dispatch("BINARY_STREAM", event.data);
+                        // Parse header byte để phân loại stream
+                        const view = new DataView(event.data);
+                        const header = view.getUint8(0);
+                        
+                        switch (header) {
+                            case 0x01: // Screen frame
+                                dispatch("BINARY_STREAM", event.data);
+                                break;
+                            case 0x02: // Webcam frame
+                                dispatch("BINARY_STREAM", event.data);
+                                break;
+                            case 0x03: // Webcam audio
+                                dispatch("BINARY_STREAM", event.data);
+                                break;
+                            case 0x04: // System audio (với timestamp)
+                                dispatch("AUDIO_STREAM", event.data);
+                                break;
+                            case 0x05: // Screen audio
+                                dispatch("SCREEN_AUDIO_STREAM", event.data);
+                                break;
+                            default:
+                                dispatch("BINARY_STREAM", event.data);
+                        }
                     } else {
                         try {
                             const packet = JSON.parse(event.data);

@@ -643,6 +643,14 @@
                         </h6>
                       </div>
                       <div class="d-flex gap-2 align-items-center">
+                        <!-- Audio Toggle -->
+                        <label class="audio-toggle-switch-mini me-2" title="Toggle Audio">
+                          <input type="checkbox" id="screen-audio-switch" checked onchange="toggleScreenAudio()">
+                          <span class="audio-slider-mini"></span>
+                          <span class="audio-label-mini"><i class="fas fa-volume-up" id="screen-audio-icon"></i></span>
+                        </label>
+
+                        <!-- Control Toggle -->
                         <div class="form-check form-switch me-2">
                           <input
                             class="form-check-input"
@@ -924,9 +932,8 @@
                           ><i
                             class="fas fa-volume-up"
                             id="audio-switch-icon"
-                          ></i>
-                          Audio</span
-                        >
+                          ></i
+                        ></span>
                       </label>
                     </div>
                   </div>
