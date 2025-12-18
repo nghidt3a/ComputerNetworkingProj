@@ -46,7 +46,7 @@ export const MonitorFeature = {
     SocketService.on("BINARY_STREAM", this.handleStreamFrame.bind(this));
     SocketService.on("SCREEN_CAPTURE", this.handleSnapshotPreview);
     SocketService.on("SCREENSHOT_FILE", this.handleSnapshotDownload);
-    
+
     // Screen audio stream - dùng cùng AUDIO_STREAM event (header 0x04) với tab Audio
     SocketService.on("AUDIO_STREAM", this.handleScreenAudio.bind(this));
 
@@ -302,7 +302,7 @@ export const MonitorFeature = {
       // Bật Stream (server tự động bật audio streaming kèm)
       SocketService.send("START_STREAM");
       isStreaming = true;
-      
+
       // Khởi tạo AudioContext trước (cần user interaction) để nghe realtime
       if (isScreenAudioEnabled) {
         this.ensureScreenAudioContext();
@@ -323,7 +323,7 @@ export const MonitorFeature = {
       // Tắt Stream (server tự động tắt audio streaming kèm)
       SocketService.send("STOP_STREAM");
       isStreaming = false;
-      
+
       // Reset audio playback
       this.resetScreenAudio();
 
@@ -412,11 +412,11 @@ export const MonitorFeature = {
     if (audioSwitch) audioSwitch.disabled = true;
 
     this.startRecordingTimer(duration);
-    
+
     // Send command with audio flag
     const payload = JSON.stringify({ duration, audio: isScreenAudioEnabled });
     SocketService.send("RECORD_SCREEN", payload);
-    
+
     const mode = isScreenAudioEnabled ? "video + audio" : "video only";
     UIManager.showToast(`Recording screen ${mode} ${duration}s...`, "info");
   },
@@ -428,9 +428,9 @@ export const MonitorFeature = {
   toggleScreenAudio() {
     isScreenAudioEnabled = !isScreenAudioEnabled;
     isScreenAudioMuted = !isScreenAudioEnabled;
-    
+
     const icon = document.getElementById("screen-audio-icon");
-    
+
     if (isScreenAudioEnabled) {
       if (icon) icon.className = "fas fa-volume-up";
       // Khởi tạo AudioContext ngay khi bật (user interaction required)
@@ -439,18 +439,20 @@ export const MonitorFeature = {
       if (icon) icon.className = "fas fa-volume-mute";
       this.resetScreenAudio();
     }
-    
-    const status = isScreenAudioEnabled ? "🔊 Screen Audio ON" : "🔇 Screen Audio OFF";
+
+    const status = isScreenAudioEnabled
+      ? "🔊 Screen Audio ON"
+      : "🔇 Screen Audio OFF";
     UIManager.showToast(status, "info");
   },
-  
+
   // --- Screen Audio Playback ---
   handleScreenAudio(arrayBuffer) {
     // Chỉ xử lý khi đang streaming và audio enabled
     if (!isStreaming || isScreenAudioMuted || !isScreenAudioEnabled) {
       return;
     }
-    
+
     // AUDIO_STREAM format: [header 0x04 (1 byte)] [timestamp (4 bytes)] [PCM data]
     let pcmData;
     if (arrayBuffer instanceof ArrayBuffer) {
@@ -458,7 +460,7 @@ export const MonitorFeature = {
       pcmData = arrayBuffer.slice(5);
     } else if (arrayBuffer instanceof Blob) {
       // Handle Blob case
-      arrayBuffer.arrayBuffer().then(ab => {
+      arrayBuffer.arrayBuffer().then((ab) => {
         this.playScreenAudioChunk(ab.slice(5));
       });
       return;
@@ -466,10 +468,10 @@ export const MonitorFeature = {
       console.warn("Unknown audio data type:", typeof arrayBuffer);
       return;
     }
-    
+
     this.playScreenAudioChunk(pcmData);
   },
-  
+
   ensureScreenAudioContext() {
     if (!screenAudioCtx) {
       screenAudioCtx = new (window.AudioContext || window.webkitAudioContext)({
@@ -479,7 +481,7 @@ export const MonitorFeature = {
     }
     if (screenAudioCtx.state === "suspended") screenAudioCtx.resume();
   },
-  
+
   playScreenAudioChunk(pcmBuffer) {
     this.ensureScreenAudioContext();
     if (!screenAudioCtx) return;
@@ -504,7 +506,7 @@ export const MonitorFeature = {
     source.start(startAt);
     screenNextAudioTime = startAt + buffer.duration;
   },
-  
+
   resetScreenAudio() {
     screenNextAudioTime = 0;
   },

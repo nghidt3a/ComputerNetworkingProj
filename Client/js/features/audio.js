@@ -65,7 +65,7 @@ export const AudioFeature = {
     // AUDIO_STREAM format: [header 0x04 (1 byte)] [timestamp (4 bytes)] [PCM data]
     // Header đã được filter bởi socket.js, chỉ cần parse timestamp và PCM
     const view = new DataView(arrayBuffer);
-    
+
     // Skip header (1 byte) + timestamp (4 bytes) = 5 bytes
     const pcmData = arrayBuffer.slice(5);
     this.playAudioChunk(pcmData);
