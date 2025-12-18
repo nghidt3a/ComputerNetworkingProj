@@ -26,6 +26,7 @@ namespace RemoteControlServer.Services
 
             _isRecording = true;
             _frameCounter = 0;
+            _tempAudioPath = null; // Reset audio path
 
             // Create temp folder for frames
             _tempFramesFolder = Path.Combine(Path.GetTempPath(), $"webcam_{Guid.NewGuid()}");
@@ -39,6 +40,10 @@ namespace RemoteControlServer.Services
                 var waveFormat = new WaveFormat(16000, 16, 1); // 16kHz mono 16-bit
                 _audioWriter = new WaveFileWriter(_tempAudioPath, waveFormat);
                 Console.WriteLine($"🎤 Audio file: {_tempAudioPath}");
+            }
+            else
+            {
+                Console.WriteLine($"🎬 Recording video only (no audio)");
             }
         }
 
@@ -81,7 +86,7 @@ namespace RemoteControlServer.Services
         /// <summary>
         /// Stop recording and encode video with FFmpeg.
         /// </summary>
-        public static async Task<string> StopRecordingAndEncode(string outputPath)
+        public static async Task<string> StopRecordingAndEncode(string outputPath, bool includeAudio = true)
         {
             if (!_isRecording) return null;
 
@@ -98,7 +103,7 @@ namespace RemoteControlServer.Services
             Console.WriteLine($"🎬 Encoding video... Frames: {_frameCounter}");
 
             // Run FFmpeg
-            bool success = await EncodeWithFFmpeg(outputPath);
+            bool success = await EncodeWithFFmpeg(outputPath, includeAudio);
 
             // Cleanup temp files
             CleanupTempFiles();
@@ -106,27 +111,27 @@ namespace RemoteControlServer.Services
             return success ? outputPath : null;
         }
 
-        private static async Task<bool> EncodeWithFFmpeg(string outputPath)
+        private static async Task<bool> EncodeWithFFmpeg(string outputPath, bool includeAudio = true)
         {
             try
             {
                 var inputPattern = Path.Combine(_tempFramesFolder, "frame_%04d.jpg");
-                var hasAudio = !string.IsNullOrEmpty(_tempAudioPath) && File.Exists(_tempAudioPath);
+                var hasAudio = includeAudio && !string.IsNullOrEmpty(_tempAudioPath) && File.Exists(_tempAudioPath);
 
                 string ffmpegArgs;
                 if (hasAudio)
                 {
-                    // Video + Audio
-                    ffmpegArgs = $"-framerate 15 -i \"{inputPattern}\" -i \"{_tempAudioPath}\" " +
-                                 $"-c:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p " +
-                                 $"-c:a aac -b:a 128k -shortest -y \"{outputPath}\"";
+                    // Video + Audio -> WebM with VP9 + Opus
+                    ffmpegArgs = $"-framerate 24 -i \"{inputPattern}\" -i \"{_tempAudioPath}\" " +
+                                 $"-c:v libvpx-vp9 -crf 30 -b:v 0 -deadline realtime -cpu-used 4 " +
+                                 $"-c:a libopus -b:a 128k -shortest -y \"{outputPath}\"";
                 }
                 else
                 {
-                    // Video only
-                    ffmpegArgs = $"-framerate 15 -i \"{inputPattern}\" " +
-                                 $"-c:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p " +
-                                 $"-y \"{outputPath}\"";
+                    // Video only -> WebM with VP9
+                    ffmpegArgs = $"-framerate 24 -i \"{inputPattern}\" " +
+                                 $"-c:v libvpx-vp9 -crf 30 -b:v 0 -deadline realtime -cpu-used 4 " +
+                                 $"-an -y \"{outputPath}\"";
                 }
 
                 Console.WriteLine($"🔧 FFmpeg: {ffmpegArgs.Substring(0, Math.Min(100, ffmpegArgs.Length))}...");

@@ -188,3 +188,93 @@
         gap: 8px;
     }
 }
+
+/* ========================================
+   AUDIO TOGGLE SWITCH IN TOOLBAR
+   ======================================== */
+.audio-toggle-toolbar {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Toggle Switch Container */
+.audio-toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Hide default checkbox */
+.audio-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+/* The slider track */
+.audio-slider {
+    position: relative;
+    width: 42px;
+    height: 22px;
+    background: #dc2626;
+    border-radius: 22px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* The slider knob */
+.audio-slider::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 2px;
+    bottom: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* When checked - green background */
+.audio-toggle-switch input:checked + .audio-slider {
+    background: #22c55e;
+}
+
+/* When checked - move knob to right */
+.audio-toggle-switch input:checked + .audio-slider::before {
+    transform: translateX(20px);
+}
+
+/* Audio Label */
+.audio-label {
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.audio-label i {
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+/* Icon change when muted */
+.audio-label i.fa-volume-mute {
+    color: #ef4444;
+}
+
+.audio-label i.fa-volume-up {
+    color: #22c55e;
+}

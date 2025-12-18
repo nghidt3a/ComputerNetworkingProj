@@ -871,6 +871,15 @@
                     <span class="badge bg-info ms-3" id="webcam-zoom-level"
                       >100%</span
                     >
+
+                    <!-- Audio Toggle Switch -->
+                    <div class="audio-toggle-toolbar ms-3">
+                      <label class="audio-toggle-switch" title="Toggle Audio">
+                        <input type="checkbox" id="webcam-audio-switch" checked onchange="toggleWebcamAudio()">
+                        <span class="audio-slider"></span>
+                        <span class="audio-label"><i class="fas fa-volume-up" id="audio-switch-icon"></i> Audio</span>
+                      </label>
+                    </div>
                   </div>
 
                   <div class="webcam-container" id="webcam-container">
@@ -931,21 +940,6 @@
                         max="60"
                       />
                     </div>
-                    <div class="form-check mb-3">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="webcam-audio-toggle"
-                        checked
-                      />
-                      <label
-                        class="form-check-label small"
-                        for="webcam-audio-toggle"
-                      >
-                        <i class="fas fa-microphone me-1"></i>Record with Audio
-                      </label>
-                    </div>
-
                     <button
                       id="btn-webcam-record"
                       onclick="startRecordWebcam()"
@@ -1451,7 +1445,7 @@
               class="form-control"
               placeholder="Enter file name..."
             />
-            <span class="input-group-text">.mp4</span>
+            <span class="input-group-text">.webm</span>
           </div>
         </div>
 

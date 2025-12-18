@@ -12,6 +12,7 @@ let remainingSeconds = 0;
 // Audio streaming state
 let audioCtx = null;
 let nextAudioTime = 0;
+let isAudioMuted = false; // Track audio mute state
 
 export const WebcamFeature = {
   init() {
@@ -138,6 +139,9 @@ export const WebcamFeature = {
   },
 
   playAudioChunk(pcmBuffer) {
+    // Skip if audio is muted
+    if (isAudioMuted) return;
+    
     this.ensureAudioContext();
     if (!audioCtx) return;
 
@@ -165,6 +169,38 @@ export const WebcamFeature = {
   resetAudioPlayback() {
     nextAudioTime = 0;
     // Không đóng AudioContext để tránh chờ user gesture, chỉ reset queue
+  },
+
+  /**
+   * Toggle audio (cả live playback và record) từ switch overlay
+   */
+  toggleAudio() {
+    isAudioMuted = !isAudioMuted;
+    
+    const checkbox = document.getElementById("webcam-audio-switch");
+    const icon = document.getElementById("audio-switch-icon");
+    
+    // Sync checkbox state
+    if (checkbox) checkbox.checked = !isAudioMuted;
+    
+    // Update icon
+    if (icon) {
+      if (isAudioMuted) {
+        icon.className = "fas fa-volume-mute";
+      } else {
+        icon.className = "fas fa-volume-up";
+      }
+    }
+    
+    const status = isAudioMuted ? "🔇 Audio OFF" : "🔊 Audio ON";
+    UIManager.showToast(status, "info");
+  },
+
+  /**
+   * Get audio enabled state (for recording)
+   */
+  isAudioEnabled() {
+    return !isAudioMuted;
   },
 
   handleWebcamFrame(data) {
@@ -236,17 +272,17 @@ export const WebcamFeature = {
       )
     );
 
-    // Check if audio recording is enabled
-    const audioToggle = document.getElementById("webcam-audio-toggle");
-    const includeAudio = audioToggle ? audioToggle.checked : false;
+    // Check if audio recording is enabled (từ audio switch overlay)
+    const includeAudio = this.isAudioEnabled();
 
     // Disable controls during recording
     const recordBtn = document.getElementById("btn-webcam-record");
     const cancelBtn = document.getElementById("btn-webcam-cancel");
+    const audioSwitch = document.getElementById("webcam-audio-switch");
     if (recordBtn) recordBtn.disabled = true;
     if (cancelBtn) cancelBtn.disabled = false;
     if (durationInput) durationInput.disabled = true;
-    if (audioToggle) audioToggle.disabled = true;
+    if (audioSwitch) audioSwitch.disabled = true;
 
     this.startRecordingTimer(duration);
 
@@ -267,7 +303,7 @@ export const WebcamFeature = {
       bytes[i] = binaryString.charCodeAt(i);
     }
 
-    const blob = new Blob([bytes], { type: "video/mp4" });
+    const blob = new Blob([bytes], { type: "video/webm" });
     const url = URL.createObjectURL(blob);
     const time = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
     const fileName = `Webcam_Rec_${time}`;
@@ -279,9 +315,9 @@ export const WebcamFeature = {
     const durationInput = document.getElementById("record-duration");
     const recordBtn = document.getElementById("btn-webcam-record");
     const cancelBtn = document.getElementById("btn-webcam-cancel");
-    const audioToggle = document.getElementById("webcam-audio-toggle");
+    const audioSwitch = document.getElementById("webcam-audio-switch");
     if (durationInput) durationInput.disabled = false;
-    if (audioToggle) audioToggle.disabled = false;
+    if (audioSwitch) audioSwitch.disabled = false;
     if (isWebcamActive && recordBtn) recordBtn.disabled = false;
     if (cancelBtn) cancelBtn.disabled = true;
     this.stopRecordingTimer();

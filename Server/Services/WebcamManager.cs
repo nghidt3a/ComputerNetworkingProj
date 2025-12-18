@@ -22,6 +22,12 @@ namespace RemoteControlServer.Services
         // Biến lưu thông tin ghi hình
         private static DateTime _stopRecordTime;
         private static string _currentSavePath;
+        private static bool _includeAudio = true;
+        
+        // Frame timing để sync với audio
+        private static long _recordingStartTicks;
+        private static int _targetFps = 24;  // Khớp với FFmpeg input framerate
+        private static int _framesRecorded = 0;
 
         // Âm thanh kèm webcam
         private const int AudioSampleRate = 16000; // Hz
@@ -63,8 +69,6 @@ namespace RemoteControlServer.Services
             StopMicCapture();
         }
 
-        private static bool _includeAudio = false;
-
         /// <summary>Start recording a video for a given duration (seconds). Returns a status message.</summary>
         public static string StartRecording(int durationSeconds, bool includeAudio = false)
         {
@@ -75,17 +79,19 @@ namespace RemoteControlServer.Services
             {
                 _includeAudio = includeAudio;
                 
-                // 1. Lưu vào thư mục Temp với extension .mp4 nếu có audio, .avi nếu không
+                // 1. Lưu vào thư mục Temp với extension .webm (browser-friendly)
                 string tempFolder = Path.GetTempPath();
-                string extension = includeAudio ? ".mp4" : ".avi";
+                string extension = ".webm";
                 string fileName = $"Rec_{DateTime.Now:HHmmss}{extension}";
                 _currentSavePath = Path.Combine(tempFolder, fileName);
 
                 // 2. Start VideoRecorder for frame/audio capture
                 VideoRecorder.StartRecording(includeAudio);
 
-                // 3. Thiết lập thời gian dừng
+                // 3. Thiết lập thời gian dừng và đếm frame
                 _stopRecordTime = DateTime.Now.AddSeconds(durationSeconds);
+                _recordingStartTicks = DateTime.Now.Ticks;
+                _framesRecorded = 0;
                 _isRecording = true;
 
                 string mode = includeAudio ? "video + audio" : "video only";
@@ -106,33 +112,18 @@ namespace RemoteControlServer.Services
             // Đợi một chút để ghi nốt frame cuối
             Thread.Sleep(200);
 
-            if (_includeAudio)
+            // Always use FFmpeg for encoding (WebM format works in browser)
+            Console.WriteLine($"🎬 Encoding video with FFmpeg...");
+            var finalPath = await VideoRecorder.StopRecordingAndEncode(_currentSavePath, _includeAudio);
+            
+            if (!string.IsNullOrEmpty(finalPath) && File.Exists(finalPath))
             {
-                // Use VideoRecorder to encode with FFmpeg
-                Console.WriteLine($"🎬 Encoding video with FFmpeg...");
-                var finalPath = await VideoRecorder.StopRecordingAndEncode(_currentSavePath);
-                
-                if (!string.IsNullOrEmpty(finalPath) && File.Exists(finalPath))
-                {
-                    Console.WriteLine($"✅ Video file ready: {finalPath}");
-                    OnVideoSaved?.Invoke(finalPath);
-                }
-                else
-                {
-                    Console.WriteLine($"❌ Video encoding failed");
-                }
+                Console.WriteLine($"✅ Video file ready: {finalPath}");
+                OnVideoSaved?.Invoke(finalPath);
             }
             else
             {
-                // Old AVI method (no audio)
-                if (_writer != null)
-                {
-                    _writer.Release();
-                    _writer = null;
-                    
-                    Console.WriteLine($">> Đã tạo file: {_currentSavePath}");
-                    OnVideoSaved?.Invoke(_currentSavePath);
-                }
+                Console.WriteLine($"❌ Video encoding failed");
             }
         }
 
@@ -189,7 +180,6 @@ namespace RemoteControlServer.Services
         }
 
         /// <summary>Main loop capturing frames from the webcam and emitting live frames/events.</summary>
-        // Server/Services/WebcamManager.cs
         private static void CameraLoop()
         {
             try 
@@ -205,52 +195,32 @@ namespace RemoteControlServer.Services
                 }
 
                 Mat frame = new Mat();
-
-                // --- CẤU HÌNH GHI HÌNH ĐỒNG BỘ ---
-                int targetFps = 15; // Webcam thường hỗ trợ tốt ở 15-30 FPS. Chọn 15 để nhẹ file.
-                long recordingStartTime = 0;
-                int framesWritten = 0;
+                byte[] currentJpegBytes = null;
+                
+                // Tính toán interval giữa các frame (ticks)
+                // 1 second = 10,000,000 ticks
+                long ticksPerFrame = 10_000_000 / _targetFps;  // ~416,666 ticks cho 24fps
 
                 while (_isStreaming)
                 {
                     _capture.Read(frame);
                     if (!frame.Empty())
                     {
-                        // --- PHẦN GHI HÌNH THÔNG MINH (AUTO SYNC) ---
+                        // --- PHẦN GHI HÌNH ĐỒNG BỘ VỚI AUDIO ---
                         if (_isRecording)
                         {
-                            if (_includeAudio)
+                            // Encode frame thành JPEG
+                            currentJpegBytes = frame.ImEncode(".jpg", new int[] { (int)ImwriteFlags.JpegQuality, 90 });
+                            
+                            // Tính số frame cần có dựa trên thời gian thực đã trôi qua
+                            long elapsedTicks = DateTime.Now.Ticks - _recordingStartTicks;
+                            int expectedFrames = (int)(elapsedTicks / ticksPerFrame);
+                            
+                            // Ghi đủ số frame để khớp với thời gian thực (bù frame nếu thiếu)
+                            while (_framesRecorded < expectedFrames && currentJpegBytes != null)
                             {
-                                // New method: save frames as JPEG for FFmpeg
-                                var jpegBytes = frame.ImEncode(".jpg", new int[] { (int)ImwriteFlags.JpegQuality, 90 });
-                                VideoRecorder.SaveFrame(jpegBytes);
-                            }
-                            else
-                            {
-                                // Old method: write to AVI directly
-                                if (_writer == null || !_writer.IsOpened())
-                                {
-                                    // Khởi tạo Writer với FPS cố định là targetFps (15)
-                                    _writer = new VideoWriter(_currentSavePath, FourCC.MJPG, targetFps, new OpenCvSharp.Size(frame.Width, frame.Height));
-                                    
-                                    // Đánh dấu mốc thời gian bắt đầu
-                                    recordingStartTime = DateTime.Now.Ticks;
-                                    framesWritten = 0;
-                                }
-
-                                if (_writer.IsOpened())
-                                {
-                                    // Tính toán số frame cần thiết dựa trên thời gian thực đã trôi qua
-                                    double elapsedSeconds = (DateTime.Now.Ticks - recordingStartTime) / 10000000.0;
-                                    int expectedFrames = (int)(elapsedSeconds * targetFps);
-
-                                    // Vòng lặp bù frame:
-                                    while (framesWritten <= expectedFrames)
-                                    {
-                                        _writer.Write(frame);
-                                        framesWritten++;
-                                    }
-                                }
+                                VideoRecorder.SaveFrame(currentJpegBytes);
+                                _framesRecorded++;
                             }
 
                             // Kiểm tra thời gian dừng
@@ -261,18 +231,18 @@ namespace RemoteControlServer.Services
                         // --- PHẦN STREAM (Gửi ảnh xem live) ---
                         if (OnFrameCaptured != null)
                         {
-                            // Nén ảnh JPEG để gửi qua mạng (giảm chất lượng xuống 50 để mượt hơn)
+                            // Nén ảnh JPEG để gửi qua mạng
                             var bytes = frame.ImEncode(".jpg", new int[] { (int)ImwriteFlags.JpegQuality, 50 });
                             OnFrameCaptured.Invoke(bytes);
                         }
                     }
                     else
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(5);
                     }
                     
-                    // Delay nhỏ để giảm tải CPU, không ảnh hưởng tới thời gian video vì đã có thuật toán bù ở trên
-                    Thread.Sleep(10); 
+                    // Delay nhỏ để giảm tải CPU
+                    Thread.Sleep(5); 
                 }
             }
             catch { _isStreaming = false; }

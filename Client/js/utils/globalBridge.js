@@ -188,6 +188,13 @@ window.cancelRecordWebcam = function () {
   WebcamFeature.cancelRecording();
 };
 
+/**
+ * Toggle audio (từ switch overlay trên webcam)
+ */
+window.toggleWebcamAudio = function () {
+  WebcamFeature.toggleAudio();
+};
+
 // --- WEBCAM DISPLAY CONTROLS ---
 /**
  * Webcam zoom controls

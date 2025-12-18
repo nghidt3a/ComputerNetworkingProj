@@ -281,7 +281,7 @@ function updateThemeIcon(theme) {
 /**
  * Show video preview modal with video player, filename input, and download button
  * @param {string} videoUrl - URL of video blob
- * @param {string} fileName - Default file name (without .mp4 extension)
+ * @param {string} fileName - Default file name (without extension)
  */
 window.showVideoPreviewModal = function (videoUrl, fileName) {
   const modal = document.getElementById("video-preview-modal");
@@ -296,7 +296,7 @@ window.showVideoPreviewModal = function (videoUrl, fileName) {
   // Set video source
   player.src = videoUrl;
 
-  // Set filename input (without .mp4 extension)
+  // Set filename input (without extension - extension added on download)
   filenameInput.value = fileName;
 
   // Show modal
@@ -335,8 +335,8 @@ window.downloadVideoPreview = function () {
 
   // Sanitize filename
   fileName = fileName.replace(/[\\/:*?"<>|]/g, "-");
-  if (!fileName.endsWith(".mp4")) {
-    fileName += ".mp4";
+  if (!fileName.endsWith(".webm") && !fileName.endsWith(".mp4")) {
+    fileName += ".webm";
   }
 
   // Download video
