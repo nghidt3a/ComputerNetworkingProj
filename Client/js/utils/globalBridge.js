@@ -58,7 +58,7 @@ import("../features/fileManager.js")
   .catch((err) => {
     console.error("Failed to load FileManagerFeature:", err);
   });
-  
+
 window.getDrives = function () {
   if (FileManagerFeature) {
     FileManagerFeature.getDrives();
@@ -73,39 +73,39 @@ window.searchFiles = function () {
   const searchInput = document.getElementById("file-search-input");
   const searchTerm = searchInput?.value.toLowerCase() || "";
   const tbody = document.getElementById("file-list-body");
-  
+
   // 1. Client-side Filter (Instant Visual Feedback)
   const rows = tbody?.getElementsByTagName("tr") || [];
   for (let row of rows) {
     // Skip empty/info rows (check if cell exists)
     if (row.cells.length > 1) {
-        const nameCell = row.cells[1]; // Name column
-        if (nameCell) {
-          const fileName = nameCell.textContent.toLowerCase();
-          // Simple filter: Show if match, hide if not
-          row.style.display = fileName.includes(searchTerm) ? "" : "none";
-        }
+      const nameCell = row.cells[1]; // Name column
+      if (nameCell) {
+        const fileName = nameCell.textContent.toLowerCase();
+        // Simple filter: Show if match, hide if not
+        row.style.display = fileName.includes(searchTerm) ? "" : "none";
+      }
     }
   }
 
   // 2. Server-side Search (Trigger on ENTER key)
   // window.event is supported in modern browsers for inline events
   const e = window.event;
-  if (e && e.key === 'Enter') {
-      if (searchTerm.length > 0) {
-          console.log("Triggering server search for:", searchTerm);
-          if (FileManagerFeature) {
-              FileManagerFeature.searchOnServer(searchTerm);
-          } else {
-               // Fallback if module not loaded
-               import("../features/fileManager.js").then((module) => {
-                   module.FileManagerFeature.searchOnServer(searchTerm);
-               });
-          }
+  if (e && e.key === "Enter") {
+    if (searchTerm.length > 0) {
+      console.log("Triggering server search for:", searchTerm);
+      if (FileManagerFeature) {
+        FileManagerFeature.searchOnServer(searchTerm);
       } else {
-          // If Enter is pressed on empty input -> Reload current folder
-          if (FileManagerFeature) FileManagerFeature.getDrives();
+        // Fallback if module not loaded
+        import("../features/fileManager.js").then((module) => {
+          module.FileManagerFeature.searchOnServer(searchTerm);
+        });
       }
+    } else {
+      // If Enter is pressed on empty input -> Reload current folder
+      if (FileManagerFeature) FileManagerFeature.getDrives();
+    }
   }
 };
 

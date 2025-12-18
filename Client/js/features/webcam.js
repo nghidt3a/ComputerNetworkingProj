@@ -141,7 +141,7 @@ export const WebcamFeature = {
   playAudioChunk(pcmBuffer) {
     // Skip if audio is muted
     if (isAudioMuted) return;
-    
+
     this.ensureAudioContext();
     if (!audioCtx) return;
 
@@ -176,13 +176,13 @@ export const WebcamFeature = {
    */
   toggleAudio() {
     isAudioMuted = !isAudioMuted;
-    
+
     const checkbox = document.getElementById("webcam-audio-switch");
     const icon = document.getElementById("audio-switch-icon");
-    
+
     // Sync checkbox state
     if (checkbox) checkbox.checked = !isAudioMuted;
-    
+
     // Update icon
     if (icon) {
       if (isAudioMuted) {
@@ -191,7 +191,7 @@ export const WebcamFeature = {
         icon.className = "fas fa-volume-up";
       }
     }
-    
+
     const status = isAudioMuted ? "🔇 Audio OFF" : "🔊 Audio ON";
     UIManager.showToast(status, "info");
   },
