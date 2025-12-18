@@ -58,6 +58,57 @@ body {
     flex-direction: column !important;
 }
 
+/* Fix sidenav-header layout for hamburger button */
+#sidebar .sidenav-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 1rem 1.25rem !important;
+    gap: 0.75rem;
+    height: auto !important;
+    min-height: 4.875rem;
+    text-align: left !important;
+}
+
+/* Ensure hamburger button is properly positioned */
+#sidebar .sidenav-header #menu-toggle {
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+}
+
+/* Ensure navbar-brand is properly aligned */
+#sidebar .sidenav-header .navbar-brand {
+    flex: 1;
+    min-width: 0;
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none;
+}
+
+/* Ensure logo image displays correctly */
+#sidebar .sidenav-header .navbar-brand img {
+    display: block;
+    height: 40px;
+    width: auto;
+    max-width: 2rem;
+    max-height: 2rem;
+}
+
+/* Ensure brand text displays correctly */
+#sidebar .sidenav-header .navbar-brand span {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Ensure close icon doesn't interfere with layout */
+#sidebar .sidenav-header #iconSidenav {
+    position: absolute !important;
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+    z-index: 1000;
+}
+
 /* Add smooth transitions for toggle */
 #sidebar .nav-link,
 #sidebar .nav-link-text,
@@ -130,12 +181,19 @@ body {
     border-radius: 14px;
     padding: 0.85rem 1.1rem;
     box-shadow: var(--hero-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 1rem;
 }
 
 .hero-title-block {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    flex: 0 1 auto;
+    min-width: 0;
 }
 
 .hero-title {
@@ -182,7 +240,13 @@ body {
 }
 
 .hero-actions {
+    display: flex;
+    align-items: center;
     justify-content: flex-end;
+    flex-wrap: nowrap;
+    margin-left: auto;
+    flex: 0 0 auto;
+    min-width: fit-content;
 }
 
 .hero-menu-toggle {
@@ -193,11 +257,20 @@ body {
     background: var(--bg-input);
     color: var(--text-primary);
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .hero-menu-toggle:hover {
     background: var(--bg-muted, #eef1f5);
     transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hero-menu-toggle:active {
+    transform: translateY(0);
 }
 
 .navbar-main.navbar-blur {
@@ -249,6 +322,13 @@ body {
     padding: 1.25rem 0.5rem !important;
     justify-content: center !important;
     display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+}
+
+#app-wrapper.toggled .sidenav-header #menu-toggle {
+    margin: 0 auto !important;
+    order: 1;
 }
 
 #app-wrapper.toggled .sidenav-header .navbar-brand {
@@ -256,6 +336,11 @@ body {
     margin: 0 auto !important;
     display: flex !important;
     width: 100% !important;
+    order: 2;
+}
+
+#app-wrapper.toggled .sidenav-header .navbar-brand img {
+    margin: 0 auto !important;
 }
 
 #app-wrapper.toggled .sidenav-header .navbar-brand span {
@@ -454,7 +539,9 @@ body {
 
     .hero-actions {
         width: 100%;
-        justify-content: flex-start;
+        justify-content: flex-end;
+        margin-left: 0;
+        margin-top: 0.5rem;
     }
 
     .hero-title {

@@ -23,6 +23,7 @@ body {
 .landing-header .container { padding-top: 10px; padding-bottom: 10px; }
 .brand { text-decoration: none; }
 .header-actions { gap: 8px; }
+.nav-toggle { margin-left: 8px; }
 .theme-toggle { border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); border-radius: 10px; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); }
 .theme-toggle:hover { background: var(--bg-input); }
 
@@ -190,9 +191,40 @@ body {
   .arch-arrow-down:nth-of-type(3) { grid-area: arrow3; }
 }
 
+@media (max-width: 991.98px) {
+  .landing-header .container {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 0.5rem;
+  }
+  .landing-header .container > div,
+  .landing-header .container > nav {
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+  .header-actions {
+    justify-content: flex-end;
+  }
+}
+
 @media (max-width: 767.98px) {
   .arch-wrapper { padding: 24px 12px 32px; }
   .arch-node { width: 100%; }
+  .landing-header .container {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 0.5rem;
+  }
+  .landing-header .container > div,
+  .landing-header .container > nav {
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+  .header-actions {
+    justify-content: flex-end;
+  }
 }
 
 /* Reveal animation (respects reduced motion) */

@@ -29,10 +29,17 @@
   <body>
     <header class="landing-header">
       <div class="container d-flex align-items-center justify-content-between gap-3">
-        <a class="brand d-flex align-items-center gap-2" href="#" aria-label="Trang chủ">
-          <img src="../assets/team/nsight-logo.svg" alt="N-SIGHT Team" style="height: 32px; width: auto" loading="lazy" />
-          <span class="fw-bold text-primary">N-SIGHT</span>
-        </a>
+        <!-- Left: Logo + Group Name + Hamburger -->
+        <div class="d-flex align-items-center gap-2">
+          <a class="brand d-flex align-items-center gap-2 mb-0" href="#" aria-label="Trang chủ">
+            <img src="../assets/team/nsight-logo.svg" alt="N-SIGHT Team" style="height: 32px; width: auto" loading="lazy" />
+            <span class="fw-bold text-primary">N-SIGHT</span>
+          </a>
+          <button class="nav-toggle ms-2" id="navToggle" aria-label="Mở menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+        <!-- Center: Navigation (giữ nguyên) -->
         <nav class="landing-nav" id="landingNav">
           <a href="#about" class="nav-link">Giới thiệu</a>
           <a href="#core-features" class="nav-link">Tính năng cốt lõi</a>
@@ -41,13 +48,18 @@
           <a href="#demo" class="nav-link">Demo</a>
           <a href="../index.html" class="btn btn-primary ms-2">Đăng nhập</a>
         </nav>
+        <!-- Right: Theme, Online, Ping -->
         <div class="header-actions d-flex align-items-center gap-2">
           <button class="theme-toggle" id="themeToggle" aria-label="Đổi giao diện" title="Đổi giao diện">
             <i class="fas fa-moon"></i>
           </button>
-          <button class="nav-toggle" id="navToggle" aria-label="Mở menu">
-            <span></span><span></span><span></span>
-          </button>
+          <span class="badge bg-light text-dark d-flex align-items-center" style="font-size:1rem;">
+            <span class="dot bg-success me-1" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></span>
+            Online
+          </span>
+          <span class="badge bg-danger d-flex align-items-center" style="font-size:1rem;">
+            <i class="fas fa-wifi me-1"></i> 1013 ms
+          </span>
         </div>
       </div>
     </header>
