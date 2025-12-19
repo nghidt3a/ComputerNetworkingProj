@@ -93,6 +93,16 @@ export const SocketService = {
           JSON.stringify({ command: command, param: param.toString() })
         );
       }
+    } else {
+      try {
+        // Thông báo nhẹ cho người dùng khi chưa kết nối
+        import('../utils/ui.js').then(({ UIManager }) => {
+          UIManager.showToast("Not connected to server", "error");
+        });
+      } catch (e) {
+        // Fallback chỉ log ra console
+        console.warn("Socket not connected. Command ignored:", command);
+      }
     }
   },
 
