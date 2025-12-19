@@ -760,5 +760,36 @@ namespace RemoteControlServer.Helpers
             }
             catch { }
         }
+
+        // ---- Power controls ----
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool LockWorkStation();
+
+        [DllImport("powrprof.dll", SetLastError = true)]
+        private static extern bool SetSuspendState(bool hibernate, bool forceCritical, bool disableWakeEvent);
+
+        public static bool Sleep()
+        {
+            try
+            {
+                return SetSuspendState(false, false, false);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool LockSession()
+        {
+            try
+            {
+                return LockWorkStation();
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

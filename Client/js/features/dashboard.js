@@ -105,14 +105,26 @@ export const DashboardFeature = {
       if (confirm("Restart Server?")) SocketService.send("RESTART");
     });
 
+    document.getElementById("btn-sleep")?.addEventListener("click", () => {
+      if (confirm("Put server to sleep?")) SocketService.send("SLEEP");
+    });
+
+    document.getElementById("btn-lock")?.addEventListener("click", () => {
+      if (confirm("Lock server session?")) SocketService.send("LOCK");
+    });
+
     // Quick Launch
     document
       .getElementById("btn-run-app")
       ?.addEventListener("click", this.runApp);
     document
+      .getElementById("btn-web-search")
+      ?.addEventListener("click", this.searchWeb);
+    document
       .getElementById("quickAppInput")
       ?.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") this.runApp();
+        if (e.key === "Enter" && e.ctrlKey) this.searchWeb();
+        else if (e.key === "Enter") this.runApp();
       });
 
     // Web Shortcuts (Event Delegation)
@@ -139,6 +151,21 @@ export const DashboardFeature = {
   openWeb(url) {
     SocketService.send("START_APP", url);
     UIManager.showToast(`Opening browser: ${url}...`, "info");
+  },
+
+  searchWeb() {
+    const input = document.getElementById("quickAppInput");
+    const query = input.value.trim();
+    if (!query)
+      return UIManager.showToast("Please enter a search term!", "error");
+
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(
+      query
+    )}`;
+
+    SocketService.send("START_APP", searchUrl);
+    UIManager.showToast(`Searching on server: ${query}`, "info");
+    input.value = "";
   },
 
   renderAppGrid(appList) {
