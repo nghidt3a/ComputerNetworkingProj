@@ -186,7 +186,11 @@
 
 /* Override any conflicting styles - let sidebar-menu.css handle the styling */
 #btn-disconnect.bg-gradient-danger {
-  background: linear-gradient(135deg, var(--danger-color, #ef4444) 0%, var(--danger-hover, #dc2626) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    var(--danger-color, #ef4444) 0%,
+    var(--danger-hover, #dc2626) 100%
+  ) !important;
   color: white !important;
   border: none !important;
 }
@@ -308,4 +312,14 @@
 /* Debug background */
 .debug-bg {
   background-color: rgba(255, 0, 0, 0.1) !important;
+}
+
+/* ===========================================
+   16. QUICK LAUNCH ICONS
+   =========================================== */
+.quick-icon {
+  height: 1em;
+  width: auto;
+  margin-right: 6px;
+  vertical-align: middle;
 }

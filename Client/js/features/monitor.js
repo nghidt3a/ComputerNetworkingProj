@@ -938,14 +938,32 @@ export const MonitorFeature = {
       if (!isControlEnabled) return;
 
       const now = Date.now();
-      if (now - lastMoveTime < 50) return; // Throttle to 20fps
+      if (now - lastMoveTime < 50) return; // Throttle to ~20fps
       lastMoveTime = now;
 
       const rect = screenImg.getBoundingClientRect();
-      let rawX = (e.clientX - rect.left) / rect.width;
-      let rawY = (e.clientY - rect.top) / rect.height;
 
-      // Clamp values between 0 and 1
+      // Adjust for object-fit (contain/cover) so we map only the drawn area
+      const imgRatio = screenImg.naturalWidth / screenImg.naturalHeight;
+      const boxRatio = rect.width / rect.height;
+
+      let drawW;
+      let drawH;
+      if (boxRatio > imgRatio) {
+        drawH = rect.height;
+        drawW = drawH * imgRatio;
+      } else {
+        drawW = rect.width;
+        drawH = drawW / imgRatio;
+      }
+
+      const offsetX = rect.left + (rect.width - drawW) / 2;
+      const offsetY = rect.top + (rect.height - drawH) / 2;
+
+      const rawX = (e.clientX - offsetX) / drawW;
+      const rawY = (e.clientY - offsetY) / drawH;
+
+      // Clamp values between 0 and 1 (anything outside is edge hovering)
       const xPercent = Math.max(0, Math.min(1, rawX));
       const yPercent = Math.max(0, Math.min(1, rawY));
 
