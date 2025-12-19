@@ -36,7 +36,9 @@
         <nav class="landing-nav" id="landingNav">
           <a href="#about" class="nav-link">Giới thiệu</a>
           <a href="#core-features" class="nav-link">Tính năng cốt lõi</a>
+          <a href="#advanced-features" class="nav-link">Chức năng sáng tạo</a>
           <a href="#architecture" class="nav-link">Kiến trúc hệ thống</a>
+          <a href="#tech-stack" class="nav-link">Công nghệ</a>
           <a href="#members" class="nav-link">Thành viên</a>
           <a href="#demo" class="nav-link">Demo</a>
           <a href="../index.html" class="btn btn-primary ms-2">Đăng nhập</a>
@@ -158,6 +160,42 @@
         </div>
       </section>
 
+      <!-- Advanced Features -->
+      <section id="advanced-features" class="section-padding bg-section reveal">
+        <div class="container">
+          <div class="text-center mb-4">
+            <h2 class="h3 fw-bold mb-2">Chức năng sáng tạo</h2>
+            <p class="text-secondary mb-0">Các tính năng nâng cao được phát triển để tăng điểm thưởng cho đồ án.</p>
+          </div>
+          <div class="row g-3 g-md-4">
+            <div class="col-12 col-lg-6">
+              <div class="feature-card feature-card-advanced h-100">
+                <div class="feature-icon text-primary mb-3">
+                  <i class="fas fa-folder-tree"></i>
+                </div>
+                <h3 class="h6 fw-bold mb-2">Quản lý File từ xa</h3>
+                <p class="text-secondary small mb-0">
+                  Duyệt cây thư mục, tải xuống tập tin từ máy bị điều khiển thông qua FileManagerService.cs. 
+                  Hỗ trợ đầy đủ các thao tác: duyệt, tải xuống, upload, đổi tên, xóa file và thư mục.
+                </p>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="feature-card feature-card-advanced h-100">
+                <div class="feature-icon text-success mb-3">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="h6 fw-bold mb-2">Giám sát tài nguyên hệ thống</h3>
+                <p class="text-secondary small mb-0">
+                  Theo dõi biểu đồ thời gian thực của CPU và RAM bằng các widget chuyên biệt. 
+                  Hiển thị thông tin phần cứng chi tiết và thống kê hiệu suất liên tục.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- System Architecture -->
       <section id="architecture" class="section-padding reveal">
         <div class="container">
@@ -167,15 +205,22 @@
           </div>
           <div class="arch-wrapper">
             <div class="arch-node arch-client">
+              <div class="arch-node-icon mb-2">
+                <i class="fas fa-globe"></i>
+              </div>
               <h3 class="h6 fw-bold mb-1">Client</h3>
               <p class="text-secondary small mb-0">Web Browser + Dashboard UI</p>
             </div>
 
             <div class="arch-arrow arch-arrow-down">
               <span>WebSocket / Socket.io</span>
+              <span class="arch-arrow-note">JSON Packets</span>
             </div>
 
             <div class="arch-node arch-server">
+              <div class="arch-node-icon mb-2">
+                <i class="fab fa-windows"></i>
+              </div>
               <h3 class="h6 fw-bold mb-1">Server</h3>
               <p class="text-secondary small mb-1">C# Signal Router</p>
               <p class="text-secondary small mb-0">Auth • Routing • Logging</p>
@@ -183,9 +228,13 @@
 
             <div class="arch-arrow arch-arrow-down">
               <span>TCP Socket</span>
+              <span class="arch-arrow-note">JSON + Binary Streams</span>
             </div>
 
             <div class="arch-node arch-agent">
+              <div class="arch-node-icon mb-2">
+                <i class="fas fa-desktop"></i>
+              </div>
               <h3 class="h6 fw-bold mb-1">Target PC</h3>
               <p class="text-secondary small mb-1">Agent Service</p>
               <p class="text-secondary small mb-0">Screen • Webcam • Keylogger • Power</p>
@@ -193,9 +242,86 @@
 
             <div class="arch-arrow arch-arrow-up arch-arrow-left">
               <span>Control Commands</span>
+              <span class="arch-arrow-note">JSON Packets</span>
             </div>
             <div class="arch-arrow arch-arrow-up arch-arrow-right">
               <span>Telemetry / Streams</span>
+              <span class="arch-arrow-note">Binary Streams</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tech Stack -->
+      <section id="tech-stack" class="section-padding reveal">
+        <div class="container">
+          <div class="text-center mb-4">
+            <h2 class="h3 fw-bold mb-2">Nền tảng công nghệ</h2>
+            <p class="text-secondary mb-0">Các công nghệ cốt lõi được sử dụng trong dự án.</p>
+          </div>
+          <div class="tech-stack-wrapper">
+            <div class="tech-stack-category">
+              <h4 class="h6 fw-bold text-secondary mb-3 text-uppercase">Backend</h4>
+              <div class="tech-stack-items">
+                <div class="tech-item">
+                  <div class="tech-icon">
+                    <i class="fab fa-microsoft"></i>
+                  </div>
+                  <span class="tech-name">C# (.NET Sockets)</span>
+                </div>
+                <div class="tech-item">
+                  <div class="tech-icon">
+                    <i class="fas fa-server"></i>
+                  </div>
+                  <span class="tech-name">Multithreading</span>
+                </div>
+              </div>
+            </div>
+            <div class="tech-stack-category">
+              <h4 class="h6 fw-bold text-secondary mb-3 text-uppercase">Frontend</h4>
+              <div class="tech-stack-items">
+                <div class="tech-item">
+                  <div class="tech-icon">
+                    <i class="fab fa-js-square"></i>
+                  </div>
+                  <span class="tech-name">JavaScript ES6+</span>
+                </div>
+                <div class="tech-item">
+                  <div class="tech-icon">
+                    <i class="fab fa-css3-alt"></i>
+                  </div>
+                  <span class="tech-name">CSS Soft UI</span>
+                </div>
+                <div class="tech-item">
+                  <div class="tech-icon">
+                    <i class="fab fa-html5"></i>
+                  </div>
+                  <span class="tech-name">HTML5</span>
+                </div>
+              </div>
+            </div>
+            <div class="tech-stack-category">
+              <h4 class="h6 fw-bold text-secondary mb-3 text-uppercase">Networking & Data</h4>
+              <div class="tech-stack-items">
+                <div class="tech-item">
+                  <div class="tech-icon">
+                    <i class="fas fa-network-wired"></i>
+                  </div>
+                  <span class="tech-name">WebSocket</span>
+                </div>
+                <div class="tech-item">
+                  <div class="tech-icon">
+                    <i class="fas fa-project-diagram"></i>
+                  </div>
+                  <span class="tech-name">TCP/IP</span>
+                </div>
+                <div class="tech-item">
+                  <div class="tech-icon">
+                    <i class="fas fa-code"></i>
+                  </div>
+                  <span class="tech-name">JSON Serialization</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

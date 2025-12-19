@@ -132,9 +132,13 @@ body {
   font-size: 0.9rem;
   text-transform: none;
   padding: 4px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
-.arch-arrow span {
+.arch-arrow > span:first-child {
   background: var(--bg-body);
   padding: 6px 10px;
   border-radius: 999px;
@@ -240,4 +244,184 @@ body {
 
 @media (max-width: 575.98px) {
   .member-grid { grid-template-columns: 1fr; max-width: 100%; }
+}
+
+/* Advanced Features */
+.feature-card-advanced {
+  position: relative;
+  background: var(--bg-card);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.feature-card-advanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  opacity: 0.6;
+}
+
+[data-theme="dark"] .feature-card-advanced::before {
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--info-color) 100%);
+  opacity: 0.8;
+}
+
+.feature-card-advanced:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-4px);
+  border-color: var(--primary-hover);
+}
+
+.feature-card-advanced .feature-icon {
+  background: linear-gradient(135deg, var(--primary-light) 0%, rgba(37, 99, 235, 0.1) 100%);
+}
+
+[data-theme="dark"] .feature-card-advanced .feature-icon {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+}
+
+/* Architecture Icons & Notes */
+.arch-node-icon {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.arch-arrow-note {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-style: italic;
+  background: transparent;
+  padding: 2px 6px;
+  border: none;
+  box-shadow: none;
+}
+
+/* Tech Stack */
+.tech-stack-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.tech-stack-category {
+  text-align: center;
+}
+
+.tech-stack-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.tech-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1.25rem;
+  min-width: 140px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.tech-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-color);
+}
+
+.tech-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-input);
+  border-radius: 16px;
+  font-size: 2rem;
+  color: var(--primary-color);
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.tech-item:hover .tech-icon {
+  background: linear-gradient(135deg, var(--primary-light) 0%, rgba(37, 99, 235, 0.1) 100%);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="dark"] .tech-item:hover .tech-icon {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+}
+
+.tech-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.tech-item:hover .tech-name {
+  color: var(--primary-color);
+}
+
+/* Responsive adjustments for Tech Stack */
+@media (max-width: 767.98px) {
+  .tech-stack-wrapper {
+    gap: 2rem;
+  }
+  
+  .tech-stack-items {
+    gap: 1rem;
+  }
+  
+  .tech-item {
+    min-width: 120px;
+    padding: 1.25rem 1rem;
+  }
+  
+  .tech-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .tech-stack-items {
+    gap: 0.75rem;
+  }
+  
+  .tech-item {
+    min-width: 100px;
+    padding: 1rem 0.75rem;
+  }
+  
+  .tech-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+  }
+  
+  .tech-name {
+    font-size: 0.75rem;
+  }
 }
