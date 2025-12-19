@@ -933,6 +933,82 @@ export const MonitorFeature = {
     const screenImg = document.getElementById("live-screen");
     if (!screenImg) return;
 
+    // Helper function to get accurate mouse position with zoom and object-fit
+    const getAccuratePosition = (e) => {
+      const rect = screenImg.getBoundingClientRect();
+
+      // Get natural image dimensions
+      const naturalWidth = screenImg.naturalWidth;
+      const naturalHeight = screenImg.naturalHeight;
+
+      if (!naturalWidth || !naturalHeight) {
+        // Fallback if image not loaded
+        return {
+          x: Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)),
+          y: Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height)),
+        };
+      }
+
+      // Calculate the displayed size considering object-fit
+      let displayWidth, displayHeight, offsetX, offsetY;
+
+      if (fitMode === "contain") {
+        // Image is scaled to fit within container while maintaining aspect ratio
+        const containerRatio = rect.width / rect.height;
+        const imageRatio = naturalWidth / naturalHeight;
+
+        if (imageRatio > containerRatio) {
+          // Image is wider - fit by width
+          displayWidth = rect.width;
+          displayHeight = rect.width / imageRatio;
+          offsetX = 0;
+          offsetY = (rect.height - displayHeight) / 2;
+        } else {
+          // Image is taller - fit by height
+          displayHeight = rect.height;
+          displayWidth = rect.height * imageRatio;
+          offsetX = (rect.width - displayWidth) / 2;
+          offsetY = 0;
+        }
+      } else if (fitMode === "cover") {
+        // Image is scaled to cover container while maintaining aspect ratio
+        const containerRatio = rect.width / rect.height;
+        const imageRatio = naturalWidth / naturalHeight;
+
+        if (imageRatio > containerRatio) {
+          displayHeight = rect.height;
+          displayWidth = rect.height * imageRatio;
+          offsetX = -(displayWidth - rect.width) / 2;
+          offsetY = 0;
+        } else {
+          displayWidth = rect.width;
+          displayHeight = rect.width / imageRatio;
+          offsetX = 0;
+          offsetY = -(displayHeight - rect.height) / 2;
+        }
+      } else {
+        // fill mode - image stretched to fill container
+        displayWidth = rect.width;
+        displayHeight = rect.height;
+        offsetX = 0;
+        offsetY = 0;
+      }
+
+      // Calculate mouse position relative to the actual image
+      const mouseX = e.clientX - rect.left - offsetX;
+      const mouseY = e.clientY - rect.top - offsetY;
+
+      // Convert to percentage (0-1)
+      let xPercent = mouseX / displayWidth;
+      let yPercent = mouseY / displayHeight;
+
+      // Clamp values
+      xPercent = Math.max(0, Math.min(1, xPercent));
+      yPercent = Math.max(0, Math.min(1, yPercent));
+
+      return { x: xPercent, y: yPercent };
+    };
+
     // Mouse Move
     screenImg.addEventListener("mousemove", (e) => {
       if (!isControlEnabled) return;
@@ -941,18 +1017,8 @@ export const MonitorFeature = {
       if (now - lastMoveTime < 50) return; // Throttle to 20fps
       lastMoveTime = now;
 
-      const rect = screenImg.getBoundingClientRect();
-      let rawX = (e.clientX - rect.left) / rect.width;
-      let rawY = (e.clientY - rect.top) / rect.height;
-
-      // Clamp values between 0 and 1
-      const xPercent = Math.max(0, Math.min(1, rawX));
-      const yPercent = Math.max(0, Math.min(1, rawY));
-
-      SocketService.send(
-        "MOUSE_MOVE",
-        JSON.stringify({ x: xPercent, y: yPercent })
-      );
+      const pos = getAccuratePosition(e);
+      SocketService.send("MOUSE_MOVE", JSON.stringify({ x: pos.x, y: pos.y }));
     });
 
     // Mouse Down
