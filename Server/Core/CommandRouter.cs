@@ -128,6 +128,22 @@ namespace RemoteControlServer.Core
                     break;
                 case "SHUTDOWN": System.Diagnostics.Process.Start("shutdown", "/s /t 5"); break;
                 case "RESTART": System.Diagnostics.Process.Start("shutdown", "/r /t 5"); break;
+                case "SLEEP":
+                    SocketManager.SendJson(socket, "LOG", "Sleeping server...");
+                    if (!SystemHelper.Sleep()) SocketManager.SendJson(socket, "LOG", "Sleep command failed");
+                    break;
+                case "LOCK":
+                    if (SystemHelper.LockSession()) SocketManager.SendJson(socket, "LOG", "Server session locked");
+                    else SocketManager.SendJson(socket, "LOG", "Lock command failed");
+                    break;
+                case "DISABLE_INPUT":
+                    SocketManager.SendJson(socket, "LOG", "Blocking mouse & keyboard on server...");
+                    if (!SystemHelper.DisableInput()) SocketManager.SendJson(socket, "LOG", "Block input failed (requires admin)");
+                    break;
+                case "ENABLE_INPUT":
+                    if (SystemHelper.EnableInput()) SocketManager.SendJson(socket, "LOG", "Input unblocked");
+                    else SocketManager.SendJson(socket, "LOG", "Unable to unblock input");
+                    break;
                 case "START_WEBCAM":
                     WebcamManager.StartWebcam();
                     WebcamManager.OnFrameCaptured += (imgBytes) => { string base64 = Convert.ToBase64String(imgBytes); SocketManager.SendJson(socket, "WEBCAM_FRAME", base64); };

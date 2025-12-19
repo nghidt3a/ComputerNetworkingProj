@@ -725,6 +725,9 @@ namespace RemoteControlServer.Helpers
         private const int MOUSEEVENTF_MIDDLEUP = 0x0040;
         private const int MOUSEEVENTF_ABSOLUTE = 0x8000;
 
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool BlockInput(bool fBlockIt);
+
         public static void SetCursorPosition(double xPercent, double yPercent)
         {
             int dx = (int)(xPercent * 65535);
@@ -759,6 +762,61 @@ namespace RemoteControlServer.Helpers
                 }
             }
             catch { }
+        }
+
+        // ---- Power controls ----
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool LockWorkStation();
+
+        [DllImport("powrprof.dll", SetLastError = true)]
+        private static extern bool SetSuspendState(bool hibernate, bool forceCritical, bool disableWakeEvent);
+
+        public static bool Sleep()
+        {
+            try
+            {
+                return SetSuspendState(false, false, false);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool LockSession()
+        {
+            try
+            {
+                return LockWorkStation();
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool DisableInput()
+        {
+            try
+            {
+                return BlockInput(true);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool EnableInput()
+        {
+            try
+            {
+                return BlockInput(false);
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

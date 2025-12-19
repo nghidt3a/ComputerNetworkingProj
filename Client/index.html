@@ -89,11 +89,7 @@
               <label class="form-label small fw-bold">Password</label>
               <div class="input-with-icon input-affix">
                 <i class="fas fa-lock input-icon"></i>
-                <input
-                  type="password"
-                  id="auth-pass"
-                  class="form-control"
-                />
+                <input type="password" id="auth-pass" class="form-control" />
                 <button
                   type="button"
                   class="affix-btn"
@@ -319,24 +315,59 @@
         <div class="container-fluid py-4">
           <section id="tab-dashboard" class="tab-content active">
             <!-- PHẦN TRÊN: Power Control & Quick Launch -->
-            <div class="row mb-4">
+            <div class="row mb-4 align-items-stretch">
               <div class="col-md-6">
-                <div class="card-custom">
+                <div class="card-custom h-100 d-flex flex-column">
                   <div class="card-header-custom">
                     <i class="fas fa-power-off text-danger"></i> Power Control
                   </div>
-                  <div class="d-grid gap-2">
-                    <button id="btn-shutdown" class="btn btn-danger">
-                      <i class="fas fa-power-off"></i> SHUTDOWN SERVER
-                    </button>
-                    <button id="btn-restart" class="btn btn-warning text-dark">
-                      <i class="fas fa-sync"></i> RESTART SERVER
-                    </button>
+                  <div class="row g-2 row-cols-2 mt-4">
+                    <div class="col">
+                      <button id="btn-shutdown" class="btn btn-danger w-100">
+                        <i class="fas fa-power-off"></i> SHUTDOWN
+                      </button>
+                    </div>
+                    <div class="col">
+                      <button
+                        id="btn-restart"
+                        class="btn btn-warning text-dark w-100"
+                      >
+                        <i class="fas fa-sync"></i> RESTART
+                      </button>
+                    </div>
+                    <div class="col">
+                      <button
+                        id="btn-sleep"
+                        class="btn btn-info text-white w-100"
+                      >
+                        <i class="fas fa-moon"></i> SLEEP
+                      </button>
+                    </div>
+                    <div class="col">
+                      <button id="btn-lock" class="btn btn-secondary w-100">
+                        <i class="fas fa-lock"></i> LOCK
+                      </button>
+                    </div>
+                    <div class="row g-2 row-cols-2 mt-2">
+                      <div class="col">
+                        <button id="btn-block-input" class="btn btn-dark w-100">
+                          <i class="fas fa-ban"></i> BLOCK INPUT
+                        </button>
+                      </div>
+                      <div class="col">
+                        <button
+                          id="btn-unblock-input"
+                          class="btn btn-outline-dark w-100"
+                        >
+                          <i class="fas fa-unlock"></i> UNBLOCK INPUT
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="col-md-6">
-                <div class="card-custom">
+                <div class="card-custom h-100 d-flex flex-column">
                   <div class="card-header-custom">
                     <i class="fas fa-rocket text-primary"></i> Quick Launch
                   </div>
@@ -345,10 +376,13 @@
                       type="text"
                       id="quickAppInput"
                       class="form-control"
-                      placeholder="App name (e.g. notepad, calc, mspaint)"
+                      placeholder="App name, URL, or search keyword"
                     />
                     <button id="btn-run-app" class="btn btn-primary">
                       <i class="fas fa-play"></i> Run
+                    </button>
+                    <button id="btn-web-search" class="btn btn-info text-white">
+                      <i class="fas fa-search"></i> Search Web
                     </button>
                     <button
                       onclick="browseApps()"
