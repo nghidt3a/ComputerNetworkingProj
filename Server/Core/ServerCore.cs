@@ -710,7 +710,17 @@ namespace RemoteControlServer.Core
                 {
                     Logger.ClientAction("Client disconnected!");
                     SocketManager.Remove(socket);
-                    if (SocketManager.All.Count == 0) StreamManager.StopStreaming();
+                    if (SocketManager.All.Count == 0) 
+                    {
+                        StreamManager.StopStreaming();
+                        
+                        // Auto-unblock input khi tất cả client disconnect để tránh bị lock vĩnh viễn
+                        if (SystemHelper.IsInputBlocked)
+                        {
+                            Logger.Info("Auto-unblocking input due to all clients disconnected...");
+                            Task.Run(() => SystemHelper.ForceUnblockInput());
+                        }
+                    }
                 };
                 socket.OnMessage = message => HandleClientCommand(socket, message);
             });

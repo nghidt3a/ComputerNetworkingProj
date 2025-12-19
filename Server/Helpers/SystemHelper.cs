@@ -808,6 +808,7 @@ namespace RemoteControlServer.Helpers
                 else
                 {
                     Logger.Info("Input blocked successfully.");
+                    _isInputBlocked = true;
                 }
                 return result;
             }
@@ -818,40 +819,111 @@ namespace RemoteControlServer.Helpers
             }
         }
 
+        // Track trạng thái block để hỗ trợ auto-unblock
+        private static bool _isInputBlocked = false;
+        public static bool IsInputBlocked => _isInputBlocked;
+
         public static bool EnableInput()
         {
             try
             {
-                // Thêm delay để đảm bảo Windows hoàn tất việc block input trước khi unblock
-                System.Threading.Thread.Sleep(200);
+                // Windows BlockInput API có hành vi không ổn định
+                // Cần gọi NHIỀU LẦN với các chiến lược khác nhau để đảm bảo unblock thành công
                 
-                bool result = BlockInput(false);
+                bool success = false;
                 
-                // Nếu error code là 0 (SUCCESS), nhưng hàm trả về false
-                // Điều đó có nghĩa là hàm thực sự thành công nhưng API trả về false
+                // Chiến lược 1: Gọi BlockInput(false) nhiều lần liên tiếp với delay ngắn
+                for (int attempt = 0; attempt < 10; attempt++)
+                {
+                    // Gọi BlockInput(false) 3 lần liên tiếp trong mỗi attempt
+                    for (int i = 0; i < 3; i++)
+                    {
+                        BlockInput(false);
+                    }
+                    
+                    // Verify bằng cách thử block rồi unblock lại
+                    BlockInput(true);
+                    System.Threading.Thread.Sleep(10);
+                    success = BlockInput(false);
+                    
+                    if (success)
+                    {
+                        Logger.Info($"Input unblocked successfully on attempt {attempt + 1}");
+                        _isInputBlocked = false;
+                        return true;
+                    }
+                    
+                    System.Threading.Thread.Sleep(100); // Delay dài hơn giữa các attempt
+                }
+                
+                // Chiến lược 2: Force unblock bằng cách gọi BlockInput(false) nhiều lần với delay dài hơn
+                for (int i = 0; i < 5; i++)
+                {
+                    BlockInput(false);
+                    System.Threading.Thread.Sleep(200);
+                }
+                
+                // Kiểm tra lần cuối
+                success = BlockInput(false);
                 int errorCode = Marshal.GetLastWin32Error();
                 
-                if (!result && errorCode == 0)
+                if (success || errorCode == 0)
                 {
-                    // Windows nói là success, đánh dấu là thành công
-                    Logger.Info("Input unblocked successfully (Windows API quirk detected).");
+                    Logger.Info("Input unblocked successfully (forced with extended retry).");
+                    _isInputBlocked = false;
                     return true;
-                }
-                else if (!result)
-                {
-                    Logger.Error($"BlockInput(false) failed. Error code: {errorCode}");
-                    return false;
                 }
                 else
                 {
-                    Logger.Info("Input unblocked successfully.");
-                    return true;
+                    // Chiến lược 3 (Fallback cuối cùng): Gọi liên tục trong 2 giây
+                    Logger.Warning("Attempting final fallback unblock strategy...");
+                    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                    while (stopwatch.ElapsedMilliseconds < 2000)
+                    {
+                        BlockInput(false);
+                        System.Threading.Thread.Sleep(50);
+                    }
+                    
+                    success = BlockInput(false);
+                    if (success)
+                    {
+                        Logger.Info("Input unblocked via fallback strategy.");
+                        _isInputBlocked = false;
+                        return true;
+                    }
+                    
+                    Logger.Error($"BlockInput(false) failed after all attempts. Error code: {errorCode}");
+                    // Vẫn đặt _isInputBlocked = false để tránh trạng thái không nhất quán
+                    _isInputBlocked = false;
+                    return false;
                 }
             }
             catch (Exception ex)
             {
                 Logger.Error($"EnableInput exception: {ex.Message}");
+                _isInputBlocked = false;
                 return false;
+            }
+        }
+        
+        // Hàm tiện ích để force unblock - gọi từ bên ngoài khi cần
+        public static void ForceUnblockInput()
+        {
+            try
+            {
+                // Gọi BlockInput(false) liên tục trong 3 giây
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                while (stopwatch.ElapsedMilliseconds < 3000)
+                {
+                    BlockInput(false);
+                    System.Threading.Thread.Sleep(30);
+                }
+                _isInputBlocked = false;
+                Logger.Info("Force unblock completed.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"ForceUnblockInput exception: {ex.Message}");
             }
         }
     }

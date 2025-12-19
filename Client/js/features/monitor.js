@@ -324,8 +324,14 @@ export const MonitorFeature = {
         UIManager.showToast("Input blocked", "warning");
       }
     } else {
-      // Unblock Input
+      // Unblock Input - Gửi nhiều lần để đảm bảo Windows unblock thành công
+      UIManager.showToast("Unblocking input...", "info");
+
+      // Gửi lệnh unblock 3 lần với delay để tăng tỷ lệ thành công
       SocketService.send("ENABLE_INPUT");
+      setTimeout(() => SocketService.send("ENABLE_INPUT"), 300);
+      setTimeout(() => SocketService.send("ENABLE_INPUT"), 600);
+
       isInputBlocked = false;
 
       // Update button appearance
@@ -336,7 +342,8 @@ export const MonitorFeature = {
       if (btnText) btnText.innerText = "Block Input";
       if (btnIcon) btnIcon.className = "fas fa-ban";
 
-      UIManager.showToast("Input unblocked", "success");
+      // Delay toast thành công để user thấy "Unblocking..."
+      setTimeout(() => UIManager.showToast("Input unblocked", "success"), 700);
     }
   },
 
