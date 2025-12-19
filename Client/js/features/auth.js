@@ -44,7 +44,9 @@ export const AuthFeature = {
         // Default to hidden
         setVisible(false);
 
-        toggleBtn.addEventListener('click', () => {
+        toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             const isVisible = passInput.type === 'password';
             setVisible(isVisible);
             // keep focus at end of input for better UX

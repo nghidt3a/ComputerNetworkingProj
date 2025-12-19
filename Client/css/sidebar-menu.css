@@ -265,25 +265,28 @@
 }
 
 #btn-disconnect {
-  background: linear-gradient(135deg, #ff4757 0%, #ee5a6f 100%);
+  background: linear-gradient(135deg, var(--danger-color, #ef4444) 0%, var(--danger-hover, #dc2626) 100%);
   color: white !important;
-  border: 2px solid #ff4757;
+  border: none;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
 #btn-disconnect:hover {
-  background: linear-gradient(135deg, #ff5e77 0%, #f06080 100%);
-  box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
-  border-color: #ff5e77;
+  background: linear-gradient(135deg, var(--danger-hover, #dc2626) 0%, #b91c1c 100%);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+  transform: translateY(-1px);
 }
 
 #btn-disconnect:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 
 #btn-disconnect .icon {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.2);
   color: white;
   border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 #btn-disconnect .icon i {
@@ -293,7 +296,7 @@
 }
 
 #btn-disconnect:hover .icon {
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.3);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
