@@ -8,6 +8,8 @@
  * 3. Nếu hoạt động, vấn đề là do animations. Nếu không, vấn đề khác.
  */
 
+import { Logger } from "./utils/logger.js";
+
 const subtitleMap = {
   dashboard: "Tổng quan hệ thống điều khiển từ xa",
   monitor: "Giám sát màn hình theo thời gian thực",
@@ -15,22 +17,22 @@ const subtitleMap = {
   audio: "Ghi âm và phát lại âm thanh từ xa",
   processes: "Quản lý tiến trình, ứng dụng và tài nguyên",
   files: "Duyệt, tải lên và tải xuống tệp",
-  terminal: "Theo dõi log và lệnh hệ thống"
+  terminal: "Theo dõi log và lệnh hệ thống",
 };
 
 let heroSubtitleEl = null;
 
 export function setupSimpleNavigation() {
-  console.log("=== SIMPLE NAVIGATION INITIALIZED ===");
+  Logger.header("Navigation Initialized");
 
   // Find all navigation buttons (support both old and new structure)
   const navButtons = document.querySelectorAll("[data-tab]");
   heroSubtitleEl = document.getElementById("hero-subtitle");
 
-  console.log(`Found ${navButtons.length} navigation buttons`);
+  Logger.info(`Found ${navButtons.length} navigation buttons`);
 
   if (navButtons.length === 0) {
-    console.error("No navigation buttons found! Check HTML structure.");
+    Logger.error("No navigation buttons found! Check HTML structure.");
     return;
   }
 
@@ -45,7 +47,7 @@ export function setupSimpleNavigation() {
   // Attach click handlers
   navButtons.forEach((btn, index) => {
     const targetId = btn.getAttribute("data-tab");
-    console.log(`Button ${index + 1}: ${targetId}`);
+    Logger.navigation(targetId);
 
     btn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -54,7 +56,8 @@ export function setupSimpleNavigation() {
   });
 
   // Set initial subtitle based on the active tab (fallback to dashboard)
-  const activeBtn = document.querySelector("[data-tab].active") || navButtons[0];
+  const activeBtn =
+    document.querySelector("[data-tab].active") || navButtons[0];
   if (activeBtn) {
     const initialTab = activeBtn.getAttribute("data-tab") || "dashboard";
     updateHeroSubtitle(initialTab);
@@ -63,10 +66,10 @@ export function setupSimpleNavigation() {
   // Disconnect button
   const disconnectBtn = document.getElementById("btn-disconnect");
   if (disconnectBtn) {
-    console.log("Disconnect button found");
+    Logger.debug("Disconnect button found");
     disconnectBtn.addEventListener("click", handleDisconnect);
   } else {
-    console.warn("Disconnect button NOT found");
+    Logger.warning("Disconnect button NOT found");
   }
 }
 
@@ -74,17 +77,17 @@ export function setupSimpleNavigation() {
  * Handle tab change - Simple version without animations
  */
 function handleTabChange(targetId, clickedBtn) {
-  console.log(`\n=== TAB CHANGE: ${targetId} ===`);
+  Logger.navigation(targetId);
 
   // 1. Find target tab
   const targetTab = document.getElementById(`tab-${targetId}`);
 
   if (!targetTab) {
-    console.error(`Target tab not found: tab-${targetId}`);
+    Logger.error(`Target tab not found: tab-${targetId}`);
     return;
   }
 
-  console.log("Target tab found:", targetTab.id);
+  Logger.debug("Target tab found", targetTab.id);
 
   // 2. Remove all active classes from navigation buttons
   document.querySelectorAll("[data-tab]").forEach((btn) => {
@@ -98,34 +101,35 @@ function handleTabChange(targetId, clickedBtn) {
 
   // 4. Add active class to clicked button
   clickedBtn.classList.add("active");
-  console.log("Active class added to button");
+  Logger.debug("Active class added to button");
 
   // 5. Add active class to target tab
   targetTab.classList.add("active");
-  console.log("Active class added to tab");
+  Logger.debug("Active class added to tab");
 
   // 6. Update hero subtitle per tab
   updateHeroSubtitle(targetId);
 
   // 7. Verify final state
-  console.log(
-    "Active button:",
+  Logger.debug(
+    "Active button",
     document.querySelector("[data-tab].active")?.getAttribute("data-tab")
   );
-  console.log("Active tab:", document.querySelector(".tab-content.active")?.id);
-  console.log("=== TAB CHANGE COMPLETE ===\n");
+  Logger.debug("Active tab", document.querySelector(".tab-content.active")?.id);
+  Logger.separator();
 }
 
 function updateHeroSubtitle(tabId) {
   if (!heroSubtitleEl) return;
-  heroSubtitleEl.textContent = subtitleMap[tabId] || "Tổng quan hệ thống điều khiển từ xa";
+  heroSubtitleEl.textContent =
+    subtitleMap[tabId] || "Tổng quan hệ thống điều khiển từ xa";
 }
 
 /**
  * Handle disconnect
  */
 function handleDisconnect() {
-  console.log("=== DISCONNECT CLICKED ===");
+  Logger.warning("Disconnect clicked");
 
   // Import SocketService dynamically to avoid circular dependencies
   import("./services/socket.js").then(({ SocketService }) => {
@@ -142,44 +146,46 @@ function handleDisconnect() {
  * Debug helper - Call this from console to check state
  */
 window.debugNavigation = function () {
-  console.log("\n=== NAVIGATION DEBUG INFO ===");
+  Logger.header("Navigation Debug Info");
 
   const buttons = document.querySelectorAll("[data-tab]");
-  console.log(`Navigation Buttons: ${buttons.length}`);
+  Logger.info(`Navigation Buttons: ${buttons.length}`);
   buttons.forEach((btn, i) => {
-    console.log(
-      `  ${i + 1}. ${btn.getAttribute(
-        "data-tab"
-      )} - Active: ${btn.classList.contains("active")}`
+    Logger.debug(
+      `Button ${i + 1}`,
+      `${btn.getAttribute("data-tab")} - Active: ${btn.classList.contains(
+        "active"
+      )}`
     );
   });
 
   const tabs = document.querySelectorAll(".tab-content");
-  console.log(`\nTab Contents: ${tabs.length}`);
+  Logger.info(`Tab Contents: ${tabs.length}`);
   tabs.forEach((tab, i) => {
     const display = window.getComputedStyle(tab).display;
-    console.log(
-      `  ${i + 1}. ${tab.id} - Active: ${tab.classList.contains(
+    Logger.debug(
+      `Tab ${i + 1}`,
+      `${tab.id} - Active: ${tab.classList.contains(
         "active"
       )}, Display: ${display}`
     );
   });
 
-  console.log("\nCurrent Active:");
-  console.log(
-    "  Button:",
+  Logger.info("Current Active:");
+  Logger.debug(
+    "Button",
     document.querySelector("[data-tab].active")?.getAttribute("data-tab") ||
       "None"
   );
-  console.log(
-    "  Tab:",
+  Logger.debug(
+    "Tab",
     document.querySelector(".tab-content.active")?.id || "None"
   );
 
-  console.log("=== END DEBUG INFO ===\n");
+  Logger.separator();
 };
 
 // Auto-run debug on load
 setTimeout(() => {
-  console.log("Run window.debugNavigation() in console to check state");
+  Logger.info("Run window.debugNavigation() in console to check state");
 }, 1000);

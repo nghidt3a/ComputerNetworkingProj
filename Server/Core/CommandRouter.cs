@@ -15,10 +15,10 @@ namespace RemoteControlServer.Core
         {
             if (packet == null || string.IsNullOrEmpty(packet.command)) return;
 
-            // Tránh log các lệnh tần suất cao
+            // Tránh log các lệnh tần suất cao (auto-update)
             if (packet.command != "GET_PERFORMANCE" && packet.command != "MOUSE_MOVE" && packet.command != "GET_SYS_INFO" && packet.command != "PING")
             {
-                Console.WriteLine($"[CMD]: {packet.command} | {packet.param}");
+                Logger.Command(packet.command, packet.param);
             }
 
             switch (packet.command)
@@ -51,12 +51,12 @@ namespace RemoteControlServer.Core
                         var imgBytes = SystemHelper.GetScreenShot(90L, 1.0);
                         if (imgBytes != null)
                         {
-                            Console.WriteLine($">> Đã chụp màn hình ({imgBytes.Length / 1024} KB). Đang gửi...");
+                            Logger.MediaOperation("Screen captured", $"{imgBytes.Length / 1024} KB");
                             string base64Full = Convert.ToBase64String(imgBytes);
                             SocketManager.SendJson(socket, "SCREENSHOT_FILE", base64Full);
                             var previewBytes = SystemHelper.GetScreenShot(85L, 0.8);
                             if (previewBytes != null) SocketManager.SendJson(socket, "SCREEN_CAPTURE", Convert.ToBase64String(previewBytes));
-                            SocketManager.SendJson(socket, "LOG", "Đã gửi ảnh chụp về máy bạn!");
+                            SocketManager.SendJson(socket, "LOG", "Screenshot sent!");
                         }
                     }
                     catch (Exception ex)
@@ -77,8 +77,6 @@ namespace RemoteControlServer.Core
                         var proc = System.Diagnostics.Process.GetProcessById(pid);
                         proc.Kill();
                         SocketManager.SendJson(socket, "LOG", $"Đã diệt ID {pid}");
-                        SocketManager.BroadcastJson("APP_LIST", ServerCore.GetCurrentApps());
-                        SocketManager.BroadcastJson("PROCESS_LIST", ServerCore.GetCurrentProcesses());
                     }
                     catch (Exception ex)
                     {
@@ -109,7 +107,7 @@ namespace RemoteControlServer.Core
                             fileNameToRun = "https://" + request;
                         }
                         
-                        Console.WriteLine($">> Attempting to launch: {fileNameToRun}");
+                        Logger.Info($"Attempting to launch: {fileNameToRun}");
                         
                         // Dùng ProcessStartInfo với UseShellExecute=true để hỗ trợ shell:AppsFolder và .lnk
                         var psi = new System.Diagnostics.ProcessStartInfo
@@ -120,18 +118,12 @@ namespace RemoteControlServer.Core
                         };
                         
                         System.Diagnostics.Process.Start(psi);
-                        SocketManager.SendJson(socket, "LOG", $"Đang mở: {System.IO.Path.GetFileName(request)}...");
-                        
-                        // Chờ cập nhật danh sách
-                        System.Threading.Tasks.Task.Run(() => { 
-                            Thread.Sleep(2000); 
-                            SocketManager.BroadcastJson("APP_LIST", ServerCore.GetCurrentApps()); 
-                        });
+                        SocketManager.SendJson(socket, "LOG", $"Opening: {System.IO.Path.GetFileName(request)}...");
                     }
                     catch (Exception ex) 
                     { 
-                        Console.WriteLine($">> Launch failed: {ex.Message}");
-                        SocketManager.SendJson(socket, "LOG", "Lỗi: Không thể mở ứng dụng này!"); 
+                        Logger.Error($"Launch failed: {ex.Message}");
+                        SocketManager.SendJson(socket, "LOG", "Error: Cannot open this application!"); 
                     }
                     break;
                 case "SHUTDOWN": System.Diagnostics.Process.Start("shutdown", "/s /t 5"); break;
@@ -182,7 +174,7 @@ namespace RemoteControlServer.Core
                 case "DOWNLOAD_FILE":
                     string base64File = FileManagerService.GetFileContentBase64(packet.param);
                     if (base64File == "ERROR_SIZE_LIMIT") SocketManager.SendJson(socket, "LOG", "Lỗi: File quá lớn (>50MB) để tải qua Web!");
-                    else if (base64File != null) { var payload = new { fileName = System.IO.Path.GetFileName(packet.param), data = base64File }; SocketManager.SendJson(socket, "FILE_DOWNLOAD_DATA", payload); SocketManager.SendJson(socket, "LOG", "Đang tải xuống: " + System.IO.Path.GetFileName(packet.param)); }
+                    else if (base64File != null) { var payload = new { fileName = System.IO.Path.GetFileName(packet.param), data = base64File }; SocketManager.SendJson(socket, "FILE_DOWNLOAD_DATA", payload); SocketManager.SendJson(socket, "LOG", "Tải xuống: " + System.IO.Path.GetFileName(packet.param)); }
                     else SocketManager.SendJson(socket, "LOG", "Lỗi: Không đọc được file!");
                     break;
                 case "DELETE_FILE": CommandHandler.DeleteFile(socket, packet.param); break;
@@ -251,7 +243,7 @@ namespace RemoteControlServer.Core
                     CommandHandler.SearchFile(socket, packet.param);
                     break;
                 case "AUDIO_DOWNLOADED":
-                    Console.WriteLine($">> Client đã tải xuống file: {packet.param}");
+                    Logger.ClientAction($"Downloaded file: {packet.param}");
                     break;
                 default: break;
             }

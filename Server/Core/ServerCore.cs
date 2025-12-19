@@ -103,7 +103,7 @@ namespace RemoteControlServer.Core
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error getting apps: {ex.Message}");
+                Logger.Error($"Error getting apps: {ex.Message}");
             }
 
             // Deduplicate step 1: Chọn entry tốt nhất cho mỗi normalized key
@@ -146,7 +146,6 @@ namespace RemoteControlServer.Core
                     .GroupBy(p => p.ProcessName, StringComparer.OrdinalIgnoreCase)
                     .Select(g => g.First())
                     .ToList();
-                Console.WriteLine($">> Background processes detected: {backgroundApps.Count}");
 
                 foreach (var proc in backgroundApps)
                 {
@@ -291,7 +290,6 @@ namespace RemoteControlServer.Core
         {
             try
             {
-                Console.WriteLine(">> Scanning UWP/Store apps via PowerShell...");
                 var psi = new ProcessStartInfo
                 {
                     FileName = "powershell",
@@ -306,7 +304,7 @@ namespace RemoteControlServer.Core
                 {
                     if (proc == null) 
                     {
-                        Console.WriteLine(">> Failed to start PowerShell process");
+                        Logger.Warning("Failed to start PowerShell process");
                         return;
                     }
 
@@ -316,12 +314,12 @@ namespace RemoteControlServer.Core
 
                     if (!string.IsNullOrWhiteSpace(errors))
                     {
-                        Console.WriteLine($">> PowerShell errors: {errors}");
+                        Logger.Warning($"PowerShell errors: {errors}");
                     }
 
                     if (string.IsNullOrWhiteSpace(output)) 
                     {
-                        Console.WriteLine(">> No output from Get-StartApps");
+                        Logger.Warning("No output from Get-StartApps");
                         return;
                     }
 
@@ -399,12 +397,11 @@ namespace RemoteControlServer.Core
                         }
                         catch { }
                     }
-                    Console.WriteLine($">> Found {uwpCount} UWP/Store apps");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($">> UWP scan failed: {ex.Message}");
+                Logger.Error($"UWP scan failed: {ex.Message}");
             }
         }
 
@@ -696,32 +693,29 @@ namespace RemoteControlServer.Core
             _sessionPassword = new Random().Next(100000, 999999).ToString();
 
             // In ra Console thật nổi bật
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("=================================================");
-            Console.WriteLine($"   REMOTE CONTROL SERVER IS RUNNING");
-            Console.WriteLine($"   URL: {url}");
-            Console.WriteLine($"   >> YOUR OTP PASSWORD: {_sessionPassword} <<");
-            Console.WriteLine("=================================================");
-            Console.ResetColor();
+            Logger.Header("REMOTE CONTROL SERVER IS RUNNING");
+            Logger.Network($"URL: {url}");
+            Logger.Success($"OTP Password: {_sessionPassword}");
+            Logger.Separator();
 
             var server = new WebSocketServer(url);
             server.Start(socket =>
             {
                 socket.OnOpen = () =>
                 {
-                    Console.WriteLine(">> Client kết nối!");
+                    Logger.ClientAction("Client connected!");
                     SocketManager.Add(socket);
                 };
                 socket.OnClose = () =>
                 {
-                    Console.WriteLine(">> Client ngắt kết nối!");
+                    Logger.ClientAction("Client disconnected!");
                     SocketManager.Remove(socket);
                     if (SocketManager.All.Count == 0) StreamManager.StopStreaming();
                 };
                 socket.OnMessage = message => HandleClientCommand(socket, message);
             });
 
-            Console.WriteLine($">> Server đang chạy tại {url}");
+            Logger.Info($"Server running at {url}");
 
             // 1. Xử lý Stream ảnh
             WebcamManager.OnFrameCaptured += (imgBytes) => {
@@ -769,26 +763,26 @@ namespace RemoteControlServer.Core
 
                         if (File.Exists(filePath))
                         {
-                            Console.WriteLine(">> Đang gửi video webcam về Client...");
+                            Logger.MediaOperation("Sending webcam video to Client");
                             byte[] fileBytes = File.ReadAllBytes(filePath);
                             string base64File = Convert.ToBase64String(fileBytes);
                             
                             // Gửi với type "VIDEO_FILE" để khớp với code Client (webcam.js)
                             SocketManager.BroadcastJson("VIDEO_FILE", base64File);
-                            SocketManager.BroadcastJson("LOG", $"Đã tải video webcam ({fileBytes.Length / 1024} KB)!");
+                            SocketManager.BroadcastJson("LOG", $"Webcam video uploaded ({fileBytes.Length / 1024} KB)!");
 
                             // Xóa file tạm sau khi gửi xong
                             File.Delete(filePath);
                         }
                         else
                         {
-                            SocketManager.BroadcastJson("LOG", "Lỗi: Không tìm thấy file video webcam.");
+                            SocketManager.BroadcastJson("LOG", "Error: Webcam video file not found.");
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("❌ Lỗi gửi file Webcam: " + ex.Message);
-                        SocketManager.BroadcastJson("LOG", "Lỗi gửi file webcam: " + ex.Message);
+                        Logger.Error($"Error sending webcam file: {ex.Message}");
+                        SocketManager.BroadcastJson("LOG", "Error sending webcam file: " + ex.Message);
                     }
                 });
             };
@@ -805,25 +799,25 @@ namespace RemoteControlServer.Core
 
                         if (File.Exists(filePath))
                         {
-                            Console.WriteLine(">> Đang gửi video màn hình về Client...");
+                            Logger.MediaOperation("Sending screen video to Client");
                             byte[] fileBytes = File.ReadAllBytes(filePath); // Dòng này hay bị lỗi nếu không có Delay
                             string base64File = Convert.ToBase64String(fileBytes);
                             
                             SocketManager.BroadcastJson("SCREEN_RECORD_FILE", base64File);
-                            SocketManager.BroadcastJson("LOG", $"Đã tải video màn hình ({fileBytes.Length / 1024} KB)!");
+                            SocketManager.BroadcastJson("LOG", $"Screen video uploaded ({fileBytes.Length / 1024} KB)!");
 
                             File.Delete(filePath);
                         }
                         else 
                         {
-                            Console.WriteLine("❌ Lỗi: Không tìm thấy file video để gửi."); // Log thêm để debug
+                            Logger.Warning("Screen video file not found after encoding");
                         }
                     }
                     catch (Exception ex)
                     {
                         // Log lỗi ra Console Server để bạn dễ thấy
-                        Console.WriteLine("❌ Lỗi gửi file Video: " + ex.Message); 
-                        SocketManager.BroadcastJson("LOG", "Lỗi ServerCore: " + ex.Message);
+                        Logger.Error($"Error sending screen video: {ex.Message}");
+                        SocketManager.BroadcastJson("LOG", "Error sending screen video: " + ex.Message);
                     }
                 });
             };
@@ -865,12 +859,12 @@ namespace RemoteControlServer.Core
             if (packet.payload == _sessionPassword)
             {
                 SocketManager.SendJson(socket, "AUTH_RESULT", "OK");
-                Console.WriteLine("-> Client đăng nhập thành công!");
+                Logger.Success("Client authentication successful!");
             }
             else
             {
                 SocketManager.SendJson(socket, "AUTH_RESULT", "FAIL");
-                Console.WriteLine("-> Client sai mật khẩu!");
+                Logger.Warning("Client authentication failed - wrong password!");
             }
         }
 

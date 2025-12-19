@@ -395,12 +395,9 @@ export const MonitorFeature = {
     }
 
     const durationInput = document.getElementById("monitor-record-duration");
-    const duration = Math.max(
-      5,
-      Math.min(
-        120,
-        parseInt(durationInput ? durationInput.value : 10, 10) || 10
-      )
+    const duration = Math.min(
+      120,
+      parseInt(durationInput ? durationInput.value : 10, 10) || 10
     );
 
     const recordBtn = document.getElementById("btn-monitor-record");
@@ -557,22 +554,9 @@ export const MonitorFeature = {
     if (recordingInterval) clearInterval(recordingInterval);
     recordingInterval = setInterval(() => {
       remainingSeconds -= 1;
-      // Play beep at last 3 seconds (optional)
+      // Play beep at last 3 seconds
       if (remainingSeconds <= 3 && remainingSeconds > 0) {
-        try {
-          const ctx = new (window.AudioContext || window.webkitAudioContext)();
-          const o = ctx.createOscillator();
-          o.type = "sine";
-          o.frequency.value = 750;
-          o.connect(ctx.destination);
-          o.start();
-          setTimeout(() => {
-            o.stop();
-            ctx.close();
-          }, 120);
-        } catch (e) {
-          // ignore audio errors
-        }
+        this.playCountdownBeep();
       }
       if (countdownEl)
         countdownEl.textContent = `${Math.max(0, remainingSeconds)}s`;
@@ -966,6 +950,26 @@ export const MonitorFeature = {
       ].includes(e.key)
     ) {
       e.preventDefault();
+    }
+  },
+
+  // Countdown beep sound
+  playCountdownBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(880, ctx.currentTime);
+      g.gain.setValueAtTime(0.001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.start();
+      o.stop(ctx.currentTime + 0.16);
+    } catch (e) {
+      // Fail silently
     }
   },
 };
