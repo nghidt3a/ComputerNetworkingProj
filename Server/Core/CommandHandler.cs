@@ -119,11 +119,12 @@ namespace RemoteControlServer.Core
                 string fileName = uploadInfo.fileName;
                 string base64Data = uploadInfo.data;
 
-                Console.WriteLine($">> Đang nhận file upload: {fileName}...");
+                Logger.FileOperation("Receiving upload", fileName);
                 string resultUpLoad = FileManagerService.SaveFileFromBase64(targetFolder, fileName, base64Data);
 
                 if (resultUpLoad == "OK")
                 {
+                    Logger.Success($"File uploaded: {fileName}");
                     SocketManager.SendJson(socket, "LOG", $"Upload thành công: {fileName}");
                     SocketManager.SendJson(socket, "FILE_LIST", FileManagerService.GetDirectoryContent(targetFolder));
                 }
@@ -134,6 +135,7 @@ namespace RemoteControlServer.Core
             }
             catch (Exception ex)
             {
+                Logger.Error($"Upload failed: {ex.Message}");
                 SocketManager.SendJson(socket, "LOG", "Lỗi xử lý Upload: " + ex.Message);
             }
         }

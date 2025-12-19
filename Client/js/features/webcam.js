@@ -1,5 +1,6 @@
 import { SocketService } from "../services/socket.js";
 import { UIManager } from "../utils/ui.js";
+import { Logger } from "../utils/logger.js";
 
 let webcamZoomLevel = 100;
 let webcamFitMode = "contain";
@@ -34,7 +35,7 @@ export const WebcamFeature = {
 
     if (!isWebcamActive) {
       // Turn ON
-      console.log("📹 Starting Webcam...");
+      Logger.media("Starting Webcam");
       SocketService.send("START_WEBCAM");
       isWebcamActive = true;
 
@@ -54,7 +55,7 @@ export const WebcamFeature = {
       UIManager.showToast("Bật Webcam...", "info");
     } else {
       // Turn OFF
-      console.log("📹 Stopping Webcam...");
+      Logger.media("Stopping Webcam");
       SocketService.send("STOP_WEBCAM");
       isWebcamActive = false;
       // Stop any ongoing recording countdown
@@ -82,7 +83,7 @@ export const WebcamFeature = {
 
   // Reset webcam về trạng thái ban đầu
   resetWebcam() {
-    console.log("🔄 Resetting webcam...");
+    Logger.media("Resetting webcam");
 
     const camImg = document.getElementById("webcam-feed");
     const placeholder = document.getElementById("webcam-placeholder");
@@ -94,20 +95,20 @@ export const WebcamFeature = {
       setTimeout(() => {
         camImg.src = "";
       }, 350); // Match CSS transition duration
-      console.log("✓ Webcam image reset");
+      Logger.debug("Webcam image reset");
     }
 
     if (placeholder) {
       // Restore visibility by removing data-hidden attribute
       placeholder.classList.remove("hidden");
       placeholder.removeAttribute("data-hidden");
-      console.log("✓ Webcam placeholder shown");
+      Logger.debug("Webcam placeholder shown");
     }
 
     if (statusBadge) {
       statusBadge.className = "badge bg-secondary";
       statusBadge.innerText = "OFFLINE";
-      console.log("✓ Status badge reset");
+      Logger.debug("Status badge reset");
     }
 
     webcamZoomLevel = 100;
@@ -207,17 +208,17 @@ export const WebcamFeature = {
     const payload = data.payload || data;
 
     if (!payload) {
-      console.error("❌ No payload received");
+      Logger.error("No payload received");
       return;
     }
 
-    console.log("✅ Received webcam frame");
+    Logger.success("Webcam frame received");
 
     const camImg = document.getElementById("webcam-feed");
     const placeholder = document.getElementById("webcam-placeholder");
     const statusBadge = document.getElementById("cam-status");
 
-    console.log("📷 Elements found:", {
+    Logger.debug("Elements check", {
       camImg: !!camImg,
       placeholder: !!placeholder,
       statusBadge: !!statusBadge,
@@ -229,28 +230,28 @@ export const WebcamFeature = {
       camImg.offsetHeight;
       camImg.classList.add("visible");
 
-      console.log("✓ Webcam image displayed");
+      Logger.debug("Webcam image displayed");
 
       // Apply zoom and fit
       this.applyWebcamZoom(webcamZoomLevel);
       this.applyWebcamFit(webcamFitMode);
     } else {
-      console.error("❌ #webcam-feed element not found!");
+      Logger.error("#webcam-feed element not found!");
     }
 
     if (placeholder) {
       // Use class-based approach for smooth fade
       placeholder.classList.add("hidden");
       placeholder.setAttribute("data-hidden", "true");
-      console.log("✓ Webcam placeholder hidden");
+      Logger.debug("Webcam placeholder hidden");
     } else {
-      console.error("❌ #webcam-placeholder element not found!");
+      Logger.error("#webcam-placeholder element not found!");
     }
 
     if (statusBadge) {
       statusBadge.className = "badge bg-success";
       statusBadge.innerText = "LIVE";
-      console.log("✓ Status badge updated");
+      Logger.debug("Status badge updated");
     }
   },
 
@@ -264,12 +265,9 @@ export const WebcamFeature = {
     }
 
     const durationInput = document.getElementById("record-duration");
-    const duration = Math.max(
-      5,
-      Math.min(
-        120,
-        parseInt(durationInput ? durationInput.value : 10, 10) || 10
-      )
+    const duration = Math.min(
+      120,
+      parseInt(durationInput ? durationInput.value : 10, 10) || 10
     );
 
     // Check if audio recording is enabled (từ audio switch overlay)

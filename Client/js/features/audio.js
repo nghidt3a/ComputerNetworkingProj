@@ -249,10 +249,7 @@ export const AudioFeature = {
       return UIManager.showToast("Hãy bật Audio trước!", "error");
 
     const durationInput = document.getElementById("audio-record-duration");
-    const duration = Math.max(
-      3,
-      Math.min(60, parseInt(durationInput ? durationInput.value : 10, 10) || 10)
-    );
+    const duration = Math.min(60, parseInt(durationInput ? durationInput.value : 10, 10) || 10);
 
     const recordBtn = document.getElementById("btn-audio-record");
     const cancelBtn = document.getElementById("btn-audio-cancel");
@@ -512,6 +509,10 @@ export const AudioFeature = {
     if (recordingInterval) clearInterval(recordingInterval);
     recordingInterval = setInterval(() => {
       remainingSeconds -= 1;
+      // Play beep at last 3 seconds
+      if (remainingSeconds <= 3 && remainingSeconds > 0) {
+        this.playCountdownBeep();
+      }
       if (countdownEl)
         countdownEl.textContent = `${Math.max(0, remainingSeconds)}s`;
       if (remainingSeconds <= 0) this.stopRecordingTimer();
@@ -545,5 +546,25 @@ export const AudioFeature = {
     if (durationInput) durationInput.disabled = false;
     if (!forceHide && isAudioActive && recordBtn) recordBtn.disabled = false;
     if (cancelBtn) cancelBtn.disabled = true;
+  },
+
+  // Countdown beep sound (giống webcam và screen)
+  playCountdownBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(880, ctx.currentTime);
+      g.gain.setValueAtTime(0.001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.start();
+      o.stop(ctx.currentTime + 0.16);
+    } catch (e) {
+      // Fail silently
+    }
   },
 };

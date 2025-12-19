@@ -1,6 +1,7 @@
 ﻿using System;
 using RemoteControlServer.Core;
 using RemoteControlServer.Services;
+using RemoteControlServer.Helpers;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -45,13 +46,11 @@ namespace RemoteControlServer
             }
             catch (Exception ex)
             {
-                Console.WriteLine("❌ Lỗi khởi tạo Server: " + ex.Message);
-                Console.WriteLine("Kiểm tra xem file ServerCore.cs đã đúng namespace chưa.");
+                Logger.Error($"Lỗi khởi tạo Server: {ex.Message}");
+                Logger.Info("Kiểm tra xem file ServerCore.cs đã đúng namespace chưa.");
                 Console.ReadLine();
                 return;
             }
-
-            Console.WriteLine(">> Server đang chạy... Nhấn Ctrl+C để thoát.");
 
             // 3. Giữ ứng dụng luôn chạy (Message Loop)
             // Lệnh này giúp Keylogger hoạt động và Server không bị tắt

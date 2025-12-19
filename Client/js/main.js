@@ -5,6 +5,7 @@
 
 import { SocketService } from "./services/socket.js";
 import { UIManager } from "./utils/ui.js";
+import { Logger } from "./utils/logger.js";
 
 // Import Features (Các tính năng cụ thể)
 import { AuthFeature } from "./features/auth.js"; // (Nếu bạn tách logic login)
@@ -26,7 +27,7 @@ import { setupSimpleNavigation } from "./navigation-simple.js";
 // --- INITIALIZATION ---
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("RCS Client Initializing...");
+  Logger.header("RCS Client Initializing");
 
   // 1. Setup UI Events (Tabs, Sidebar clicks)
   setupSimpleNavigation(); // Using simple version to fix navigation issues
