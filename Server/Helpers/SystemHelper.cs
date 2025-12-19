@@ -730,8 +730,14 @@ namespace RemoteControlServer.Helpers
 
         public static void SetCursorPosition(double xPercent, double yPercent)
         {
+            // Clamp values to 0-1 range to ensure valid input
+            xPercent = Math.Max(0, Math.Min(1, xPercent));
+            yPercent = Math.Max(0, Math.Min(1, yPercent));
+            
+            // Convert percentage to absolute coordinates (0-65535 range for MOUSEEVENTF_ABSOLUTE)
             int dx = (int)(xPercent * 65535);
             int dy = (int)(yPercent * 65535);
+            
             mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, dx, dy, 0, 0);
         }
 
