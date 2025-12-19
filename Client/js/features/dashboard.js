@@ -113,20 +113,6 @@ export const DashboardFeature = {
       if (confirm("Lock server session?")) SocketService.send("LOCK");
     });
 
-    document
-      .getElementById("btn-block-input")
-      ?.addEventListener("click", () => {
-        if (confirm("Block mouse & keyboard on server?"))
-          SocketService.send("DISABLE_INPUT");
-      });
-
-    document
-      .getElementById("btn-unblock-input")
-      ?.addEventListener("click", () => {
-        SocketService.send("ENABLE_INPUT");
-        UIManager.showToast("Unblocking server input", "info");
-      });
-
     // Quick Launch
     document
       .getElementById("btn-run-app")

@@ -77,6 +77,33 @@
   transform: translate(-50%, -50%) scale(2);
 }
 
+/* Input toggle button styling (works on light/dark) */
+.btn-input-toggle {
+  background: #0f172a;
+  color: #fff;
+  border: 1px solid #0f172a;
+  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.15);
+  transition: all 0.15s ease;
+}
+
+.btn-input-toggle:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+}
+
+.btn-input-toggle.is-blocked {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+  box-shadow: 0 6px 12px rgba(220, 38, 38, 0.2);
+}
+
+.btn-input-toggle.is-blocked:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+  box-shadow: 0 8px 16px rgba(185, 28, 28, 0.25);
+}
+
 /* Fit Modes */
 #live-screen.fit-contain {
   object-fit: contain;

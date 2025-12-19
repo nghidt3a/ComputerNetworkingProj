@@ -348,21 +348,6 @@
                         <i class="fas fa-lock"></i> LOCK
                       </button>
                     </div>
-                    <div class="row g-2 row-cols-2 mt-2">
-                      <div class="col">
-                        <button id="btn-block-input" class="btn btn-dark w-100">
-                          <i class="fas fa-ban"></i> BLOCK INPUT
-                        </button>
-                      </div>
-                      <div class="col">
-                        <button
-                          id="btn-unblock-input"
-                          class="btn btn-outline-dark w-100"
-                        >
-                          <i class="fas fa-unlock"></i> UNBLOCK INPUT
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -705,6 +690,16 @@
                             >Control</label
                           >
                         </div>
+
+                        <!-- Block/Unblock Toggle Button -->
+                        <button
+                          id="btn-input-toggle"
+                          class="btn btn-sm btn-input-toggle mb-0"
+                          title="Toggle Input Block"
+                        >
+                          <i class="fas fa-ban"></i>
+                          <span id="btn-input-text">Block Input</span>
+                        </button>
 
                         <button
                           id="btn-monitor-toggle"

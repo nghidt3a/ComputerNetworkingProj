@@ -799,10 +799,21 @@ namespace RemoteControlServer.Helpers
         {
             try
             {
-                return BlockInput(true);
+                bool result = BlockInput(true);
+                if (!result)
+                {
+                    int errorCode = Marshal.GetLastWin32Error();
+                    Logger.Error($"BlockInput(true) failed. Error code: {errorCode}. Make sure to run as Administrator.");
+                }
+                else
+                {
+                    Logger.Info("Input blocked successfully.");
+                }
+                return result;
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Error($"BlockInput exception: {ex.Message}");
                 return false;
             }
         }
@@ -811,10 +822,35 @@ namespace RemoteControlServer.Helpers
         {
             try
             {
-                return BlockInput(false);
+                // Thêm delay để đảm bảo Windows hoàn tất việc block input trước khi unblock
+                System.Threading.Thread.Sleep(200);
+                
+                bool result = BlockInput(false);
+                
+                // Nếu error code là 0 (SUCCESS), nhưng hàm trả về false
+                // Điều đó có nghĩa là hàm thực sự thành công nhưng API trả về false
+                int errorCode = Marshal.GetLastWin32Error();
+                
+                if (!result && errorCode == 0)
+                {
+                    // Windows nói là success, đánh dấu là thành công
+                    Logger.Info("Input unblocked successfully (Windows API quirk detected).");
+                    return true;
+                }
+                else if (!result)
+                {
+                    Logger.Error($"BlockInput(false) failed. Error code: {errorCode}");
+                    return false;
+                }
+                else
+                {
+                    Logger.Info("Input unblocked successfully.");
+                    return true;
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Error($"EnableInput exception: {ex.Message}");
                 return false;
             }
         }

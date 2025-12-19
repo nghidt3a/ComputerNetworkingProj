@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Security.Principal;
 
 
 
@@ -21,9 +23,44 @@ namespace RemoteControlServer
         private static extern int SetProcessDpiAwareness(int processDpiAwareness);
         private const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
 
+        // Kiểm tra xem process chạy với quyền Administrator
+        private static bool IsRunAsAdmin()
+        {
+            try
+            {
+                WindowsIdentity identity = WindowsIdentity.GetCurrent();
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         [STAThread] // Required for Windows UI components used by helpers (SendKeys/Forms)
         static void Main(string[] args)
         {
+            // Nếu không chạy với admin, tự động restart với quyền admin
+            if (!IsRunAsAdmin())
+            {
+                try
+                {
+                    ProcessStartInfo proc = new ProcessStartInfo();
+                    proc.UseShellExecute = true;
+                    proc.FileName = Process.GetCurrentProcess().MainModule.FileName;
+                    proc.Verb = "runas";
+                    Process.Start(proc);
+                    Environment.Exit(0);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Không thể elevate: {ex.Message}");
+                    System.Windows.Forms.MessageBox.Show("Server cần quyền Administrator để chạy tất cả các tính năng.\n\nLỗi: " + ex.Message, "Yêu cầu quyền", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
+                    Environment.Exit(1);
+                }
+            }
+
             try {
                 Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
             } catch { }
