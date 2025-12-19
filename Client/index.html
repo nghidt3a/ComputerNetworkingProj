@@ -51,9 +51,6 @@
           <div>
             <p class="login-eyebrow">Remote Access</p>
             <h2>N-SIGHT Login</h2>
-            <p class="login-subtitle">
-              Kết nối bảo mật tới hệ thống điều khiển.
-            </p>
           </div>
         </div>
 
@@ -96,7 +93,6 @@
                   type="password"
                   id="auth-pass"
                   class="form-control"
-                  value="123"
                 />
                 <button
                   type="button"
@@ -121,10 +117,6 @@
           >
             CONNECT SYSTEM
           </button>
-
-          <p class="login-footnote small text-muted mt-1">
-            Chỉ quản trị viên được phép truy cập bảng điều khiển.
-          </p>
         </form>
       </div>
     </section>
@@ -1328,13 +1320,13 @@
                     id="btn-get-apps"
                     class="btn btn-outline-primary btn-sm"
                   >
-                    Apps Only
+                    Apps
                   </button>
                   <button
                     id="btn-get-processes"
                     class="btn btn-outline-secondary btn-sm"
                   >
-                    All Processes
+                    Processes
                   </button>
                 </div>
               </div>
@@ -1581,23 +1573,6 @@
         </div>
       </div>
     </div>
-
-    <script>
-      (() => {
-        const passInput = document.getElementById("auth-pass");
-        const toggleBtn = document.getElementById("toggle-pass");
-
-        if (passInput && toggleBtn) {
-          toggleBtn.addEventListener("click", () => {
-            const isHidden = passInput.type === "password";
-            passInput.type = isHidden ? "text" : "password";
-            const icon = toggleBtn.querySelector("i");
-            if (icon)
-              icon.className = isHidden ? "fas fa-eye" : "fas fa-eye-slash";
-          });
-        }
-      })();
-    </script>
 
     <script type="module" src="js/main.js"></script>
   </body>
