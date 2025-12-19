@@ -655,3 +655,85 @@ body {
         padding: 0.25rem;
     }
 }
+
+/* --- MINIMAL DASHBOARD FOOTER --- */
+#dashboard-footer {
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+    margin-top: 2rem;
+    background: transparent;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+#dashboard-footer .footer-text {
+    opacity: 0.8;
+}
+
+#dashboard-footer .footer-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+#dashboard-footer .footer-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    opacity: 0.85;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+#dashboard-footer .footer-link:hover {
+    opacity: 1;
+    transform: translateY(-3px);
+}
+
+/* Footer icon base style */
+#dashboard-footer .footer-link i {
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+/* Brand hover colors with higher specificity so they win over globals */
+#dashboard-footer .icon-fb:hover {
+    color: #1877F2;
+}
+
+#dashboard-footer .icon-yt:hover {
+    color: #FF0000;
+}
+
+#dashboard-footer .icon-gm:hover {
+    color: #EA4335;
+}
+
+#dashboard-footer .icon-gh:hover {
+    color: #333333;
+}
+
+[data-theme="dark"] #dashboard-footer .icon-gh:hover {
+    color: #ffffff;
+}
+
+[data-theme="dark"] #dashboard-footer {
+    background: transparent;
+}
+
+/* Ensure footer divider behaves like a normal hr (not absolute like cards) */
+#page-content .footer-divider {
+    position: static !important;
+    margin-top: 3rem !important;
+    margin-bottom: 0 !important;
+}
+
+@media (min-width: 768px) {
+    #dashboard-footer .footer-social {
+        justify-content: flex-end;
+    }
+}
