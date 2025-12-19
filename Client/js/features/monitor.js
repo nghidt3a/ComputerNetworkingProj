@@ -936,27 +936,27 @@ export const MonitorFeature = {
     // Helper function to get accurate mouse position with zoom and object-fit
     const getAccuratePosition = (e) => {
       const rect = screenImg.getBoundingClientRect();
-      
+
       // Get natural image dimensions
       const naturalWidth = screenImg.naturalWidth;
       const naturalHeight = screenImg.naturalHeight;
-      
+
       if (!naturalWidth || !naturalHeight) {
         // Fallback if image not loaded
         return {
           x: Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)),
-          y: Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height))
+          y: Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height)),
         };
       }
-      
+
       // Calculate the displayed size considering object-fit
       let displayWidth, displayHeight, offsetX, offsetY;
-      
+
       if (fitMode === "contain") {
         // Image is scaled to fit within container while maintaining aspect ratio
         const containerRatio = rect.width / rect.height;
         const imageRatio = naturalWidth / naturalHeight;
-        
+
         if (imageRatio > containerRatio) {
           // Image is wider - fit by width
           displayWidth = rect.width;
@@ -974,7 +974,7 @@ export const MonitorFeature = {
         // Image is scaled to cover container while maintaining aspect ratio
         const containerRatio = rect.width / rect.height;
         const imageRatio = naturalWidth / naturalHeight;
-        
+
         if (imageRatio > containerRatio) {
           displayHeight = rect.height;
           displayWidth = rect.height * imageRatio;
@@ -993,19 +993,19 @@ export const MonitorFeature = {
         offsetX = 0;
         offsetY = 0;
       }
-      
+
       // Calculate mouse position relative to the actual image
       const mouseX = e.clientX - rect.left - offsetX;
       const mouseY = e.clientY - rect.top - offsetY;
-      
+
       // Convert to percentage (0-1)
       let xPercent = mouseX / displayWidth;
       let yPercent = mouseY / displayHeight;
-      
+
       // Clamp values
       xPercent = Math.max(0, Math.min(1, xPercent));
       yPercent = Math.max(0, Math.min(1, yPercent));
-      
+
       return { x: xPercent, y: yPercent };
     };
 
@@ -1018,10 +1018,7 @@ export const MonitorFeature = {
       lastMoveTime = now;
 
       const pos = getAccuratePosition(e);
-      SocketService.send(
-        "MOUSE_MOVE",
-        JSON.stringify({ x: pos.x, y: pos.y })
-      );
+      SocketService.send("MOUSE_MOVE", JSON.stringify({ x: pos.x, y: pos.y }));
     });
 
     // Mouse Down
