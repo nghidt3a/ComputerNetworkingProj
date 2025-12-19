@@ -3,27 +3,30 @@
 ## 🖥️ Client Logger
 
 ### Import
+
 ```javascript
 import { Logger } from "./utils/logger.js";
 ```
 
 ### Methods
-| Method | Emoji | Example |
-|--------|-------|---------|
-| `info()` | ℹ️ | `Logger.info("Starting connection...")` |
-| `success()` | ✅ | `Logger.success("File uploaded successfully")` |
-| `error()` | ❌ | `Logger.error("Network error occurred")` |
-| `warning()` | ⚠️ | `Logger.warning("Low bandwidth detected")` |
-| `command()` | 🔧 | `Logger.command("CAPTURE_SCREEN", "90")` |
-| `file()` | 📁 | `Logger.file("Opening", "C:\\Users\\file.txt")` |
-| `media()` | 🎬 | `Logger.media("Recording started", "30 seconds")` |
-| `network()` | 🌐 | `Logger.network("Connected to server")` |
-| `ui()` | 🎨 | `Logger.ui("Theme changed", "dark mode")` |
-| `navigation()` | 🗺️ | `Logger.navigation("dashboard")` |
-| `serverAction()` | 🖥️ | `Logger.serverAction("Screen refresh received")` |
-| `header()` | Bold | `Logger.header("Session Started")` |
+
+| Method           | Emoji | Example                                           |
+| ---------------- | ----- | ------------------------------------------------- |
+| `info()`         | ℹ️    | `Logger.info("Starting connection...")`           |
+| `success()`      | ✅    | `Logger.success("File uploaded successfully")`    |
+| `error()`        | ❌    | `Logger.error("Network error occurred")`          |
+| `warning()`      | ⚠️    | `Logger.warning("Low bandwidth detected")`        |
+| `command()`      | 🔧    | `Logger.command("CAPTURE_SCREEN", "90")`          |
+| `file()`         | 📁    | `Logger.file("Opening", "C:\\Users\\file.txt")`   |
+| `media()`        | 🎬    | `Logger.media("Recording started", "30 seconds")` |
+| `network()`      | 🌐    | `Logger.network("Connected to server")`           |
+| `ui()`           | 🎨    | `Logger.ui("Theme changed", "dark mode")`         |
+| `navigation()`   | 🗺️    | `Logger.navigation("dashboard")`                  |
+| `serverAction()` | 🖥️    | `Logger.serverAction("Screen refresh received")`  |
+| `header()`       | Bold  | `Logger.header("Session Started")`                |
 
 ### Examples
+
 ```javascript
 // Info logging
 Logger.info("Initializing webcam stream");
@@ -66,25 +69,28 @@ Logger.navigation("file-manager");
 ## ⚙️ Server Logger (C#)
 
 ### Import
+
 ```csharp
 using RemoteControlServer.Helpers;
 ```
 
 ### Methods
-| Method | Emoji | Example |
-|--------|-------|---------|
-| `Info()` | ℹ️ | `Logger.Info("Server started")` |
-| `Success()` | ✅ | `Logger.Success("File sent successfully")` |
-| `Error()` | ❌ | `Logger.Error("Database connection failed")` |
-| `Warning()` | ⚠️ | `Logger.Warning("High CPU usage detected")` |
-| `ClientAction()` | 🖥️ | `Logger.ClientAction("Client connected")` |
-| `Command()` | 🔧 | `Logger.Command("START_STREAM", "720p")` |
-| `FileOperation()` | 📁 | `Logger.FileOperation("Deleted", "C:\\temp\\file.dat")` |
-| `MediaOperation()` | 🎬 | `Logger.MediaOperation("Recording", "150 KB")` |
-| `Network()` | 🌐 | `Logger.Network("Listening on port 8181")` |
-| `Header()` | Bold | `Logger.Header("SYSTEM STATUS")` |
+
+| Method             | Emoji | Example                                                 |
+| ------------------ | ----- | ------------------------------------------------------- |
+| `Info()`           | ℹ️    | `Logger.Info("Server started")`                         |
+| `Success()`        | ✅    | `Logger.Success("File sent successfully")`              |
+| `Error()`          | ❌    | `Logger.Error("Database connection failed")`            |
+| `Warning()`        | ⚠️    | `Logger.Warning("High CPU usage detected")`             |
+| `ClientAction()`   | 🖥️    | `Logger.ClientAction("Client connected")`               |
+| `Command()`        | 🔧    | `Logger.Command("START_STREAM", "720p")`                |
+| `FileOperation()`  | 📁    | `Logger.FileOperation("Deleted", "C:\\temp\\file.dat")` |
+| `MediaOperation()` | 🎬    | `Logger.MediaOperation("Recording", "150 KB")`          |
+| `Network()`        | 🌐    | `Logger.Network("Listening on port 8181")`              |
+| `Header()`         | Bold  | `Logger.Header("SYSTEM STATUS")`                        |
 
 ### Examples
+
 ```csharp
 // Info logging
 Logger.Info("Scanning for applications...");
@@ -131,28 +137,32 @@ Logger.Separator();
 ## 🎯 Best Practices
 
 1. **Use appropriate method for context**
+
    - ✅ Use `success()` for completed operations
    - ❌ Use `error()` for failures
    - ⚠️ Use `warning()` for potential issues
    - ℹ️ Use `info()` for general messages
 
 2. **Include context in messages**
+
    ```javascript
    // Good
    Logger.error(`Failed to load settings: ${error.message}`);
    Logger.media("Webcam recording", `${duration}s, ${fileSize}KB`);
-   
+
    // Bad
    Logger.error("Error!");
    Logger.media("Recording");
    ```
 
 3. **Use command logging for debugging**
+
    ```csharp
    Logger.Command(packet.command, packet.param);
    ```
 
 4. **Group related logs**
+
    ```csharp
    Logger.Header("Starting Video Stream");
    Logger.FileOperation("Created", framePath);
@@ -173,6 +183,7 @@ Logger.Separator();
 ## 📊 Console Output Format
 
 ### Server Terminal
+
 ```
 [⚙️  SERVER] ℹ️ Starting video capture...
 [⚙️  SERVER] 🎬 Encoding video - 1920x1080
@@ -182,6 +193,7 @@ Logger.Separator();
 ```
 
 ### Browser Console (F12 → Console)
+
 ```
 [🖥️  CLIENT] ℹ️ Initializing features
 [🖥️  CLIENT] 🔧 [CMD] START_WEBCAM
@@ -196,6 +208,7 @@ Logger.Separator();
 ## 🔍 Debugging
 
 ### Client Debug Mode
+
 ```javascript
 // Enable debug logs
 window.DEBUG_MODE = true;
@@ -206,12 +219,14 @@ window.DEBUG_MODE = false;
 ```
 
 ### View Navigation State
+
 ```javascript
 // Call this in browser console
 window.debugNavigation();
 ```
 
 ### Example Output
+
 ```
 ───────────────────────────────────────
    Navigation Debug Info

@@ -8,7 +8,7 @@
  * 3. Nếu hoạt động, vấn đề là do animations. Nếu không, vấn đề khác.
  */
 
-import { Logger } from './utils/logger.js';
+import { Logger } from "./utils/logger.js";
 
 const subtitleMap = {
   dashboard: "Tổng quan hệ thống điều khiển từ xa",
@@ -17,7 +17,7 @@ const subtitleMap = {
   audio: "Ghi âm và phát lại âm thanh từ xa",
   processes: "Quản lý tiến trình, ứng dụng và tài nguyên",
   files: "Duyệt, tải lên và tải xuống tệp",
-  terminal: "Theo dõi log và lệnh hệ thống"
+  terminal: "Theo dõi log và lệnh hệ thống",
 };
 
 let heroSubtitleEl = null;
@@ -56,7 +56,8 @@ export function setupSimpleNavigation() {
   });
 
   // Set initial subtitle based on the active tab (fallback to dashboard)
-  const activeBtn = document.querySelector("[data-tab].active") || navButtons[0];
+  const activeBtn =
+    document.querySelector("[data-tab].active") || navButtons[0];
   if (activeBtn) {
     const initialTab = activeBtn.getAttribute("data-tab") || "dashboard";
     updateHeroSubtitle(initialTab);
@@ -120,7 +121,8 @@ function handleTabChange(targetId, clickedBtn) {
 
 function updateHeroSubtitle(tabId) {
   if (!heroSubtitleEl) return;
-  heroSubtitleEl.textContent = subtitleMap[tabId] || "Tổng quan hệ thống điều khiển từ xa";
+  heroSubtitleEl.textContent =
+    subtitleMap[tabId] || "Tổng quan hệ thống điều khiển từ xa";
 }
 
 /**
@@ -151,7 +153,9 @@ window.debugNavigation = function () {
   buttons.forEach((btn, i) => {
     Logger.debug(
       `Button ${i + 1}`,
-      `${btn.getAttribute("data-tab")} - Active: ${btn.classList.contains("active")}`
+      `${btn.getAttribute("data-tab")} - Active: ${btn.classList.contains(
+        "active"
+      )}`
     );
   });
 
@@ -161,14 +165,17 @@ window.debugNavigation = function () {
     const display = window.getComputedStyle(tab).display;
     Logger.debug(
       `Tab ${i + 1}`,
-      `${tab.id} - Active: ${tab.classList.contains("active")}, Display: ${display}`
+      `${tab.id} - Active: ${tab.classList.contains(
+        "active"
+      )}, Display: ${display}`
     );
   });
 
   Logger.info("Current Active:");
   Logger.debug(
     "Button",
-    document.querySelector("[data-tab].active")?.getAttribute("data-tab") || "None"
+    document.querySelector("[data-tab].active")?.getAttribute("data-tab") ||
+      "None"
   );
   Logger.debug(
     "Tab",

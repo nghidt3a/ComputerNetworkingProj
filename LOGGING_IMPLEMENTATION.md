@@ -5,30 +5,35 @@
 ### ✅ Created New Files
 
 #### 1. **Server/Helpers/Logger.cs** (New)
+
 - Centralized logging utility for Server with 10+ methods
 - Color-coded console output (Cyan for Server, Magenta for Client actions)
 - Emoji-based categorization (ℹ️ Info, ✅ Success, ❌ Error, ⚠️ Warning, etc.)
 - Professional formatting with headers and separators
 
 #### 2. **Client/js/utils/logger.js** (New)
+
 - Centralized logging utility for Client-side JavaScript
 - CSS-styled console output with proper color coding
 - 14+ logging methods for different scenarios
 - Debug mode support with `window.DEBUG_MODE` flag
 
 #### 3. **LOGGING_GUIDE.md** (New)
+
 - Comprehensive guide explaining the logging system
 - Examples and use cases for both Server and Client
 - Visual examples of console output
 - Benefits and implementation details
 
 #### 4. **LOGGER_QUICK_REFERENCE.md** (New)
+
 - Quick reference card for developers
 - Methods table with emojis and examples
 - Best practices section
 - Debugging tips
 
 #### 5. **update-logging-reference.ps1** (New)
+
 - PowerShell reference script for future updates
 - Documents all Logger method mappings
 - Can be used to guide additional logging improvements
@@ -40,6 +45,7 @@
 ### Server-Side (C#)
 
 #### Program.cs
+
 ```diff
 + using RemoteControlServer.Helpers;
 
@@ -51,20 +57,23 @@
 ```
 
 #### Core/ServerCore.cs
+
 - Updated 20+ `Console.WriteLine` calls to use Logger methods
 - Key changes:
+
   ```diff
   - Console.WriteLine($"Error getting apps: {ex.Message}");
   + Logger.Error($"Error getting apps: {ex.Message}");
-  
+
   - Console.WriteLine(">> Client kết nối!");
   + Logger.ClientAction("Client connected!");
-  
+
   - Console.WriteLine(">> Server đang chạy tại {url}");
   + Logger.Info($"Server running at {url}");
   ```
 
 #### Core/CommandRouter.cs
+
 - Updated command logging with `Logger.Command()`
 - Updated screenshot capture logging with `Logger.MediaOperation()`
 - Updated application launch logging with `Logger.Info()` and `Logger.Error()`
@@ -73,6 +82,7 @@
 ### Client-Side (JavaScript)
 
 #### js/main.js
+
 ```diff
 + import { Logger } from "./utils/logger.js";
 
@@ -81,31 +91,35 @@
 ```
 
 #### js/navigation-simple.js
+
 - Added import for Logger
 - Replaced 25+ `console.log()` calls with appropriate Logger methods
 - Key changes:
+
   ```diff
   - console.log("=== SIMPLE NAVIGATION INITIALIZED ===");
   + Logger.header("Navigation Initialized");
-  
+
   - console.log(`Button ${index + 1}: ${targetId}`);
   + Logger.navigation(targetId);
-  
+
   - console.log("=== TAB CHANGE COMPLETE ===\n");
   + Logger.separator();
   ```
 
 #### js/features/webcam.js
+
 - Added import for Logger
 - Updated 10+ logging calls
 - Key changes:
+
   ```diff
   - console.log("📹 Starting Webcam...");
   + Logger.media("Starting Webcam");
-  
+
   - console.log("🔄 Resetting webcam...");
   + Logger.media("Resetting webcam");
-  
+
   - console.log("✅ Received webcam frame");
   + Logger.success("Webcam frame received");
   ```
@@ -114,39 +128,43 @@
 
 ## 📊 Statistics
 
-| Category | Count |
-|----------|-------|
-| New files created | 5 |
-| Server files updated | 3 |
-| Client files updated | 3 |
-| Total Console/Log calls updated | 60+ |
-| Logger methods created (Server) | 10 |
-| Logger methods created (Client) | 14 |
+| Category                        | Count |
+| ------------------------------- | ----- |
+| New files created               | 5     |
+| Server files updated            | 3     |
+| Client files updated            | 3     |
+| Total Console/Log calls updated | 60+   |
+| Logger methods created (Server) | 10    |
+| Logger methods created (Client) | 14    |
 
 ---
 
 ## 🎯 Key Features
 
 ### 1. **Clear Prefixes**
+
 - Server: `[⚙️  SERVER]`
 - Client: `[🖥️  CLIENT]`
 
 ### 2. **Type-Specific Emojis**
-| Emoji | Meaning | Example |
-|-------|---------|---------|
-| ℹ️ | Information | General status messages |
-| ✅ | Success | Operation completed |
-| ❌ | Error | Something failed |
-| ⚠️ | Warning | Potential issue |
-| 🔧 | Command | Command being executed |
-| 📁 | File | File operations |
-| 🎬 | Media | Video/Audio operations |
-| 🌐 | Network | Connection status |
-| 🔊/🔇 | Audio | Audio-specific |
-| 🖥️ | Client action | Client did something |
+
+| Emoji | Meaning       | Example                 |
+| ----- | ------------- | ----------------------- |
+| ℹ️    | Information   | General status messages |
+| ✅    | Success       | Operation completed     |
+| ❌    | Error         | Something failed        |
+| ⚠️    | Warning       | Potential issue         |
+| 🔧    | Command       | Command being executed  |
+| 📁    | File          | File operations         |
+| 🎬    | Media         | Video/Audio operations  |
+| 🌐    | Network       | Connection status       |
+| 🔊/🔇 | Audio         | Audio-specific          |
+| 🖥️    | Client action | Client did something    |
 
 ### 3. **Color Coding**
+
 - **Server Terminal:**
+
   - Cyan: General info
   - Green: Success
   - Red: Errors
@@ -160,6 +178,7 @@
   - Works with F12 Developer Tools
 
 ### 4. **Professional Formatting**
+
 - Headers with borders
 - Separators for clarity
 - Indentation for grouping
@@ -170,6 +189,7 @@
 ## 🚀 Usage Examples
 
 ### Before (Old Way)
+
 ```
 >> Server đang chạy tại ws://0.0.0.0:8181
 >> Client kết nối!
@@ -178,6 +198,7 @@
 ```
 
 ### After (New Way with Logger)
+
 ```
 [⚙️  SERVER] ℹ️ Server running at ws://0.0.0.0:8181
 [🖥️  CLIENT] → Client connected!
@@ -190,26 +211,31 @@
 ## ✨ Benefits
 
 ✅ **Improved Readability**
+
 - Easier to distinguish between Server and Client messages
 - Color-coded by message type
 - Emoji indicators for quick scanning
 
 ✅ **Better Debugging**
+
 - Consistent format makes logs easier to parse
 - Clear indication of what failed and why
 - Easier to grep/search logs
 
 ✅ **Professional Appearance**
+
 - Polished console output
 - Well-organized information flow
 - Modern logging practices
 
 ✅ **Maintainability**
+
 - Centralized logging configuration
 - Change format once, applies everywhere
 - Easy to add new log types
 
 ✅ **Developer Experience**
+
 - Reduced cognitive load when reading logs
 - Faster error identification
 - Clear action history
@@ -219,6 +245,7 @@
 ## 📝 Remaining Files to Update
 
 Optional: The following files could benefit from Logger updates:
+
 - `Client/js/features/monitor.js` (5 console.log calls)
 - `Client/js/features/taskManager.js` (2 console.log calls)
 - `Client/js/features/fileManager.js` (2 console.log calls)
@@ -237,5 +264,6 @@ These are lower-priority utility logging that don't affect main functionality.
 4. **Test in console**: Verify output appears correctly
 
 For more details, see:
+
 - [LOGGING_GUIDE.md](LOGGING_GUIDE.md) - Full documentation
 - [LOGGER_QUICK_REFERENCE.md](LOGGER_QUICK_REFERENCE.md) - Quick reference

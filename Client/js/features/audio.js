@@ -249,7 +249,10 @@ export const AudioFeature = {
       return UIManager.showToast("Hãy bật Audio trước!", "error");
 
     const durationInput = document.getElementById("audio-record-duration");
-    const duration = Math.min(60, parseInt(durationInput ? durationInput.value : 10, 10) || 10);
+    const duration = Math.min(
+      60,
+      parseInt(durationInput ? durationInput.value : 10, 10) || 10
+    );
 
     const recordBtn = document.getElementById("btn-audio-record");
     const cancelBtn = document.getElementById("btn-audio-cancel");

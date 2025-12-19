@@ -3,6 +3,7 @@
 ## 📺 Server Terminal Output
 
 ### Startup Sequence
+
 ```
 ════════════════════════════════════════════════════════════════════════════
    REMOTE CONTROL SERVER IS RUNNING
@@ -14,6 +15,7 @@
 ```
 
 ### Client Connection
+
 ```
 [🖥️  CLIENT] → Client connected!
 [⚙️  SERVER] ✅ Client authentication successful!
@@ -21,6 +23,7 @@
 ```
 
 ### Command Execution - Screenshot
+
 ```
 [⚙️  SERVER] 🔧 [CMD] CAPTURE_SCREEN
 [⚙️  SERVER] 🎬 Screen captured - 150 KB
@@ -29,6 +32,7 @@
 ```
 
 ### Command Execution - Start Webcam
+
 ```
 [⚙️  SERVER] 🔧 [CMD] START_WEBCAM
 [⚙️  SERVER] 🎬 Starting webcam capture
@@ -36,6 +40,7 @@
 ```
 
 ### Command Execution - File Download
+
 ```
 [⚙️  SERVER] 🔧 [CMD] GET_APPS
 [⚙️  SERVER] 📁 Scanning applications...
@@ -44,6 +49,7 @@
 ```
 
 ### Video Recording - Complete Flow
+
 ```
 [⚙️  SERVER] 🔧 [CMD] START_STREAM
 [⚙️  SERVER] 🎬 Starting screen streaming
@@ -61,6 +67,7 @@
 ### Error Scenarios
 
 #### Network Error
+
 ```
 [⚙️  SERVER] 🌐 URL: ws://0.0.0.0:8181
 [⚙️  SERVER] ❌ Error: Port 8181 already in use
@@ -69,6 +76,7 @@
 ```
 
 #### File Error
+
 ```
 [⚙️  SERVER] 🔧 [CMD] START_APP
 [⚙️  SERVER] ℹ️ Attempting to launch: C:\Program Files\App.exe
@@ -76,6 +84,7 @@
 ```
 
 #### Authentication Error
+
 ```
 [🖥️  CLIENT] → Client attempting authentication
 [⚙️  SERVER] ⚠️ Client authentication failed - wrong password!
@@ -83,6 +92,7 @@
 ```
 
 ### Client Disconnect
+
 ```
 [🖥️  CLIENT] → Client disconnected!
 [⚙️  SERVER] ℹ️ Stream stopped
@@ -93,6 +103,7 @@
 ## 🌐 Browser Console Output (F12)
 
 ### Initialization
+
 ```
 ═══════════════════════════════════════════════════════════════
    RCS Client Initializing
@@ -104,6 +115,7 @@
 ```
 
 ### Navigation
+
 ```
 [🖥️  CLIENT] 🗺️ Navigation: monitor
 [🖥️  CLIENT] 🎨 [UI] Tab changed: monitor
@@ -111,6 +123,7 @@
 ```
 
 ### Webcam Feature
+
 ```
 [🖥️  CLIENT] 🎬 Starting Webcam...
 [⚙️  SERVER] → Client requesting START_WEBCAM
@@ -122,6 +135,7 @@
 ```
 
 ### Screen Monitoring
+
 ```
 [🖥️  CLIENT] 🎬 Starting screen monitor...
 [⚙️  SERVER] → Starting screen streaming
@@ -132,6 +146,7 @@
 ```
 
 ### File Manager
+
 ```
 [🖥️  CLIENT] 📁 Opening folder: C:\Users\Desktop
 [⚙️  SERVER] 📁 Reading directory: C:\Users\Desktop
@@ -142,6 +157,7 @@
 ```
 
 ### Command Execution
+
 ```
 [🖥️  CLIENT] 🔧 [CMD] GET_APPS
 [🖥️  CLIENT] 🎨 Loading apps list...
@@ -152,6 +168,7 @@
 ```
 
 ### Error Handling
+
 ```
 [🖥️  CLIENT] ❌ Connection lost
 [⚙️  SERVER] → Client disconnected
@@ -160,6 +177,7 @@
 ```
 
 ### Debug Mode
+
 ```
 [🖥️  CLIENT] 🐛 [DEBUG] Checking connection state
 [🖥️  CLIENT] 🐛 [DEBUG] Socket ready: true
@@ -173,25 +191,25 @@
 
 ### Server Console (Windows Terminal)
 
-| Color | Meaning | Usage |
-|-------|---------|-------|
-| **Cyan** 🔵 | Info/Action | General server messages |
-| **Green** 🟢 | Success | Successful operations |
-| **Red** 🔴 | Error | Failed operations |
-| **Yellow** 🟡 | Warning | Potential issues |
-| **Magenta** 🟣 | Client Action | Messages about client |
-| **White** ⚪ | Headers | Important sections |
+| Color          | Meaning       | Usage                   |
+| -------------- | ------------- | ----------------------- |
+| **Cyan** 🔵    | Info/Action   | General server messages |
+| **Green** 🟢   | Success       | Successful operations   |
+| **Red** 🔴     | Error         | Failed operations       |
+| **Yellow** 🟡  | Warning       | Potential issues        |
+| **Magenta** 🟣 | Client Action | Messages about client   |
+| **White** ⚪   | Headers       | Important sections      |
 
 ### Browser Console (F12)
 
-| Color | Meaning | Usage |
-|-------|---------|-------|
-| **Cyan** 🔵 | Info | Client info messages |
-| **Green** 🟢 | Success | Client successes |
-| **Red** 🔴 | Error | Client errors |
-| **Yellow** 🟡 | Warning | Client warnings |
-| **Purple** 🟣 | UI/Nav | UI and navigation |
-| **Orange** 🟠 | Media | Video/audio operations |
+| Color         | Meaning | Usage                  |
+| ------------- | ------- | ---------------------- |
+| **Cyan** 🔵   | Info    | Client info messages   |
+| **Green** 🟢  | Success | Client successes       |
+| **Red** 🔴    | Error   | Client errors          |
+| **Yellow** 🟡 | Warning | Client warnings        |
+| **Purple** 🟣 | UI/Nav  | UI and navigation      |
+| **Orange** 🟠 | Media   | Video/audio operations |
 
 ---
 
@@ -216,6 +234,7 @@ RCS Client Initializing...
 ```
 
 **Problems:**
+
 - 😞 Hỗn loạn, khó đọc
 - 😕 Không biết Server hay Client
 - 🔍 Khó tìm lỗi
@@ -248,6 +267,7 @@ RCS Client Initializing...
 ```
 
 **Benefits:**
+
 - 😊 Rõ ràng, dễ đọc
 - 🎯 Biết ngay Server vs Client
 - 🔴 Lỗi nổi bật
@@ -261,25 +281,30 @@ RCS Client Initializing...
 ### Scenario 1: User Reports "Webcam Not Working"
 
 **Old Console:**
+
 ```
 ❌ Error starting webcam
 Connection error on webcam
 Unexpected error
 ```
+
 → Không biết lỗi gì
 
 **New Console:**
+
 ```
 [🖥️  CLIENT] 🎬 Starting Webcam...
 [⚙️  SERVER] 🔧 [CMD] START_WEBCAM
 [⚙️  SERVER] ❌ Error: Camera hardware not found
 [🖥️  CLIENT] ❌ Webcam failed to start
 ```
+
 → Ngay lập tức biết: Camera không được kết nối
 
 ### Scenario 2: Performance Issue
 
 **Old Console:**
+
 ```
 Getting data...
 Sending data...
@@ -288,15 +313,18 @@ Getting data...
 Sending data...
 Done
 ```
+
 → Không biết bao lâu, không biết cái gì
 
 **New Console:**
+
 ```
 [⚙️  SERVER] 🎬 Encoding screen video... Frames: 1800
 [⚙️  SERVER] 🎬 FFmpeg encoding: 45% complete
 [⚙️  SERVER] ⚠️ High memory usage detected
 [⚙️  SERVER] ✅ Video encoded: 5120 KB in 12 seconds
 ```
+
 → Rõ ràng tiến độ và performance
 
 ---
@@ -332,6 +360,7 @@ Done
 ## 📝 Summary
 
 The new Logger system provides:
+
 - ✅ **Clear organization** - No more confusion
 - ✅ **Color-coded output** - Easy visual scanning
 - ✅ **Emoji indicators** - Quick context understanding
