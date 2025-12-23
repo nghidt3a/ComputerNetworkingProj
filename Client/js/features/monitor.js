@@ -12,9 +12,6 @@ let startX, startY, scrollLeft, scrollTop;
 let isControlEnabled = false;
 let lastMoveTime = 0;
 
-// Input block toggle state
-let isInputBlocked = false; // Track whether input is currently blocked
-
 // FPS tracking
 let fpsCount = 0;
 let lastFpsTimestamp = performance.now();
@@ -107,12 +104,6 @@ export const MonitorFeature = {
       "SCREEN_RECORD_FILE",
       this.handleScreenRecordDownload.bind(this)
     );
-
-    // Setup Block/Unblock Input Toggle Button
-    const btnInputToggle = document.getElementById("btn-input-toggle");
-    if (btnInputToggle) {
-      btnInputToggle.addEventListener("click", () => this.toggleInputBlock());
-    }
 
     // Setup Pan & Drag for zoomed images
     this.setupPanControls();
@@ -299,52 +290,6 @@ export const MonitorFeature = {
     // Update charts
     cpuChart.update("none"); // 'none' for no animation (smoother real-time)
     ramChart.update("none");
-  },
-
-  // Toggle Input Block/Unblock
-  toggleInputBlock() {
-    const btn = document.getElementById("btn-input-toggle");
-    const btnText = document.getElementById("btn-input-text");
-    const btnIcon = btn?.querySelector("i");
-
-    if (!isInputBlocked) {
-      // Block Input
-      if (confirm("Block mouse & keyboard on server?")) {
-        SocketService.send("DISABLE_INPUT");
-        isInputBlocked = true;
-
-        // Update button appearance
-        if (btn) {
-          btn.className = "btn btn-sm btn-input-toggle mb-0";
-          btn.classList.add("is-blocked");
-        }
-        if (btnText) btnText.innerText = "Unblock Input";
-        if (btnIcon) btnIcon.className = "fas fa-lock";
-
-        UIManager.showToast("Input blocked", "warning");
-      }
-    } else {
-      // Unblock Input - Gửi nhiều lần để đảm bảo Windows unblock thành công
-      UIManager.showToast("Unblocking input...", "info");
-
-      // Gửi lệnh unblock 3 lần với delay để tăng tỷ lệ thành công
-      SocketService.send("ENABLE_INPUT");
-      setTimeout(() => SocketService.send("ENABLE_INPUT"), 300);
-      setTimeout(() => SocketService.send("ENABLE_INPUT"), 600);
-
-      isInputBlocked = false;
-
-      // Update button appearance
-      if (btn) {
-        btn.className = "btn btn-sm btn-input-toggle mb-0";
-        btn.classList.remove("is-blocked");
-      }
-      if (btnText) btnText.innerText = "Block Input";
-      if (btnIcon) btnIcon.className = "fas fa-ban";
-
-      // Delay toast thành công để user thấy "Unblocking..."
-      setTimeout(() => UIManager.showToast("Input unblocked", "success"), 700);
-    }
   },
 
   // Toggle Monitor (Start/Stop)
@@ -1014,7 +959,7 @@ export const MonitorFeature = {
       if (!isControlEnabled) return;
 
       const now = Date.now();
-      if (now - lastMoveTime < 50) return; // Throttle to 20fps
+      if (now - lastMoveTime < 50) return; // Throttle to ~20fps
       lastMoveTime = now;
 
       const pos = getAccuratePosition(e);
