@@ -73,25 +73,25 @@
   // Members data (edit this list or supply via JSON)
   const TEAM_MEMBERS = [
     {
-      name: 'Nguyễn Văn A',
-      role: 'Nhóm trưởng',
+      name: 'Đoàn Thanh Nghĩa',
+      role: 'Lead Developer',
       avatar: '../assets/team/a.jpg',
-      github: 'https://github.com/example',
-      facebook: 'https://facebook.com/example',
-      email: 'example@gmail.com'
+      github: 'https://github.com/nghidt3a',
+      facebook: 'https://www.facebook.com/dtnghia2006',
+      email: 'dtnghia20062006@gmail.com'
     },
     {
-      name: 'Trần Thị B',
-      role: 'Backend',
+      name: 'Mai Hoàng Nhật',
+      role: 'Backend Developer',
       avatar: '../assets/team/b.jpg',
-      github: 'https://github.com/example',
-      facebook: 'https://facebook.com/example',
-      email: 'example@gmail.com'
+      github: 'https://github.com/hoazgnhatt1307',
+      facebook: 'https://www.facebook.com/hoang.nhat.224303',
+      email: 'mhn130706@gmail.com'
     }
   ];
 
   const fallbackAvatar = (name) => {
-    const n = (name || 'User').split(' ').map(s => s[0]).join('').slice(0,2).toUpperCase();
+    const n = (name || 'User').split(' ').map(s => s[0]).join('').slice(0, 2).toUpperCase();
     const svg = encodeURIComponent(
       `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'>` +
       `<rect width='100%' height='100%' fill='%23e2e8f0'/>` +

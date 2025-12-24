@@ -1,375 +1,401 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Remote Control System — Landing</title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Remote Control System — Landing</title>
 
-    <!-- Reuse existing design tokens & base styles -->
-    <link rel="stylesheet" href="../css/variables.css" />
-    <link rel="stylesheet" href="../css/soft-ui-base.css" />
-    <link rel="stylesheet" href="../css/components.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <!-- Page-specific styles -->
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <header class="landing-header">
-      <div class="container d-flex align-items-center justify-content-between gap-3">
-        <a class="brand d-flex align-items-center gap-2" href="#" aria-label="Trang chủ">
-          <img src="../assets/team/nsight-logo.svg" alt="N-SIGHT Team" style="height: 32px; width: auto" loading="lazy" />
-          <span class="fw-bold text-primary">N-SIGHT</span>
-        </a>
-        <nav class="landing-nav" id="landingNav">
-          <a href="#about" class="nav-link">Giới thiệu</a>
-          <a href="#core-features" class="nav-link">Tính năng cốt lõi</a>
-          <a href="#advanced-features" class="nav-link">Chức năng sáng tạo</a>
-          <a href="#architecture" class="nav-link">Kiến trúc hệ thống</a>
-          <a href="#tech-stack" class="nav-link">Công nghệ</a>
-          <a href="#members" class="nav-link">Thành viên</a>
-          <a href="#demo" class="nav-link">Demo</a>
-          <a href="../index.html" class="btn btn-primary ms-2">Đăng nhập</a>
-        </nav>
-        <div class="header-actions d-flex align-items-center gap-2">
-          <button class="theme-toggle" id="themeToggle" aria-label="Đổi giao diện" title="Đổi giao diện">
-            <i class="fas fa-moon"></i>
-          </button>
-          <button class="nav-toggle" id="navToggle" aria-label="Mở menu">
-            <span></span><span></span><span></span>
-          </button>
+  <!-- Reuse existing design tokens & base styles -->
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/soft-ui-base.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+
+  <!-- Page-specific styles -->
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <header class="landing-header">
+    <div class="container d-flex align-items-center justify-content-between gap-3">
+      <a class="brand d-flex align-items-center gap-2" href="#" aria-label="Trang chủ">
+        <img src="../assets/team/nsight-logo.svg" alt="N-SIGHT Team" style="height: 32px; width: auto" loading="lazy" />
+        <span class="fw-bold text-primary">N-SIGHT</span>
+      </a>
+      <nav class="landing-nav" id="landingNav">
+        <a href="#about" class="nav-link">Giới thiệu</a>
+        <a href="#core-features" class="nav-link">Tính năng cốt lõi</a>
+        <a href="#advanced-features" class="nav-link">Chức năng sáng tạo</a>
+        <a href="#architecture" class="nav-link">Kiến trúc hệ thống</a>
+        <a href="#tech-stack" class="nav-link">Công nghệ</a>
+        <a href="#members" class="nav-link">Thành viên</a>
+        <a href="#demo" class="nav-link">Demo</a>
+        <a href="../index.html" class="btn btn-primary ms-2">Đăng nhập</a>
+      </nav>
+      <div class="header-actions d-flex align-items-center gap-2">
+        <button class="theme-toggle" id="themeToggle" aria-label="Đổi giao diện" title="Đổi giao diện">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button class="nav-toggle" id="navToggle" aria-label="Mở menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero section-padding text-center reveal">
+      <div class="container">
+        <h1 class="display-5 fw-800 mb-3">
+          N-SIGHT: Giải Pháp Quản Trị Hệ Thống Từ Xa Toàn Diện
+        </h1>
+        <p class="lead text-secondary mx-auto maxw-720">
+          Hệ thống điều khiển máy tính thời gian thực với độ trễ thấp, bảo mật cao và giao diện Soft UI hiện đại.
+          Giải pháp tối ưu cho việc giám sát, hỗ trợ kỹ thuật và quản lý tài nguyên tập trung.
+        </p>
+        <div class="mt-4 d-flex gap-2 justify-content-center">
+          <a href="../index.html" class="btn btn-primary btn-lg">Truy Cập Hệ Thống</a>
+          <a href="#demo" class="btn btn-outline-primary btn-lg">Xem Demo</a>
         </div>
       </div>
-    </header>
+    </section>
 
-    <main>
-      <!-- Hero -->
-      <section class="hero section-padding text-center reveal">
-        <div class="container">
-          <h1 class="display-5 fw-800 mb-3">
-            Remote Control System — Computer Networking 24CTT5
-          </h1>
-          <p class="lead text-secondary mx-auto maxw-720">
-            Nền tảng điều khiển và giám sát hệ thống từ xa với giao diện Soft UI
-            đồng bộ, tối ưu trải nghiệm và hiệu năng.
-          </p>
-          <div class="mt-4 d-flex gap-2 justify-content-center">
-            <a href="../index.html" class="btn btn-primary btn-lg">Đăng nhập hệ thống</a>
-            <a href="#demo" class="btn btn-outline-primary btn-lg">Xem Demo</a>
-          </div>
-        </div>
-      </section>
-
-      <!-- About Team -->
-      <section id="about" class="section-padding reveal">
-        <div class="container">
-          <div class="card shadow-sm">
-            <div class="card-body p-4 p-md-5">
-              <div class="row align-items-center g-4">
-                <div class="col-lg-7">
-                  <h2 class="h3 fw-bold mb-3">Giới thiệu Đồ án & Team</h2>
-                  <p class="mb-3 text-secondary">
-                    Dự án tập trung vào các tính năng: giám sát màn hình, điều khiển webcam,
-                    ghi âm, quản lý tiến trình, quản lý file, và terminal logs — tất cả được
-                    kết nối qua socket với khả năng mở rộng linh hoạt.
-                  </p>
-                  <ul class="list-unstyled text-secondary mb-0">
-                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Giao diện Soft UI đồng bộ</li>
-                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Tối ưu cho Dark/Light mode</li>
-                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Trải nghiệm mượt, responsive</li>
-                  </ul>
-                </div>
-                <div class="col-lg-5">
-                  <div class="about-visual card-background bg-gradient-primary border-radius-xl p-0 overflow-hidden">
-                    <div class="full-background opacity-100"></div>
-                    <div class="p-4 text-white position-relative" style="z-index:1">
-                      <h3 class="h5 mb-2">Remote Control System Overview</h3>
-                      <p class="mb-0">Soft shadows • Smooth interactions • Clean tokens</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Core Features -->
-      <section id="core-features" class="section-padding reveal">
-        <div class="container">
-          <div class="text-center mb-4">
-            <h2 class="h3 fw-bold mb-2">Tính năng cốt lõi</h2>
-            <p class="text-secondary mb-0">Các module kỹ thuật chính của hệ thống.</p>
-          </div>
-          <div class="row g-3 g-md-4">
-            <div class="col-12 col-sm-6 col-lg-4">
-              <div class="feature-card h-100">
-                <div class="feature-icon text-primary mb-3"><i class="fas fa-window-restore"></i></div>
-                <h3 class="h6 fw-bold mb-2">Quản lý Ứng dụng</h3>
-                <p class="text-secondary small mb-0">Điều phối app với giao diện Soft UI, cập nhật trạng thái thời gian thực.</p>
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4">
-              <div class="feature-card h-100">
-                <div class="feature-icon text-success mb-3"><i class="fas fa-microchip"></i></div>
-                <h3 class="h6 fw-bold mb-2">Quản lý Tiến trình</h3>
-                <p class="text-secondary small mb-0">Theo dõi CPU/RAM và thao tác process qua socket hai chiều.</p>
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4">
-              <div class="feature-card h-100">
-                <div class="feature-icon text-info mb-3"><i class="fas fa-desktop"></i></div>
-                <h3 class="h6 fw-bold mb-2">Chụp màn hình</h3>
-                <p class="text-secondary small mb-0">Truyền tải khung hình nén thời gian thực qua Socket.</p>
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4">
-              <div class="feature-card h-100">
-                <div class="feature-icon text-warning mb-3"><i class="fas fa-keyboard"></i></div>
-                <h3 class="h6 fw-bold mb-2">Keylogger</h3>
-                <p class="text-secondary small mb-0">Ghi nhận sự kiện phím với buffer an toàn, stream về dashboard.</p>
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4">
-              <div class="feature-card h-100">
-                <div class="feature-icon text-danger mb-3"><i class="fas fa-power-off"></i></div>
-                <h3 class="h6 fw-bold mb-2">Điều khiển Nguồn</h3>
-                <p class="text-secondary small mb-0">Gửi lệnh shutdown/restart qua kênh bảo mật, xác nhận hai bước.</p>
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-4">
-              <div class="feature-card h-100">
-                <div class="feature-icon text-primary mb-3"><i class="fas fa-video"></i></div>
-                <h3 class="h6 fw-bold mb-2">Giám sát Webcam</h3>
-                <p class="text-secondary small mb-0">Streaming video/audio với kiểm soát start/stop và bitrate.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Advanced Features -->
-      <section id="advanced-features" class="section-padding bg-section reveal">
-        <div class="container">
-          <div class="text-center mb-4">
-            <h2 class="h3 fw-bold mb-2">Chức năng sáng tạo</h2>
-            <p class="text-secondary mb-0">Các tính năng nâng cao được phát triển để tăng điểm thưởng cho đồ án.</p>
-          </div>
-          <div class="row g-3 g-md-4">
-            <div class="col-12 col-lg-6">
-              <div class="feature-card feature-card-advanced h-100">
-                <div class="feature-icon text-primary mb-3">
-                  <i class="fas fa-folder-tree"></i>
-                </div>
-                <h3 class="h6 fw-bold mb-2">Quản lý File từ xa</h3>
-                <p class="text-secondary small mb-0">
-                  Duyệt cây thư mục, tải xuống tập tin từ máy bị điều khiển thông qua FileManagerService.cs. 
-                  Hỗ trợ đầy đủ các thao tác: duyệt, tải xuống, upload, đổi tên, xóa file và thư mục.
+    <!-- About Team -->
+    <section id="about" class="section-padding reveal">
+      <div class="container">
+        <div class="card shadow-sm">
+          <div class="card-body p-4 p-md-5">
+            <div class="row align-items-center g-4">
+              <div class="col-lg-7">
+                <h2 class="h3 fw-bold mb-3">Giới thiệu Dự án</h2>
+                <p class="mb-3 text-secondary">
+                  N-SIGHT là dự án phần mềm điều khiển từ xa (Remote Desktop Control) được phát triển bởi nhóm sinh viên
+                  lớp 24CTT5 - ĐH KHTN.
+                  Hệ thống vượt qua các giới hạn của các ứng dụng quản lý truyền thống bằng cách tích hợp khả năng giám
+                  sát đa chiều: hình ảnh, âm thanh, tệp tin và tiến trình hệ thống, tất cả trên nền tảng Web hiện đại.
                 </p>
+                <ul class="list-unstyled text-secondary mb-0">
+                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Real-time Streaming:</strong>
+                    Truyền tải hình ảnh/âm thanh độ trễ thấp qua WebSocket.</li>
+                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Giao diện Soft UI:</strong>
+                    Thiết kế chuẩn mực, thân thiện và hỗ trợ Dark Mode.</li>
+                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Đa nền tảng:</strong> Client
+                    hoạt động trên mọi trình duyệt hiện đại.</li>
+                </ul>
               </div>
-            </div>
-            <div class="col-12 col-lg-6">
-              <div class="feature-card feature-card-advanced h-100">
-                <div class="feature-icon text-success mb-3">
-                  <i class="fas fa-chart-line"></i>
-                </div>
-                <h3 class="h6 fw-bold mb-2">Giám sát tài nguyên hệ thống</h3>
-                <p class="text-secondary small mb-0">
-                  Theo dõi biểu đồ thời gian thực của CPU và RAM bằng các widget chuyên biệt. 
-                  Hiển thị thông tin phần cứng chi tiết và thống kê hiệu suất liên tục.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- System Architecture -->
-      <section id="architecture" class="section-padding reveal">
-        <div class="container">
-          <div class="text-center mb-4">
-            <h2 class="h3 fw-bold mb-2">Kiến trúc hệ thống</h2>
-            <p class="text-secondary mb-0">Luồng dữ liệu giữa Client (Web), Server (C#) và Target PC (Agent).</p>
-          </div>
-          <div class="arch-wrapper">
-            <div class="arch-node arch-client">
-              <div class="arch-node-icon mb-2">
-                <i class="fas fa-globe"></i>
-              </div>
-              <h3 class="h6 fw-bold mb-1">Client</h3>
-              <p class="text-secondary small mb-0">Web Browser + Dashboard UI</p>
-            </div>
-
-            <div class="arch-arrow arch-arrow-down">
-              <span>WebSocket / Socket.io</span>
-              <span class="arch-arrow-note">JSON Packets</span>
-            </div>
-
-            <div class="arch-node arch-server">
-              <div class="arch-node-icon mb-2">
-                <i class="fab fa-windows"></i>
-              </div>
-              <h3 class="h6 fw-bold mb-1">Server</h3>
-              <p class="text-secondary small mb-1">C# Signal Router</p>
-              <p class="text-secondary small mb-0">Auth • Routing • Logging</p>
-            </div>
-
-            <div class="arch-arrow arch-arrow-down">
-              <span>TCP Socket</span>
-              <span class="arch-arrow-note">JSON + Binary Streams</span>
-            </div>
-
-            <div class="arch-node arch-agent">
-              <div class="arch-node-icon mb-2">
-                <i class="fas fa-desktop"></i>
-              </div>
-              <h3 class="h6 fw-bold mb-1">Target PC</h3>
-              <p class="text-secondary small mb-1">Agent Service</p>
-              <p class="text-secondary small mb-0">Screen • Webcam • Keylogger • Power</p>
-            </div>
-
-            <div class="arch-arrow arch-arrow-up arch-arrow-left">
-              <span>Control Commands</span>
-              <span class="arch-arrow-note">JSON Packets</span>
-            </div>
-            <div class="arch-arrow arch-arrow-up arch-arrow-right">
-              <span>Telemetry / Streams</span>
-              <span class="arch-arrow-note">Binary Streams</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Tech Stack -->
-      <section id="tech-stack" class="section-padding reveal">
-        <div class="container">
-          <div class="text-center mb-4">
-            <h2 class="h3 fw-bold mb-2">Nền tảng công nghệ</h2>
-            <p class="text-secondary mb-0">Các công nghệ cốt lõi được sử dụng trong dự án.</p>
-          </div>
-          <div class="tech-stack-wrapper">
-            <div class="tech-stack-category">
-              <h4 class="h6 fw-bold text-secondary mb-3 text-uppercase">Backend</h4>
-              <div class="tech-stack-items">
-                <div class="tech-item">
-                  <div class="tech-icon">
-                    <i class="fab fa-microsoft"></i>
+              <div class="col-lg-5">
+                <div class="about-visual card-background bg-gradient-primary border-radius-xl p-0 overflow-hidden">
+                  <div class="full-background opacity-100"></div>
+                  <div class="p-4 text-white position-relative" style="z-index:1">
+                    <h3 class="h5 mb-2">Kiến Trúc & Hiệu Năng</h3>
+                    <p class="mb-0">Sử dụng công nghệ đa luồng (Multithreading) và giao thức TCP/IP tối ưu hóa băng
+                      thông.</p>
                   </div>
-                  <span class="tech-name">C# (.NET Sockets)</span>
-                </div>
-                <div class="tech-item">
-                  <div class="tech-icon">
-                    <i class="fas fa-server"></i>
-                  </div>
-                  <span class="tech-name">Multithreading</span>
-                </div>
-              </div>
-            </div>
-            <div class="tech-stack-category">
-              <h4 class="h6 fw-bold text-secondary mb-3 text-uppercase">Frontend</h4>
-              <div class="tech-stack-items">
-                <div class="tech-item">
-                  <div class="tech-icon">
-                    <i class="fab fa-js-square"></i>
-                  </div>
-                  <span class="tech-name">JavaScript ES6+</span>
-                </div>
-                <div class="tech-item">
-                  <div class="tech-icon">
-                    <i class="fab fa-css3-alt"></i>
-                  </div>
-                  <span class="tech-name">CSS Soft UI</span>
-                </div>
-                <div class="tech-item">
-                  <div class="tech-icon">
-                    <i class="fab fa-html5"></i>
-                  </div>
-                  <span class="tech-name">HTML5</span>
-                </div>
-              </div>
-            </div>
-            <div class="tech-stack-category">
-              <h4 class="h6 fw-bold text-secondary mb-3 text-uppercase">Networking & Data</h4>
-              <div class="tech-stack-items">
-                <div class="tech-item">
-                  <div class="tech-icon">
-                    <i class="fas fa-network-wired"></i>
-                  </div>
-                  <span class="tech-name">WebSocket</span>
-                </div>
-                <div class="tech-item">
-                  <div class="tech-icon">
-                    <i class="fas fa-project-diagram"></i>
-                  </div>
-                  <span class="tech-name">TCP/IP</span>
-                </div>
-                <div class="tech-item">
-                  <div class="tech-icon">
-                    <i class="fas fa-code"></i>
-                  </div>
-                  <span class="tech-name">JSON Serialization</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Members -->
-      <section id="members" class="section-padding bg-section reveal">
-        <div class="container">
-          <div class="text-center mb-4">
-            <h2 class="h3 fw-bold mb-2">Thành viên Nhóm</h2>
-            <p class="text-secondary mb-0">Ảnh, tên và vai trò.</p>
-          </div>
-          <div id="membersGrid" class="member-grid"></div>
+    <!-- Core Features -->
+    <section id="core-features" class="section-padding reveal">
+      <div class="container">
+        <div class="text-center mb-4">
+          <h2 class="h3 fw-bold mb-2">Tính Năng Cốt Lõi</h2>
+          <p class="text-secondary mb-0">Các module chức năng chính đảm bảo khả năng kiểm soát toàn diện.</p>
         </div>
-      </section>
+        <div class="row g-3 g-md-4">
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="feature-card h-100">
+              <div class="feature-icon text-primary mb-3"><i class="fas fa-window-restore"></i></div>
+              <h3 class="h6 fw-bold mb-2">Quản Lý Ứng Dụng</h3>
+              <p class="text-secondary small mb-0">Khởi chạy và tìm kiếm ứng dụng trên máy Target nhanh chóng từ thư
+                viện tích hợp.</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="feature-card h-100">
+              <div class="feature-icon text-success mb-3"><i class="fas fa-microchip"></i></div>
+              <h3 class="h6 fw-bold mb-2">Kiểm Soát Tiến Trình</h3>
+              <p class="text-secondary small mb-0">Giám sát tài nguyên (PID, RAM) và can thiệp (Kill/Start) vào các tiến
+                trình hệ thống.</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="feature-card h-100">
+              <div class="feature-icon text-info mb-3"><i class="fas fa-desktop"></i></div>
+              <h3 class="h6 fw-bold mb-2">Remote Desktop</h3>
+              <p class="text-secondary small mb-0">Stream màn hình thời gian thực chất lượng cao, hỗ trợ thao tác chuột
+                và phím ảo.</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="feature-card h-100">
+              <div class="feature-icon text-warning mb-3"><i class="fas fa-keyboard"></i></div>
+              <h3 class="h6 fw-bold mb-2">Keylogger Thông Minh</h3>
+              <p class="text-secondary small mb-0">Ghi nhận và đồng bộ sự kiện bàn phím thời gian thực về Dashboard.</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="feature-card h-100">
+              <div class="feature-icon text-danger mb-3"><i class="fas fa-power-off"></i></div>
+              <h3 class="h6 fw-bold mb-2">Điều Khiển Nguồn</h3>
+              <p class="text-secondary small mb-0">Thực hiện lệnh Shutdown, Restart, Sleep, Lock màn hình từ xa.</p>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="feature-card h-100">
+              <div class="feature-icon text-primary mb-3"><i class="fas fa-video"></i></div>
+              <h3 class="h6 fw-bold mb-2">Giám Sát Webcam</h3>
+              <p class="text-secondary small mb-0">Truy cập Camera/Microphone, hỗ trợ ghi âm và quay video giám sát.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <!-- Demo YouTube -->
-      <section id="demo" class="section-padding reveal">
-        <div class="container">
-          <div class="row g-4 align-items-center">
-            <div class="col-lg-6">
-              <h2 class="h3 fw-bold mb-3">Video Demo</h2>
-              <p class="text-secondary mb-3">
-                Xem video demo chức năng chính của hệ thống. Nhấn vào nút để mở trên YouTube.
+    <!-- Advanced Features -->
+    <section id="advanced-features" class="section-padding bg-section reveal">
+      <div class="container">
+        <div class="text-center mb-4">
+          <h2 class="h3 fw-bold mb-2">Chức Năng Nâng Cao</h2>
+          <p class="text-secondary mb-0">Các tính năng mở rộng kỹ thuật cao (Advanced Requirements).</p>
+        </div>
+        <div class="row g-3 g-md-4">
+          <div class="col-12 col-lg-6">
+            <div class="feature-card feature-card-advanced h-100">
+              <div class="feature-icon text-primary mb-3">
+                <i class="fas fa-folder-tree"></i>
+              </div>
+              <h3 class="h6 fw-bold mb-2">File Manager Đa Nhiệm</h3>
+              <p class="text-secondary small mb-0">
+                Hệ thống quản lý tệp tin toàn diện: Duyệt cây thư mục, thao tác Upload/Download tốc độ cao,
+                Đổi tên, Xóa file/folder. Giao tiếp dữ liệu dạng Binary/Base64 an toàn.
               </p>
-              <div class="d-flex gap-2">
-                <a id="btnYoutube" class="btn btn-primary" href="#" target="_blank" rel="noopener">
-                  Xem trên YouTube
-                </a>
-                <a href="../index.html" class="btn btn-outline-primary">Đăng nhập hệ thống</a>
+            </div>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div class="feature-card feature-card-advanced h-100">
+              <div class="feature-icon text-success mb-3">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h3 class="h6 fw-bold mb-2">Biểu Đồ Hiệu Năng Real-time</h3>
+              <p class="text-secondary small mb-0">
+                Dashboard trực quan hóa dữ liệu phần cứng (CPU, RAM, Disk, GPU) thông qua thư viện Chart.js.
+                Cập nhật liên tục mỗi giây để phát hiện điểm nghẽn hệ thống.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- System Architecture -->
+    <section id="architecture" class="section-padding reveal">
+      <div class="container">
+        <div class="text-center mb-4">
+          <h2 class="h3 fw-bold mb-2">Kiến Trúc Hệ Thống</h2>
+          <p class="text-secondary mb-0">Mô hình Client-Server-Agent với giao tiếp Socket đa luồng.</p>
+        </div>
+        <div class="arch-wrapper">
+          <div class="arch-node arch-client">
+            <div class="arch-node-icon mb-2">
+              <i class="fas fa-globe"></i>
+            </div>
+            <h3 class="h6 fw-bold mb-1">Client (Controller)</h3>
+            <p class="text-secondary small mb-0">Web Dashboard (HTML/JS)</p>
+          </div>
+
+          <div class="arch-arrow arch-arrow-down">
+            <span>WebSocket</span>
+            <span class="arch-arrow-note">Commands / JSON</span>
+          </div>
+
+          <div class="arch-node arch-server">
+            <div class="arch-node-icon mb-2">
+              <i class="fab fa-windows"></i>
+            </div>
+            <h3 class="h6 fw-bold mb-1">Central Server</h3>
+            <p class="text-secondary small mb-1">C# .NET Core Service</p>
+            <p class="text-secondary small mb-0">Routing • Authentication • Logging</p>
+          </div>
+
+          <div class="arch-arrow arch-arrow-down">
+            <span>TCP Socket</span>
+            <span class="arch-arrow-note">Data Streams</span>
+          </div>
+
+          <div class="arch-node arch-agent">
+            <div class="arch-node-icon mb-2">
+              <i class="fas fa-desktop"></i>
+            </div>
+            <h3 class="h6 fw-bold mb-1">Agent (Target)</h3>
+            <p class="text-secondary small mb-1">Máy Bị Điều Khiển</p>
+            <p class="text-secondary small mb-0">System Hooks • Media Capture</p>
+          </div>
+
+          <div class="arch-arrow arch-arrow-up arch-arrow-left">
+            <span>Control Commands</span>
+            <span class="arch-arrow-note">JSON Packets</span>
+          </div>
+          <div class="arch-arrow arch-arrow-up arch-arrow-right">
+            <span>Telemetry / Streams</span>
+            <span class="arch-arrow-note">Binary Streams</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section id="tech-stack" class="section-padding reveal">
+      <div class="container">
+        <div class="text-center mb-4">
+          <h2 class="h3 fw-bold mb-2">Công Nghệ Sử Dụng</h2>
+          <p class="text-secondary mb-0">Tối ưu hóa hiệu năng với các công nghệ tiên tiến.</p>
+        </div>
+        <div class="tech-stack-wrapper">
+          <div class="tech-stack-category">
+            <h4 class="h6 fw-bold text-secondary mb-3 text-uppercase">Backend & Core</h4>
+            <div class="tech-stack-items">
+              <div class="tech-item">
+                <div class="tech-icon">
+                  <i class="fab fa-microsoft"></i>
+                </div>
+                <span class="tech-name">C# .NET 6</span>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">
+                  <i class="fas fa-server"></i>
+                </div>
+                <span class="tech-name">Multithreading</span>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">
+                  <i class="fas fa-compress-arrows-alt"></i>
+                </div>
+                <span class="tech-name">Image Compression</span>
               </div>
             </div>
-            <div class="col-lg-6">
-              <div class="video-frame">
-                <iframe id="ytFrame" title="N-SIGHT Demo" loading="lazy" allowfullscreen></iframe>
+          </div>
+          <div class="tech-stack-category">
+            <h4 class="h6 fw-bold text-secondary mb-3 text-uppercase">Frontend</h4>
+            <div class="tech-stack-items">
+              <div class="tech-item">
+                <div class="tech-icon">
+                  <i class="fab fa-js-square"></i>
+                </div>
+                <span class="tech-name">Vanilla JS (ES6)</span>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">
+                  <i class="fab fa-css3-alt"></i>
+                </div>
+                <span class="tech-name">Soft UI / CSS3</span>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">
+                  <i class="fab fa-bootstrap"></i>
+                </div>
+                <span class="tech-name">Bootstrap 5</span>
+              </div>
+            </div>
+          </div>
+          <div class="tech-stack-category">
+            <h4 class="h6 fw-bold text-secondary mb-3 text-uppercase">Giao Thức</h4>
+            <div class="tech-stack-items">
+              <div class="tech-item">
+                <div class="tech-icon">
+                  <i class="fas fa-network-wired"></i>
+                </div>
+                <span class="tech-name">WebSocket Secure</span>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">
+                  <i class="fas fa-code"></i>
+                </div>
+                <span class="tech-name">JSON Interface</span>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </main>
-
-    <footer class="landing-footer text-center text-secondary">
-      <div class="container py-4">
-        <small>© <span id="year"></span> N-SIGHT Team — All rights reserved.</small>
       </div>
-    </footer>
+    </section>
 
-    <script src="./main.js"></script>
-  </body>
+    <!-- Members -->
+    <section id="members" class="section-padding bg-section reveal">
+      <div class="container">
+        <div class="text-center mb-4">
+          <h2 class="h3 fw-bold mb-2">Đội Ngũ Phát Triển</h2>
+          <p class="text-secondary mb-0">Sinh viên lớp 24CTT5 - Đại học Khoa học Tự nhiên, ĐHQG-HCM.</p>
+        </div>
+        <div id="membersGrid" class="member-grid"></div>
+      </div>
+    </section>
+
+    <!-- Demo YouTube -->
+    <section id="demo" class="section-padding reveal">
+      <div class="container">
+        <div class="row g-4 align-items-center">
+          <div class="col-lg-6">
+            <h2 class="h3 fw-bold mb-3">Trải Nghiệm Thực Tế</h2>
+            <p class="text-secondary mb-3">
+              Xem video demo chi tiết các tính năng của hệ thống N-SIGHT.
+              Từ kết nối, giám sát đến điều khiển nâng cao.
+            </p>
+            <div class="d-flex gap-2">
+              <a id="btnYoutube" class="btn btn-primary" href="#" target="_blank" rel="noopener">
+                <i class="fab fa-youtube me-2"></i>Xem Demo Trên YouTube
+              </a>
+              <a href="../index.html" class="btn btn-outline-primary">Đăng Nhập Ngay</a>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="video-frame shadow-lg">
+              <iframe id="ytFrame" title="N-SIGHT Demo" loading="lazy" allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="landing-footer text-secondary">
+    <div class="container-fluid py-4 px-4 px-md-5">
+      <div class="row align-items-center gy-3">
+        <div class="col-md-6 text-center text-md-start">
+          <small>© <span id="year"></span> N-SIGHT Team — All rights reserved.</small>
+        </div>
+        <div class="col-md-6">
+          <div class="footer-social justify-content-center justify-content-md-end">
+            <a href="https://facebook.com" class="footer-link" aria-label="N-SIGHT Facebook" target="_blank"
+              rel="noopener noreferrer">
+              <i class="fab fa-facebook icon-fb"></i>
+            </a>
+            <a href="mailto:nsight.contact@gmail.com" class="footer-link" aria-label="Contact via Email">
+              <i class="fas fa-envelope icon-gm"></i>
+            </a>
+            <a href="https://www.youtube.com" class="footer-link" aria-label="N-SIGHT YouTube" target="_blank"
+              rel="noopener noreferrer">
+              <i class="fab fa-youtube icon-yt"></i>
+            </a>
+            <a href="https://github.com" class="footer-link" aria-label="N-SIGHT GitHub" target="_blank"
+              rel="noopener noreferrer">
+              <i class="fab fa-github icon-gh"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./main.js"></script>
+</body>
+
 </html>

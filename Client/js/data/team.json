@@ -1,18 +1,18 @@
 [
   {
-    "name": "Nguyễn Văn A",
-    "role": "Nhóm trưởng",
-    "avatar": "../../assets/team/a.jpg",
-    "github": "https://github.com/example",
-    "facebook": "https://facebook.com/example",
-    "email": "example@gmail.com"
+    "name": "Đoàn Thanh Nghĩa",
+    "role": "Lead Developer",
+    "avatar": "../assets/team/a.jpg",
+    "github": "https://github.com/nghidt3a",
+    "facebook": "https://www.facebook.com/dtnghia2006",
+    "email": "dtnghia20062006@gmail.com"
   },
   {
     "name": "Mai Hoàng Nhật",
-    "role": "Backend",
-    "avatar": "../../assets/team/MHN.jpg",
-    "github": "https://github.com/example",
-    "facebook": "https://facebook.com/example",
-    "email": "example@gmail.com"
+    "role": "Backend Developer",
+    "avatar": "../assets/team/b.jpg",
+    "github": "https://github.com/hoazgnhatt1307",
+    "facebook": "https://www.facebook.com/hoang.nhat.224303",
+    "email": "mhn130706@gmail.com"
   }
 ]
