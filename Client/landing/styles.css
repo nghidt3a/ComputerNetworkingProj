@@ -3,7 +3,8 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    sans-serif;
   background: var(--bg-body);
   color: var(--text-primary);
 }
@@ -265,8 +266,8 @@ body {
     gap: 0.5rem;
   }
 
-  .landing-header .container>div,
-  .landing-header .container>nav {
+  .landing-header .container > div,
+  .landing-header .container > nav {
     justify-content: space-between;
     width: 100%;
     margin-bottom: 0.25rem;
@@ -292,8 +293,8 @@ body {
     gap: 0.5rem;
   }
 
-  .landing-header .container>div,
-  .landing-header .container>nav {
+  .landing-header .container > div,
+  .landing-header .container > nav {
     justify-content: space-between;
     width: 100%;
     margin-bottom: 0.25rem;
@@ -308,7 +309,7 @@ body {
 .reveal {
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity .5s ease, transform .5s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .reveal.is-visible {
@@ -349,18 +350,26 @@ body {
 }
 
 .feature-card-advanced::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--primary-color) 0%,
+    var(--primary-hover) 100%
+  );
   opacity: 0.6;
 }
 
 [data-theme="dark"] .feature-card-advanced::before {
-  background: linear-gradient(90deg, var(--primary-color) 0%, var(--info-color) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--primary-color) 0%,
+    var(--info-color) 100%
+  );
   opacity: 0.8;
 }
 
@@ -371,11 +380,19 @@ body {
 }
 
 .feature-card-advanced .feature-icon {
-  background: linear-gradient(135deg, var(--primary-light) 0%, rgba(37, 99, 235, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-light) 0%,
+    rgba(37, 99, 235, 0.1) 100%
+  );
 }
 
 [data-theme="dark"] .feature-card-advanced .feature-icon {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.2) 0%,
+    rgba(37, 99, 235, 0.1) 100%
+  );
 }
 
 /* Architecture Icons & Notes */
@@ -443,13 +460,17 @@ body {
 }
 
 .tech-item::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--primary-color) 0%,
+    var(--primary-hover) 100%
+  );
   opacity: 0;
   transition: opacity 0.35s ease;
 }
@@ -479,13 +500,21 @@ body {
 }
 
 .tech-item:hover .tech-icon {
-  background: linear-gradient(135deg, var(--primary-light) 0%, rgba(37, 99, 235, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-light) 0%,
+    rgba(37, 99, 235, 0.1) 100%
+  );
   transform: scale(1.15) rotate(5deg);
   box-shadow: var(--shadow-md);
 }
 
 [data-theme="dark"] .tech-item:hover .tech-icon {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.2) 0%,
+    rgba(37, 99, 235, 0.1) 100%
+  );
 }
 
 .tech-name {
@@ -670,15 +699,15 @@ body {
 
 /* Brand hover colors */
 .icon-fb:hover {
-  color: #1877F2 !important;
+  color: #1877f2 !important;
 }
 
 .icon-yt:hover {
-  color: #FF0000 !important;
+  color: #ff0000 !important;
 }
 
 .icon-gm:hover {
-  color: #EA4335 !important;
+  color: #ea4335 !important;
 }
 
 .icon-gh:hover {
