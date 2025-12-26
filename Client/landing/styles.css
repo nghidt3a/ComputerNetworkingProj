@@ -137,6 +137,11 @@ body {
   object-fit: cover;
 }
 
+/* Điều chỉnh vị trí hình ảnh của Đoàn Thanh Nghĩa */
+.member-card:first-child .member-avatar {
+  object-position: center 1%;
+}
+
 /* Video */
 .video-frame {
   background: var(--bg-card);
@@ -266,8 +271,8 @@ body {
     gap: 0.5rem;
   }
 
-  .landing-header .container > div,
-  .landing-header .container > nav {
+  .landing-header .container>div,
+  .landing-header .container>nav {
     justify-content: space-between;
     width: 100%;
     margin-bottom: 0.25rem;
@@ -293,8 +298,8 @@ body {
     gap: 0.5rem;
   }
 
-  .landing-header .container > div,
-  .landing-header .container > nav {
+  .landing-header .container>div,
+  .landing-header .container>nav {
     justify-content: space-between;
     width: 100%;
     margin-bottom: 0.25rem;
@@ -356,20 +361,16 @@ body {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--primary-color) 0%,
-    var(--primary-hover) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--primary-color) 0%,
+      var(--primary-hover) 100%);
   opacity: 0.6;
 }
 
 [data-theme="dark"] .feature-card-advanced::before {
-  background: linear-gradient(
-    90deg,
-    var(--primary-color) 0%,
-    var(--info-color) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--primary-color) 0%,
+      var(--info-color) 100%);
   opacity: 0.8;
 }
 
@@ -380,19 +381,15 @@ body {
 }
 
 .feature-card-advanced .feature-icon {
-  background: linear-gradient(
-    135deg,
-    var(--primary-light) 0%,
-    rgba(37, 99, 235, 0.1) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--primary-light) 0%,
+      rgba(37, 99, 235, 0.1) 100%);
 }
 
 [data-theme="dark"] .feature-card-advanced .feature-icon {
-  background: linear-gradient(
-    135deg,
-    rgba(59, 130, 246, 0.2) 0%,
-    rgba(37, 99, 235, 0.1) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.2) 0%,
+      rgba(37, 99, 235, 0.1) 100%);
 }
 
 /* Architecture Icons & Notes */
@@ -466,11 +463,9 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(
-    90deg,
-    var(--primary-color) 0%,
-    var(--primary-hover) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--primary-color) 0%,
+      var(--primary-hover) 100%);
   opacity: 0;
   transition: opacity 0.35s ease;
 }
@@ -500,21 +495,17 @@ body {
 }
 
 .tech-item:hover .tech-icon {
-  background: linear-gradient(
-    135deg,
-    var(--primary-light) 0%,
-    rgba(37, 99, 235, 0.1) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--primary-light) 0%,
+      rgba(37, 99, 235, 0.1) 100%);
   transform: scale(1.15) rotate(5deg);
   box-shadow: var(--shadow-md);
 }
 
 [data-theme="dark"] .tech-item:hover .tech-icon {
-  background: linear-gradient(
-    135deg,
-    rgba(59, 130, 246, 0.2) 0%,
-    rgba(37, 99, 235, 0.1) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.2) 0%,
+      rgba(37, 99, 235, 0.1) 100%);
 }
 
 .tech-name {
