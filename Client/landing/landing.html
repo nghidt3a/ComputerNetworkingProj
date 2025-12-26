@@ -52,11 +52,12 @@
     <section class="hero section-padding text-center reveal">
       <div class="container">
         <h1 class="display-5 fw-800 mb-3">
-          N-SIGHT: Giải Pháp Quản Trị Hệ Thống Từ Xa Toàn Diện
+          N-SIGHT: Remote Control System
         </h1>
         <p class="lead text-secondary mx-auto maxw-720">
-          Hệ thống điều khiển máy tính thời gian thực với độ trễ thấp, bảo mật cao và giao diện Soft UI hiện đại.
-          Giải pháp tối ưu cho việc giám sát, hỗ trợ kỹ thuật và quản lý tài nguyên tập trung.
+          Đồ án môn học <strong>Mạng máy tính</strong> — <strong>Nhóm 17</strong><br>
+          Ứng dụng web điều khiển máy tính từ xa, cho phép người dùng giám sát màn hình, webcam,
+          quản lý tiến trình và tệp tin thông qua giao thức WebSocket.
         </p>
         <div class="mt-4 d-flex gap-2 justify-content-center">
           <a href="../index.html" class="btn btn-primary btn-lg">Truy Cập Hệ Thống</a>
@@ -72,29 +73,31 @@
           <div class="card-body p-4 p-md-5">
             <div class="row align-items-center g-4">
               <div class="col-lg-7">
-                <h2 class="h3 fw-bold mb-3">Giới thiệu Dự án</h2>
+                <h2 class="h3 fw-bold mb-3">Giới thiệu Đồ Án</h2>
                 <p class="mb-3 text-secondary">
-                  N-SIGHT là dự án phần mềm điều khiển từ xa (Remote Desktop Control) được phát triển bởi nhóm sinh viên
-                  lớp 24CTT5 - ĐH KHTN.
-                  Hệ thống vượt qua các giới hạn của các ứng dụng quản lý truyền thống bằng cách tích hợp khả năng giám
-                  sát đa chiều: hình ảnh, âm thanh, tệp tin và tiến trình hệ thống, tất cả trên nền tảng Web hiện đại.
+                  N-SIGHT là đồ án môn học <strong>Mạng máy tính</strong>, được thực hiện bởi <strong>Nhóm 17</strong> —
+                  Lớp 24CTT5, Đại học Khoa học Tự nhiên, ĐHQG-HCM.
+                </p>
+                <p class="mb-3 text-secondary">
+                  Đồ án xây dựng ứng dụng điều khiển máy tính từ xa với các chức năng như xem màn hình,
+                  điều khiển chuột/bàn phím, giám sát webcam, thu âm, quản lý tiến trình và tệp tin.
+                  Hệ thống sử dụng giao thức WebSocket để truyền dữ liệu thời gian thực giữa Client và Server.
                 </p>
                 <ul class="list-unstyled text-secondary mb-0">
                   <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Real-time Streaming:</strong>
-                    Truyền tải hình ảnh/âm thanh độ trễ thấp qua WebSocket.</li>
-                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Giao diện Soft UI:</strong>
-                    Thiết kế chuẩn mực, thân thiện và hỗ trợ Dark Mode.</li>
-                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Đa nền tảng:</strong> Client
-                    hoạt động trên mọi trình duyệt hiện đại.</li>
+                    Truyền hình ảnh và âm thanh qua WebSocket</li>
+                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Giao diện Web:</strong>
+                    Dashboard thân thiện, hỗ trợ chế độ tối</li>
+                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Đa nền tảng:</strong>
+                    Chạy trên mọi trình duyệt hiện đại</li>
                 </ul>
               </div>
               <div class="col-lg-5">
                 <div class="about-visual card-background bg-gradient-primary border-radius-xl p-0 overflow-hidden">
                   <div class="full-background opacity-100"></div>
                   <div class="p-4 text-white position-relative" style="z-index:1">
-                    <h3 class="h5 mb-2">Kiến Trúc & Hiệu Năng</h3>
-                    <p class="mb-0">Sử dụng công nghệ đa luồng (Multithreading) và giao thức TCP/IP tối ưu hóa băng
-                      thông.</p>
+                    <h3 class="h5 mb-2">Đồ Án Mạng Máy Tính</h3>
+                    <p class="mb-0">Nhóm 17 — Lớp 24CTT5<br>Học kỳ 1 — Năm học 2025-2026</p>
                   </div>
                 </div>
               </div>
@@ -108,53 +111,50 @@
     <section id="core-features" class="section-padding reveal">
       <div class="container">
         <div class="text-center mb-4">
-          <h2 class="h3 fw-bold mb-2">Tính Năng Cốt Lõi</h2>
-          <p class="text-secondary mb-0">Các module chức năng chính đảm bảo khả năng kiểm soát toàn diện.</p>
+          <h2 class="h3 fw-bold mb-2">Các Chức Năng Chính</h2>
+          <p class="text-secondary mb-0">Những tính năng cơ bản của ứng dụng điều khiển từ xa.</p>
         </div>
         <div class="row g-3 g-md-4">
           <div class="col-12 col-sm-6 col-lg-4">
             <div class="feature-card h-100">
               <div class="feature-icon text-primary mb-3"><i class="fas fa-window-restore"></i></div>
               <h3 class="h6 fw-bold mb-2">Quản Lý Ứng Dụng</h3>
-              <p class="text-secondary small mb-0">Khởi chạy và tìm kiếm ứng dụng trên máy Target nhanh chóng từ thư
-                viện tích hợp.</p>
+              <p class="text-secondary small mb-0">Khởi chạy ứng dụng trên máy từ xa.</p>
             </div>
           </div>
           <div class="col-12 col-sm-6 col-lg-4">
             <div class="feature-card h-100">
               <div class="feature-icon text-success mb-3"><i class="fas fa-microchip"></i></div>
               <h3 class="h6 fw-bold mb-2">Kiểm Soát Tiến Trình</h3>
-              <p class="text-secondary small mb-0">Giám sát tài nguyên (PID, RAM) và can thiệp (Kill/Start) vào các tiến
-                trình hệ thống.</p>
+              <p class="text-secondary small mb-0">Xem danh sách tiến trình đang chạy, tắt tiến trình.</p>
             </div>
           </div>
           <div class="col-12 col-sm-6 col-lg-4">
             <div class="feature-card h-100">
               <div class="feature-icon text-info mb-3"><i class="fas fa-desktop"></i></div>
               <h3 class="h6 fw-bold mb-2">Remote Desktop</h3>
-              <p class="text-secondary small mb-0">Stream màn hình thời gian thực chất lượng cao, hỗ trợ thao tác chuột
-                và phím ảo.</p>
+              <p class="text-secondary small mb-0">Xem màn hình máy từ xa theo thời gian thực.</p>
             </div>
           </div>
           <div class="col-12 col-sm-6 col-lg-4">
             <div class="feature-card h-100">
               <div class="feature-icon text-warning mb-3"><i class="fas fa-keyboard"></i></div>
-              <h3 class="h6 fw-bold mb-2">Keylogger Thông Minh</h3>
-              <p class="text-secondary small mb-0">Ghi nhận và đồng bộ sự kiện bàn phím thời gian thực về Dashboard.</p>
+              <h3 class="h6 fw-bold mb-2">Keylogger</h3>
+              <p class="text-secondary small mb-0">Ghi nhận sự kiện bàn phím.</p>
             </div>
           </div>
           <div class="col-12 col-sm-6 col-lg-4">
             <div class="feature-card h-100">
               <div class="feature-icon text-danger mb-3"><i class="fas fa-power-off"></i></div>
               <h3 class="h6 fw-bold mb-2">Điều Khiển Nguồn</h3>
-              <p class="text-secondary small mb-0">Thực hiện lệnh Shutdown, Restart, Sleep, Lock màn hình từ xa.</p>
+              <p class="text-secondary small mb-0">Shutdown, Restart, Sleep, Lock máy từ xa.</p>
             </div>
           </div>
           <div class="col-12 col-sm-6 col-lg-4">
             <div class="feature-card h-100">
               <div class="feature-icon text-primary mb-3"><i class="fas fa-video"></i></div>
               <h3 class="h6 fw-bold mb-2">Giám Sát Webcam</h3>
-              <p class="text-secondary small mb-0">Truy cập Camera/Microphone, hỗ trợ ghi âm và quay video giám sát.</p>
+              <p class="text-secondary small mb-0">Xem webcam và thu âm từ xa.</p>
             </div>
           </div>
         </div>
@@ -165,31 +165,43 @@
     <section id="advanced-features" class="section-padding bg-section reveal">
       <div class="container">
         <div class="text-center mb-4">
-          <h2 class="h3 fw-bold mb-2">Chức Năng Nâng Cao</h2>
-          <p class="text-secondary mb-0">Các tính năng mở rộng kỹ thuật cao (Advanced Requirements).</p>
+          <h2 class="h3 fw-bold mb-2">Chức Năng Mở Rộng</h2>
+          <p class="text-secondary mb-0">Các tính năng bổ sung được phát triển thêm cho đồ án.</p>
         </div>
         <div class="row g-3 g-md-4">
           <div class="col-12 col-lg-6">
             <div class="feature-card feature-card-advanced h-100">
-              <div class="feature-icon text-primary mb-3">
-                <i class="fas fa-folder-tree"></i>
-              </div>
-              <h3 class="h6 fw-bold mb-2">File Manager Đa Nhiệm</h3>
+              <div class="feature-icon text-danger mb-3"><i class="fas fa-microphone"></i></div>
+              <h3 class="h6 fw-bold mb-2">Ghi Âm Từ Xa</h3>
               <p class="text-secondary small mb-0">
-                Hệ thống quản lý tệp tin toàn diện: Duyệt cây thư mục, thao tác Upload/Download tốc độ cao,
-                Đổi tên, Xóa file/folder. Giao tiếp dữ liệu dạng Binary/Base64 an toàn.
+                Thu âm thanh từ microphone máy bị điều khiển và tải về file.
               </p>
             </div>
           </div>
           <div class="col-12 col-lg-6">
             <div class="feature-card feature-card-advanced h-100">
-              <div class="feature-icon text-success mb-3">
-                <i class="fas fa-chart-line"></i>
-              </div>
-              <h3 class="h6 fw-bold mb-2">Biểu Đồ Hiệu Năng Real-time</h3>
+              <div class="feature-icon text-warning mb-3"><i class="fas fa-mouse-pointer"></i></div>
+              <h3 class="h6 fw-bold mb-2">Điều Khiển Chuột &amp; Bàn Phím</h3>
               <p class="text-secondary small mb-0">
-                Dashboard trực quan hóa dữ liệu phần cứng (CPU, RAM, Disk, GPU) thông qua thư viện Chart.js.
-                Cập nhật liên tục mỗi giây để phát hiện điểm nghẽn hệ thống.
+                Thao tác trực tiếp trên màn hình từ xa: click, di chuyển, cuộn, gõ phím.
+              </p>
+            </div>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div class="feature-card feature-card-advanced h-100">
+              <div class="feature-icon text-primary mb-3"><i class="fas fa-folder-tree"></i></div>
+              <h3 class="h6 fw-bold mb-2">File Manager</h3>
+              <p class="text-secondary small mb-0">
+                Duyệt thư mục, upload/download, đổi tên, xóa file/folder.
+              </p>
+            </div>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div class="feature-card feature-card-advanced h-100">
+              <div class="feature-icon text-success mb-3"><i class="fas fa-chart-line"></i></div>
+              <h3 class="h6 fw-bold mb-2">Biểu Đồ Hiệu Năng</h3>
+              <p class="text-secondary small mb-0">
+                Đồ thị CPU, RAM cập nhật theo thời gian thực.
               </p>
             </div>
           </div>
@@ -202,52 +214,44 @@
       <div class="container">
         <div class="text-center mb-4">
           <h2 class="h3 fw-bold mb-2">Kiến Trúc Hệ Thống</h2>
-          <p class="text-secondary mb-0">Mô hình Client-Server-Agent với giao tiếp Socket đa luồng.</p>
+          <p class="text-secondary mb-0">Mô hình Client — Server — Agent</p>
         </div>
-        <div class="arch-wrapper">
-          <div class="arch-node arch-client">
-            <div class="arch-node-icon mb-2">
-              <i class="fas fa-globe"></i>
-            </div>
+
+        <!-- Simplified Vertical Architecture Diagram -->
+        <div class="arch-vertical">
+          <!-- Client Node -->
+          <div class="arch-node">
+            <div class="arch-node-icon"><i class="fas fa-globe"></i></div>
             <h3 class="h6 fw-bold mb-1">Client (Controller)</h3>
-            <p class="text-secondary small mb-0">Web Dashboard (HTML/JS)</p>
+            <p class="text-secondary small mb-0">Web Dashboard — HTML/JS</p>
           </div>
 
-          <div class="arch-arrow arch-arrow-down">
-            <span>WebSocket</span>
-            <span class="arch-arrow-note">Commands / JSON</span>
+          <!-- Arrow Down -->
+          <div class="arch-connector">
+            <div class="arch-line"></div>
+            <span class="arch-label">WebSocket</span>
+            <span class="arch-sublabel">Commands / JSON</span>
           </div>
 
-          <div class="arch-node arch-server">
-            <div class="arch-node-icon mb-2">
-              <i class="fab fa-windows"></i>
-            </div>
-            <h3 class="h6 fw-bold mb-1">Central Server</h3>
-            <p class="text-secondary small mb-1">C# .NET Core Service</p>
-            <p class="text-secondary small mb-0">Routing • Authentication • Logging</p>
+          <!-- Server Node -->
+          <div class="arch-node arch-node-highlight">
+            <div class="arch-node-icon"><i class="fas fa-server"></i></div>
+            <h3 class="h6 fw-bold mb-1">Server (Central)</h3>
+            <p class="text-secondary small mb-0">C# .NET Core — Routing &amp; Auth</p>
           </div>
 
-          <div class="arch-arrow arch-arrow-down">
-            <span>TCP Socket</span>
-            <span class="arch-arrow-note">Data Streams</span>
+          <!-- Arrow Down -->
+          <div class="arch-connector">
+            <div class="arch-line"></div>
+            <span class="arch-label">Internal</span>
+            <span class="arch-sublabel">Cùng máy / TCP Socket</span>
           </div>
 
-          <div class="arch-node arch-agent">
-            <div class="arch-node-icon mb-2">
-              <i class="fas fa-desktop"></i>
-            </div>
+          <!-- Agent Node -->
+          <div class="arch-node">
+            <div class="arch-node-icon"><i class="fas fa-desktop"></i></div>
             <h3 class="h6 fw-bold mb-1">Agent (Target)</h3>
-            <p class="text-secondary small mb-1">Máy Bị Điều Khiển</p>
-            <p class="text-secondary small mb-0">System Hooks • Media Capture</p>
-          </div>
-
-          <div class="arch-arrow arch-arrow-up arch-arrow-left">
-            <span>Control Commands</span>
-            <span class="arch-arrow-note">JSON Packets</span>
-          </div>
-          <div class="arch-arrow arch-arrow-up arch-arrow-right">
-            <span>Telemetry / Streams</span>
-            <span class="arch-arrow-note">Binary Streams</span>
+            <p class="text-secondary small mb-0">Máy bị điều khiển — Thực thi lệnh</p>
           </div>
         </div>
       </div>
@@ -332,8 +336,8 @@
     <section id="members" class="section-padding bg-section reveal">
       <div class="container">
         <div class="text-center mb-4">
-          <h2 class="h3 fw-bold mb-2">Đội Ngũ Phát Triển</h2>
-          <p class="text-secondary mb-0">Sinh viên lớp 24CTT5 - Đại học Khoa học Tự nhiên, ĐHQG-HCM.</p>
+          <h2 class="h3 fw-bold mb-2">Thành Viên Nhóm 17</h2>
+          <p class="text-secondary mb-0">Lớp 24CTT5 — Đại học Khoa học Tự nhiên, ĐHQG-HCM</p>
         </div>
         <div id="membersGrid" class="member-grid"></div>
       </div>
@@ -344,10 +348,9 @@
       <div class="container">
         <div class="row g-4 align-items-center">
           <div class="col-lg-6">
-            <h2 class="h3 fw-bold mb-3">Trải Nghiệm Thực Tế</h2>
+            <h2 class="h3 fw-bold mb-3">Video Demo</h2>
             <p class="text-secondary mb-3">
-              Xem video demo chi tiết các tính năng của hệ thống N-SIGHT.
-              Từ kết nối, giám sát đến điều khiển nâng cao.
+              Xem video trình bày các chức năng của ứng dụng N-SIGHT.
             </p>
             <div class="d-flex gap-2">
               <a id="btnYoutube" class="btn btn-primary" href="#" target="_blank" rel="noopener">
@@ -370,7 +373,7 @@
     <div class="container-fluid py-4 px-4 px-md-5">
       <div class="row align-items-center gy-3">
         <div class="col-md-6 text-center text-md-start">
-          <small>© <span id="year"></span> N-SIGHT Team — All rights reserved.</small>
+          <small>© 2024 Nhóm 17 — Đồ án Mạng máy tính — Lớp 24CTT5</small>
         </div>
         <div class="col-md-6">
           <div class="footer-social justify-content-center justify-content-md-end">
