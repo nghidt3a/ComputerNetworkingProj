@@ -39,9 +39,6 @@ export const SocketService = {
               case 0x04: // System audio (với timestamp)
                 dispatch("AUDIO_STREAM", event.data);
                 break;
-              case 0x05: // Screen audio
-                dispatch("SCREEN_AUDIO_STREAM", event.data);
-                break;
               default:
                 dispatch("BINARY_STREAM", event.data);
             }
