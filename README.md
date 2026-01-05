@@ -14,17 +14,76 @@
 
 ---
 
+## ⚡ Quick Start
+
+### 📦 Yêu Cầu Hệ Thống
+
+| Thành phần | Yêu cầu |
+|------------|---------|
+| **OS** | Windows 10/11 |
+| **Runtime** | [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0) hoặc Runtime |
+| **Trình duyệt** | Chrome, Firefox, Edge (phiên bản mới nhất) |
+| **RAM** | Tối thiểu 4GB |
+
+### ⚠️ Yêu Cầu Bổ Sung (External Dependencies)
+
+> **Lưu ý quan trọng:** File sau **KHÔNG** được đính kèm trong source code do giới hạn dung lượng (~95MB).
+
+| Thông tin | Chi tiết |
+|-----------|----------|
+| **File** | `ffmpeg.exe` |
+| **Link tải** | [ffmpeg.org](https://ffmpeg.org/download.html) hoặc [gyan.dev](https://www.gyan.dev/ffmpeg/builds/) |
+| **Cách cài** | Tải → Giải nén → Copy `ffmpeg.exe` vào `Server/bin/Debug/net8.0-windows/` |
+
+> 💡 Nếu thiếu `ffmpeg.exe`, tính năng **Recording** (Screen, Webcam, Audio) sẽ không hoạt động.
+
+---
+
+### 🔧 Cài Đặt & Chạy
+
+#### Bước 1: Chạy Server
+
+**Cách 1: Visual Studio**
+```
+1. Mở file TestNewWeb.sln bằng Visual Studio 2022
+2. Build → Build Solution (Ctrl+Shift+B)
+3. Nhấn F5 để chạy
+```
+
+**Cách 2: .NET CLI**
+```bash
+cd Server
+dotnet restore
+dotnet build
+dotnet run
+```
+
+> Server sẽ lắng nghe tại `ws://localhost:8181`
+
+#### Bước 2: Chạy Client
+
+**Cách 1: Live Server (Khuyến nghị)**
+1. Mở VS Code → Cài extension **Live Server**
+2. Mở thư mục `Client`
+3. Click chuột phải `index.html` → **Open with Live Server**
+
+**Cách 2: Mở trực tiếp**
+- Mở file `Client/index.html` bằng trình duyệt
+
+#### Bước 3: Kết Nối
+1. Nhập **IP Address:** `localhost` hoặc IP của Server
+2. Nhập **Port:** `8181`
+3. Nhấn **Connect**
+
+---
+
 ## 📋 Mục Lục
 
 - [Giới Thiệu](#-giới-thiệu)
 - [Tính Năng](#-tính-năng)
 - [Công Nghệ Sử Dụng](#-công-nghệ-sử-dụng)
-- [Yêu Cầu Hệ Thống](#-yêu-cầu-hệ-thống)
-- [Cài Đặt & Chạy](#-cài-đặt--chạy)
-- [Hướng Dẫn Sử Dụng](#-hướng-dẫn-sử-dụng)
 - [Kiến Trúc Hệ Thống](#-kiến-trúc-hệ-thống)
 - [Thành Viên Nhóm](#-thành-viên-nhóm)
-- [Liên Hệ](#-liên-hệ)
 
 ---
 
@@ -122,81 +181,6 @@
 
 ---
 
-## 📦 Yêu Cầu Hệ Thống
-
-### Server (Máy được điều khiển)
-- **OS:** Windows 10/11
-- **Runtime:** .NET 6 SDK hoặc Runtime
-- **RAM:** Tối thiểu 4GB
-- **Phần cứng:** Webcam, Microphone (tùy chọn)
-
-### Client (Máy điều khiển)
-- **Trình duyệt:** Chrome, Firefox, Edge (phiên bản mới nhất)
-- **Kết nối:** Cùng mạng LAN hoặc có thể truy cập IP của Server
-
----
-
-## 🔧 Cài Đặt & Chạy
-
-### Bước 1: Clone Repository
-
-```bash
-git clone https://github.com/your-repo/ComputerNetworkingProj.git
-cd ComputerNetworkingProj
-```
-
-### Bước 2: Chạy Server
-
-**Cách 1: Sử dụng Visual Studio**
-1. Mở file `TestNewWeb.sln` bằng Visual Studio 2022
-2. Chọn Build → Build Solution (hoặc `Ctrl+Shift+B`)
-3. Nhấn `F5` để chạy hoặc `Ctrl+F5` để chạy không debug
-
-**Cách 2: Sử dụng .NET CLI (Command Line)**
-```bash
-cd Server
-dotnet restore
-dotnet build
-dotnet run
-```
-
-> ⚠️ **Lưu ý:** Server mặc định sẽ lắng nghe tại `ws://localhost:8181`
-
-### Bước 3: Chạy Client
-
-**Cách 1: Sử dụng Live Server (Khuyến nghị)**
-1. Mở VS Code
-2. Cài extension **Live Server** (nếu chưa có)
-3. Mở thư mục `Client`
-4. Click chuột phải vào `index.html` → **Open with Live Server**
-
-**Cách 2: Mở trực tiếp**
-- Mở file `Client/index.html` bằng trình duyệt web
-
-### Bước 4: Kết Nối
-1. Nhập **IP Address** của máy Server (ví dụ: `192.168.1.100` hoặc `localhost`)
-2. Nhập **Port:** `8181`
-3. Nhập **Password** (nếu có cấu hình)
-4. Nhấn **Connect**
-
----
-
-## 📖 Hướng Dẫn Sử Dụng
-
-### Kịch Bản Demo
-
-1. **Đăng nhập** - Kiểm tra trạng thái kết nối
-2. **Dashboard** - Xem thông tin hệ thống, biểu đồ hiệu suất
-3. **Screen Monitor** - Stream màn hình, chụp ảnh, quay video
-4. **Webcam** - Bật webcam, ghi hình, tải video
-5. **Audio** - Ghi âm, phát lại, tải/xóa bản ghi
-6. **Process Manager** - Xem, tìm kiếm, kill process
-7. **File Manager** - Duyệt, upload/download, đổi tên, xóa
-8. **Terminal Logs** - Xem log, tải log
-9. **Power Control** - Shutdown, restart, lock
-
----
-
 ## 🏗️ Kiến Trúc Hệ Thống
 
 ```
@@ -239,6 +223,20 @@ ComputerNetworkingProj/
 ├── TestNewWeb.sln          # Visual Studio Solution
 └── README.md               # This file
 ```
+
+---
+
+## 📖 Hướng Dẫn Sử Dụng (Demo)
+
+1. **Đăng nhập** - Kiểm tra trạng thái kết nối
+2. **Dashboard** - Xem thông tin hệ thống, biểu đồ hiệu suất
+3. **Screen Monitor** - Stream màn hình, chụp ảnh, quay video
+4. **Webcam** - Bật webcam, ghi hình, tải video
+5. **Audio** - Ghi âm, phát lại, tải/xóa bản ghi
+6. **Process Manager** - Xem, tìm kiếm, kill process
+7. **File Manager** - Duyệt, upload/download, đổi tên, xóa
+8. **Terminal Logs** - Xem log, tải log
+9. **Power Control** - Shutdown, restart, lock
 
 ---
 
